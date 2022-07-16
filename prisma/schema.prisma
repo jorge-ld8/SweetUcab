@@ -1,0 +1,662 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model beneficio {
+  b_id               Int                  @id(map: "c_beneficio_id") @default(autoincrement())
+  b_descripcion      String               @db.VarChar(30)
+  b_monto            Decimal              @db.Decimal(10, 2)
+  beneficio_empleado beneficio_empleado[]
+}
+
+model efectivo {
+  e_id                Int                   @id(map: "c_efectivo_id") @default(autoincrement())
+  e_moneda            String                @db.VarChar(20)
+  e_nombre            String                @db.VarChar(20)
+  metodo_pago_cliente metodo_pago_cliente[]
+  pago                pago[]
+}
+
+model horario {
+  h_id             Int                @id(map: "c_horario_id") @default(autoincrement())
+  h_dia            String             @db.VarChar(15)
+  h_hora_inicio    DateTime           @db.Time(6)
+  h_hora_fin       DateTime           @db.Time(6)
+  horario_empleado horario_empleado[]
+}
+
+model imagen_producto {
+  i_id          Int        @id(map: "c_imagen_producto_id") @default(autoincrement())
+  i_descripcion String     @db.VarChar(20)
+  i_uri_imagen  String?    @db.VarChar(100)
+  producto      producto[]
+}
+
+model lugar {
+  l_id                                               Int                @id(map: "c_lugar_id") @default(autoincrement())
+  l_descripcion                                      String             @db.VarChar(30)
+  fk_lugar                                           Int?
+  l_tipo                                             String             @db.VarChar(20)
+  lugar                                              lugar?             @relation("lugarTolugar_fk_lugar", fields: [fk_lugar], references: [l_id], onDelete: NoAction, onUpdate: NoAction, map: "c_lugar_fk_lugar")
+  banco                                              banco[]
+  cliente_juridico_cliente_juridico_fk_lugarTolugar  cliente_juridico[] @relation("cliente_juridico_fk_lugarTolugar")
+  cliente_juridico_cliente_juridico_fk_lugar2Tolugar cliente_juridico[] @relation("cliente_juridico_fk_lugar2Tolugar")
+  cliente_natural                                    cliente_natural[]
+  other_lugar                                        lugar[]            @relation("lugarTolugar_fk_lugar")
+  tienda                                             tienda[]
+}
+
+model producto {
+  p_id                   Int                      @id(map: "c_producto_id") @default(autoincrement())
+  p_descripcion          String                   @db.VarChar(20)
+  p_nombre               String                   @db.VarChar(20)
+  p_peso                 Decimal                  @db.Decimal(10, 0)
+  p_precio_actual        Decimal                  @db.Decimal(10, 2)
+  fk_imagen_producto     Int?
+  imagen_producto        imagen_producto?         @relation(fields: [fk_imagen_producto], references: [i_id], onDelete: NoAction, onUpdate: NoAction, map: "c_producto_fk_imagen_producto")
+  compra                 compra[]
+  detalle_pedido         detalle_pedido[]
+  detalle_pedido_interno detalle_pedido_interno[]
+  ingrediente_producto   ingrediente_producto[]
+  oferta                 oferta[]
+  producto_almacen       producto_almacen[]
+  producto_anaquel       producto_anaquel[]
+  producto_presupuesto   producto_presupuesto[]
+  sabor_producto         sabor_producto[]
+}
+
+model sabor {
+  s_id          Int    @id(map: "c_sabor_id") @default(autoincrement())
+  s_descripcion String @db.VarChar(30)
+}
+
+model tarjeta {
+  t_id                Int                   @id(map: "c_tarjeta_id") @default(autoincrement())
+  t_nombre_en_tarjeta String                @db.VarChar(15)
+  t_credito           Boolean
+  t_nombre            String                @db.VarChar(20)
+  t_clave             Decimal?              @db.Decimal(4, 0)
+  t_cod_seguridad     Decimal               @db.Decimal(3, 0)
+  t_fecha_venc        DateTime              @db.Date
+  t_num_tarjeta       Decimal               @unique @db.Decimal(16, 0)
+  metodo_pago_cliente metodo_pago_cliente[]
+  pago                pago[]
+}
+
+model asistencia_empleado {
+  a_id                  Int      @default(autoincrement())
+  a_comentario          String?  @db.VarChar(30)
+  a_justificacion_falta String?  @db.VarChar(30)
+  a_fecha               DateTime @unique @db.Date
+  a_asistencia          Boolean
+  fk_empleado           Int      @unique
+  empleado              empleado @relation(fields: [fk_empleado], references: [e_id], onDelete: NoAction, onUpdate: NoAction, map: "c_asistencia_empleado_fk_empleado")
+
+  @@id([a_id, fk_empleado], map: "c_asistencia_empleado_pk")
+}
+
+model banco {
+  b_id          Int         @id(map: "c_banco_id") @default(autoincrement())
+  b_nombre      String      @db.VarChar(20)
+  b_descripcion String      @db.VarChar(30)
+  fk_lugar      Int?
+  lugar         lugar?      @relation(fields: [fk_lugar], references: [l_id], onDelete: NoAction, onUpdate: NoAction, map: "c_banco_fk_lugar")
+  cheque        cheque[]
+  pagomovil     pagomovil[]
+  zelle         zelle[]
+}
+
+model beneficio_empleado {
+  b_id         Int       @default(autoincrement())
+  fk_beneficio Int
+  fk_empleado  Int
+  beneficio    beneficio @relation(fields: [fk_beneficio], references: [b_id], onDelete: NoAction, onUpdate: NoAction, map: "c_beneficio_empleado_fk_beneficio")
+  empleado     empleado  @relation(fields: [fk_empleado], references: [e_id], onDelete: NoAction, onUpdate: NoAction, map: "c_beneficio_empleado_fk_empleado")
+
+  @@id([b_id, fk_beneficio, fk_empleado], map: "c_beneficio_empleado_pk")
+}
+
+model departamento {
+  d_id          Int        @id(map: "c_departamento_id") @default(autoincrement())
+  d_descripcion String     @db.VarChar(30)
+  d_nombre      String     @db.VarChar(20)
+  fk_tienda     Int
+  tienda        tienda     @relation(fields: [fk_tienda], references: [t_id], onDelete: NoAction, onUpdate: NoAction)
+  empleado      empleado[]
+}
+
+model empleado {
+  e_id                Int                  @id(map: "c_empleado_id") @default(autoincrement())
+  e_nombre1           String               @db.VarChar(20)
+  e_nombre2           String?              @db.VarChar(20)
+  e_apellido1         String               @db.VarChar(20)
+  e_apellido2         String?              @db.VarChar(20)
+  e_cedula            Decimal              @unique @db.Decimal(10, 0)
+  e_salario           Decimal              @db.Decimal(10, 2)
+  fk_departamento     Int?
+  departamento        departamento?        @relation(fields: [fk_departamento], references: [d_id], onDelete: NoAction, onUpdate: NoAction, map: "c_empleado_fk_departamento")
+  asistencia_empleado asistencia_empleado?
+  beneficio_empleado  beneficio_empleado[]
+  horario_empleado    horario_empleado[]
+  usuario             usuario[]
+  vacacion            vacacion[]
+}
+
+model estatus {
+  e_id                   Int                      @id(map: "c_estatus_id") @default(autoincrement())
+  e_descripcion          String                   @db.VarChar(30)
+  e_nombre               String                   @db.VarChar(20)
+  estatus_pedido         estatus_pedido[]
+  estatus_pedido_interno estatus_pedido_interno[]
+  estatus_presupuesto    estatus_presupuesto[]
+  estatus_transaccion    estatus_transaccion[]
+}
+
+model flyer {
+  f_id                Int      @id(map: "c_flyer_id") @default(autoincrement())
+  f_fecha_publicacion DateTime @db.Date
+  oferta              oferta[]
+}
+
+model horario_empleado {
+  h_id        Int      @default(autoincrement())
+  fk_horario  Int
+  fk_empleado Int
+  empleado    empleado @relation(fields: [fk_empleado], references: [e_id], onDelete: NoAction, onUpdate: NoAction, map: "c_horario_empleado_fk_empleado")
+  horario     horario  @relation(fields: [fk_horario], references: [h_id], onDelete: NoAction, onUpdate: NoAction, map: "c_horario_empleado_fk_horario")
+
+  @@id([h_id, fk_horario, fk_empleado], map: "c_horario_empleado_pk")
+}
+
+model ingrediente {
+  i_id                 Int                    @id(map: "c_ingrediente_id") @default(autoincrement())
+  i_nombre             String                 @db.VarChar(20)
+  i_descripcion        String                 @db.VarChar(30)
+  ingrediente_producto ingrediente_producto[]
+  sabor_producto       sabor_producto[]
+}
+
+model ingrediente_producto {
+  i_id           Int         @default(autoincrement())
+  fk_ingrediente Int
+  fk_producto    Int
+  ingrediente    ingrediente @relation(fields: [fk_ingrediente], references: [i_id], onDelete: NoAction, onUpdate: NoAction, map: "c_ingrediente_producto_fk_ingrediente")
+  producto       producto    @relation(fields: [fk_producto], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_ingrediente_producto_fk_producto")
+
+  @@id([i_id, fk_producto, fk_ingrediente], map: "c_ingrediente_producto_pk")
+}
+
+model oferta {
+  o_id                   Int       @id(map: "c_oferta_id") @default(autoincrement())
+  o_descripcion          String?   @db.VarChar(30)
+  o_porcentaje_descuento Decimal   @db.Decimal(3, 0)
+  o_fecha_inicio         DateTime  @db.Date
+  o_fecha_fin            DateTime  @db.Date
+  fk_producto            Int?
+  fk_flyer               Int?
+  flyer                  flyer?    @relation(fields: [fk_flyer], references: [f_id], onDelete: NoAction, onUpdate: NoAction, map: "c_oferta_fk_flyer")
+  producto               producto? @relation(fields: [fk_producto], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_oferta_fk_producto")
+}
+
+model paypal {
+  p_id                Int                   @id(map: "c_paypal_id") @default(autoincrement())
+  p_nombre            String                @db.VarChar(20)
+  p_email             String                @db.VarChar(20)
+  metodo_pago_cliente metodo_pago_cliente[]
+  pago                pago[]
+}
+
+model permiso {
+  p_id          Int           @id(map: "c_permiso_id") @default(autoincrement())
+  p_tipo        String        @db.VarChar(20)
+  p_descripcion String        @db.VarChar(30)
+  permiso_rol   permiso_rol[]
+}
+
+model permiso_rol {
+  p_id           Int     @default(autoincrement())
+  fk_rol         Int
+  fk_permiso     Int
+  p_razonamiento String? @db.VarChar(20)
+  permiso        permiso @relation(fields: [fk_permiso], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_permiso_rol_fk_permiso")
+  rol            rol     @relation(fields: [fk_rol], references: [r_id], onDelete: NoAction, onUpdate: NoAction, map: "c_permiso_rol_fk_rol")
+
+  @@id([p_id, fk_rol, fk_permiso], map: "c_permiso_rol_pk")
+}
+
+model punto {
+  p_id                Int                   @id(map: "c_punto_id") @default(autoincrement())
+  p_nombre            String                @db.VarChar(20)
+  p_descripcion       String                @db.VarChar(30)
+  historico_punto     historico_punto[]
+  metodo_pago_cliente metodo_pago_cliente[]
+  pago                pago[]
+}
+
+model rol {
+  r_id          Int           @id(map: "c_rol_id") @default(autoincrement())
+  r_tipo        String        @db.VarChar(20)
+  r_descripcion String        @db.VarChar(30)
+  permiso_rol   permiso_rol[]
+  usuario       usuario[]
+}
+
+model sabor_producto {
+  s_id        Int         @default(autoincrement())
+  fk_sabor    Int
+  fk_producto Int
+  producto    producto    @relation(fields: [fk_producto], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_sabor_producto_fk_producto")
+  ingrediente ingrediente @relation(fields: [fk_sabor], references: [i_id], onDelete: NoAction, onUpdate: NoAction, map: "c_sabor_producto_fk_sabor")
+
+  @@id([s_id, fk_producto, fk_sabor], map: "c_sabor_producto_pk")
+}
+
+model tienda {
+  t_id               Int                  @id(map: "c_tienda_id") @default(autoincrement())
+  t_nombre           String               @db.VarChar(20)
+  fk_lugar           Int?
+  t_tipo             String               @db.VarChar(20)
+  t_direccion        String               @db.VarChar(20)
+  lugar              lugar?               @relation(fields: [fk_lugar], references: [l_id], onDelete: NoAction, onUpdate: NoAction, map: "c_tienda_fk_lugar")
+  almacen            almacen[]
+  cliente_juridico   cliente_juridico[]
+  cliente_natural    cliente_natural[]
+  departamento       departamento[]
+  pedido_fabrica     pedido_fabrica[]
+  transaccion_compra transaccion_compra[]
+}
+
+model vacacion {
+  v_id           Int      @id(map: "c_vacacion_id") @default(autoincrement())
+  v_descripcion  String   @db.VarChar(30)
+  v_fecha_inicio DateTime @db.Date
+  v_fecha_fin    DateTime @db.Date
+  v_remunerada   Boolean
+  fk_empleado    Int
+  empleado       empleado @relation(fields: [fk_empleado], references: [e_id], onDelete: NoAction, onUpdate: NoAction, map: "c_vacacion_fk_empleado")
+}
+
+model almacen {
+  a_id             Int                @id(map: "c_almacen_id") @default(autoincrement())
+  a_nombre         String             @db.VarChar(20)
+  fk_tienda        Int
+  tienda           tienda             @relation(fields: [fk_tienda], references: [t_id], onDelete: NoAction, onUpdate: NoAction, map: "c_almacen_fk_tienda")
+  pasillo          pasillo[]
+  pedido_interno   pedido_interno[]
+  producto_almacen producto_almacen[]
+}
+
+model anaquel {
+  a_id             Int                @id(map: "c_anaquel_id") @default(autoincrement())
+  a_tipo_producto  String             @db.VarChar(20)
+  fk_zona_pasillo  Int
+  zona_pasillo     zona_pasillo       @relation(fields: [fk_zona_pasillo], references: [z_id], onDelete: NoAction, onUpdate: NoAction, map: "c_anaquel_fk_zona_pasillo")
+  producto_anaquel producto_anaquel[]
+}
+
+model cliente_juridico {
+  c_id                                    Int                   @id(map: "c_cliente_juridico_id") @default(autoincrement())
+  c_rif                                   String                @unique @db.VarChar(10)
+  c_cantidad_puntos                       Decimal               @db.Decimal(10, 0)
+  c_codigo_registro                       String                @unique @db.Char(11)
+  c_razon_social                          String                @db.VarChar(20)
+  c_denom_comercial                       String                @db.VarChar(20)
+  c_capital_disponible                    Decimal               @db.Decimal(10, 0)
+  c_direccion                             String                @db.VarChar(30)
+  c_direccion_fiscal_ppal                 String                @db.VarChar(30)
+  c_pagina_web                            String                @unique @db.VarChar(30)
+  fk_lugar                                Int?
+  fk_lugar2                               Int?
+  fk_tienda                               Int
+  lugar_cliente_juridico_fk_lugarTolugar  lugar?                @relation("cliente_juridico_fk_lugarTolugar", fields: [fk_lugar], references: [l_id], onDelete: NoAction, onUpdate: NoAction, map: "c_cliente_juridico_fk_lugar")
+  lugar_cliente_juridico_fk_lugar2Tolugar lugar?                @relation("cliente_juridico_fk_lugar2Tolugar", fields: [fk_lugar2], references: [l_id], onDelete: NoAction, onUpdate: NoAction, map: "c_cliente_juridico_fk_lugar2")
+  tienda                                  tienda                @relation(fields: [fk_tienda], references: [t_id], onDelete: NoAction, onUpdate: NoAction, map: "c_cliente_juridico_fk_tienda")
+  metodo_pago_cliente                     metodo_pago_cliente[]
+  persona_contacto                        persona_contacto[]
+  presupuesto                             presupuesto[]
+  telefono                                telefono[]
+  transaccion_compra                      transaccion_compra[]
+  usuario                                 usuario[]
+}
+
+model cliente_natural {
+  c_id                Int                   @id(map: "c_cliente_natural_id") @default(autoincrement())
+  c_rif               String                @unique @db.VarChar(10)
+  c_cantidad_puntos   Decimal               @db.Decimal(10, 0)
+  c_codigo_registro   String                @unique @db.Char(11)
+  c_nombre1           String                @db.VarChar(20)
+  c_nombre2           String?               @db.VarChar(20)
+  c_apellido1         String                @db.VarChar(20)
+  c_apellido2         String?               @db.VarChar(20)
+  c_cedula            Decimal               @unique @db.Decimal(10, 0)
+  c_direccion         String                @db.VarChar(30)
+  fk_lugar            Int?
+  fk_tienda           Int
+  lugar               lugar?                @relation(fields: [fk_lugar], references: [l_id], onDelete: NoAction, onUpdate: NoAction, map: "c_cliente_natural_fk_lugar")
+  tienda              tienda                @relation(fields: [fk_tienda], references: [t_id], onDelete: NoAction, onUpdate: NoAction, map: "c_cliente_natural_fk_tienda")
+  metodo_pago_cliente metodo_pago_cliente[]
+  presupuesto         presupuesto[]
+  telefono            telefono[]
+  transaccion_compra  transaccion_compra[]
+  usuario             usuario[]
+}
+
+model detalle_pedido {
+  d_id              Int            @default(autoincrement())
+  d_cantidad        Decimal        @db.Decimal(10, 0)
+  fk_pedido_fabrica Int
+  fk_producto       Int
+  pedido_fabrica    pedido_fabrica @relation(fields: [fk_pedido_fabrica], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_detalle_pedido_fk_pedido_fabrica")
+  producto          producto       @relation(fields: [fk_producto], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_detalle_pedido_fk_producto")
+
+  @@id([d_id, fk_producto, fk_pedido_fabrica], map: "c_detalle_pedido_pk")
+}
+
+model detalle_pedido_interno {
+  d_id              Int            @default(autoincrement())
+  d_cantidad        Decimal        @db.Decimal(10, 0)
+  fk_pedido_interno Int
+  fk_producto       Int
+  pedido_interno    pedido_interno @relation(fields: [fk_pedido_interno], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_detalle_pedido_interno_fk_pedido_interno")
+  producto          producto       @relation(fields: [fk_producto], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_detalle_pedido_interno_fk_producto")
+
+  @@id([d_id, fk_producto, fk_pedido_interno], map: "c_detalle_pedido_interno_pk")
+}
+
+model estatus_pedido {
+  e_id                Int            @default(autoincrement())
+  e_fecha_hora_inicio DateTime       @db.Timestamp(6)
+  e_fecha_hora_fin    DateTime?      @db.Timestamp(6)
+  fk_pedido_fabrica   Int
+  fk_estatus          Int
+  estatus             estatus        @relation(fields: [fk_estatus], references: [e_id], onDelete: NoAction, onUpdate: NoAction, map: "c_estatus_pedido_fk_estatus")
+  pedido_fabrica      pedido_fabrica @relation(fields: [fk_pedido_fabrica], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_estatus_pedido_fk_pedido_fabrica")
+
+  @@id([e_id, fk_estatus, fk_pedido_fabrica], map: "c_estatus_pedido_pk")
+}
+
+model estatus_pedido_interno {
+  e_id                Int            @default(autoincrement())
+  e_fecha_hora_inicio DateTime       @db.Timestamp(6)
+  e_fecha_hora_fin    DateTime?      @db.Timestamp(6)
+  fk_pedido_interno   Int
+  fk_estatus          Int
+  estatus             estatus        @relation(fields: [fk_estatus], references: [e_id], onDelete: NoAction, onUpdate: NoAction, map: "c_estatus_pedido_interno_fk_estatus")
+  pedido_interno      pedido_interno @relation(fields: [fk_pedido_interno], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_estatus_pedido_interno_fk_pedido_interno")
+
+  @@id([e_id, fk_estatus, fk_pedido_interno], map: "c_estatus_pedido_interno_pk")
+}
+
+model pagomovil {
+  p_id                Int                   @id(map: "c_pagomovil_id") @default(autoincrement())
+  p_nombre            String                @db.VarChar(20)
+  p_cedula            Decimal               @unique @db.Decimal(10, 0)
+  fk_telefono         Int
+  fk_banco            Int
+  banco               banco                 @relation(fields: [fk_banco], references: [b_id], onDelete: NoAction, onUpdate: NoAction, map: "c_pagomovil_fk_banco")
+  telefono            telefono              @relation(fields: [fk_telefono], references: [t_id], onDelete: NoAction, onUpdate: NoAction, map: "c_pagomovil_fk_telefono")
+  metodo_pago_cliente metodo_pago_cliente[]
+  pago                pago[]
+}
+
+model pasillo {
+  p_id         Int            @id(map: "c_pasillo_id") @default(autoincrement())
+  p_nombre     String         @db.VarChar(20)
+  fk_almacen   Int
+  almacen      almacen        @relation(fields: [fk_almacen], references: [a_id], onDelete: NoAction, onUpdate: NoAction, map: "c_pasillo_fk_almacen")
+  zona_pasillo zona_pasillo[]
+}
+
+model pedido_fabrica {
+  p_id             Int              @id(map: "c_pedido_fabrica_id") @default(autoincrement())
+  p_fecha_creacion DateTime         @db.Date
+  p_numero         Decimal          @unique @db.Decimal(10, 0)
+  fk_tienda        Int?
+  tienda           tienda?          @relation(fields: [fk_tienda], references: [t_id], onDelete: NoAction, onUpdate: NoAction, map: "c_pedido_fabrica_fk_tienda")
+  detalle_pedido   detalle_pedido[]
+  estatus_pedido   estatus_pedido[]
+}
+
+model pedido_interno {
+  p_id                         Int                      @id(map: "c_pedido_interno_pk") @default(autoincrement())
+  p_fecha_creacion             DateTime                 @db.Date
+  p_numero                     Decimal                  @unique @db.Decimal(10, 0)
+  fk_almacen                   Int
+  fk_producto_anaquel_id       Int
+  fk_producto_anaquel_producto Int
+  fk_producto_anaquel_anaquel  Int
+  almacen                      almacen                  @relation(fields: [fk_almacen], references: [a_id], onDelete: NoAction, onUpdate: NoAction, map: "c_pedido_interno_fk_almacen")
+  producto_anaquel             producto_anaquel         @relation(fields: [fk_producto_anaquel_id, fk_producto_anaquel_producto, fk_producto_anaquel_anaquel], references: [p_id, fk_producto, fk_anaquel], onDelete: NoAction, onUpdate: NoAction, map: "c_pedido_interno_fk_producto_anaquel")
+  detalle_pedido_interno       detalle_pedido_interno[]
+  estatus_pedido_interno       estatus_pedido_interno[]
+}
+
+model persona_contacto {
+  p_id                Int              @id(map: "c_persona_contacto_id") @default(autoincrement())
+  c_nombre            String           @db.VarChar(20)
+  c_apellido          String           @db.VarChar(20)
+  fk_cliente_juridico Int
+  cliente_juridico    cliente_juridico @relation(fields: [fk_cliente_juridico], references: [c_id], onDelete: NoAction, onUpdate: NoAction, map: "c_persona_contacto_fk_cliente_juridico")
+  telefono            telefono[]
+}
+
+model producto_almacen {
+  p_id        Int      @default(autoincrement())
+  p_cantidad  Decimal  @db.Decimal(10, 0)
+  fk_almacen  Int
+  fk_producto Int
+  almacen     almacen  @relation(fields: [fk_almacen], references: [a_id], onDelete: NoAction, onUpdate: NoAction, map: "c_producto_almacen_fk_almacen")
+  producto    producto @relation(fields: [fk_producto], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_producto_almacen_fk_producto")
+
+  @@id([p_id, fk_producto, fk_almacen], map: "c_producto_almacen_pk")
+}
+
+model producto_anaquel {
+  p_id           Int              @default(autoincrement())
+  p_cantidad     Decimal          @db.Decimal(10, 0)
+  fk_anaquel     Int
+  fk_producto    Int
+  fk_empleado    Int?
+  anaquel        anaquel          @relation(fields: [fk_anaquel], references: [a_id], onDelete: NoAction, onUpdate: NoAction, map: "c_producto_anaquel_fk_anaquel")
+  producto       producto         @relation(fields: [fk_producto], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_producto_anaquel_fk_producto")
+  compra         compra[]
+  pedido_interno pedido_interno[]
+
+  @@id([p_id, fk_producto, fk_anaquel], map: "c_producto_anaquel_pk")
+}
+
+model telefono {
+  t_id                Int               @id(map: "c_telefono_id") @default(autoincrement())
+  t_cod_pais          Decimal           @db.Decimal(3, 0)
+  t_cod_area          Decimal           @db.Decimal(3, 0)
+  t_numero            Decimal           @db.Decimal(7, 0)
+  fk_cliente_juridico Int?
+  fk_cliente_natural  Int?
+  fk_persona_contacto Int?
+  cliente_juridico    cliente_juridico? @relation(fields: [fk_cliente_juridico], references: [c_id], onDelete: NoAction, onUpdate: NoAction, map: "c_telefono_fk_cliente_juridico")
+  cliente_natural     cliente_natural?  @relation(fields: [fk_cliente_natural], references: [c_id], onDelete: NoAction, onUpdate: NoAction, map: "c_telefono_fk_cliente_natural")
+  persona_contacto    persona_contacto? @relation(fields: [fk_persona_contacto], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_telefono_fk_persona_contacto")
+  pagomovil           pagomovil[]
+  zelle               zelle[]
+}
+
+model zelle {
+  z_id                Int                   @id(map: "c_zelle_id") @default(autoincrement())
+  z_nombre            String                @db.VarChar(20)
+  z_nombre_titular    String                @db.VarChar(40)
+  z_correo            String                @db.VarChar(30)
+  fk_telefono         Int
+  fk_banco            Int
+  banco               banco                 @relation(fields: [fk_banco], references: [b_id], onDelete: NoAction, onUpdate: NoAction, map: "c_zelle_fk_banco")
+  telefono            telefono              @relation(fields: [fk_telefono], references: [t_id], onDelete: NoAction, onUpdate: NoAction, map: "c_zelle_fk_telefono")
+  metodo_pago_cliente metodo_pago_cliente[]
+  pago                pago[]
+}
+
+model zona_pasillo {
+  z_id                   Int       @id(map: "c_zona_pasillo_id") @default(autoincrement())
+  z_ubicacion_en_pasillo String    @db.VarChar(20)
+  fk_pasillo             Int
+  pasillo                pasillo   @relation(fields: [fk_pasillo], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_zona_pasillo_fk_pasillo")
+  anaquel                anaquel[]
+}
+
+model cheque {
+  c_id                Int                   @id(map: "c_cheque_id") @default(autoincrement())
+  c_nombre            String                @db.VarChar(20)
+  c_numero            Decimal               @db.Decimal(10, 0)
+  fk_banco            Int
+  banco               banco                 @relation(fields: [fk_banco], references: [b_id], onDelete: NoAction, onUpdate: NoAction, map: "c_cheque_fk_banco")
+  metodo_pago_cliente metodo_pago_cliente[]
+  pago                pago[]
+}
+
+model compra {
+  c_id                         Int                @default(autoincrement())
+  c_cantidad                   Decimal            @db.Decimal(10, 0)
+  c_precio_por_unidad          Decimal            @db.Decimal(10, 2)
+  fk_producto                  Int
+  fk_producto_anaquel_id       Int
+  fk_producto_anaquel_producto Int
+  fk_producto_anaquel_anaquel  Int
+  fk_transaccion_compra        Int
+  producto                     producto           @relation(fields: [fk_producto], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_compra_fk_producto")
+  producto_anaquel             producto_anaquel   @relation(fields: [fk_producto_anaquel_id, fk_producto_anaquel_producto, fk_producto_anaquel_anaquel], references: [p_id, fk_producto, fk_anaquel], onDelete: NoAction, onUpdate: NoAction, map: "c_compra_fk_producto_anaquel")
+  transaccion_compra           transaccion_compra @relation(fields: [fk_transaccion_compra], references: [t_id], onDelete: NoAction, onUpdate: NoAction, map: "c_compra_fk_transaccion_compra")
+
+  @@id([c_id, fk_producto, fk_transaccion_compra], map: "c_compra_pk")
+}
+
+model estatus_presupuesto {
+  e_id                Int         @default(autoincrement())
+  e_fecha_hora_inicio DateTime    @db.Timestamp(6)
+  e_fecha_hora_fin    DateTime?   @db.Timestamp(6)
+  fk_presupuesto      Int
+  fk_estatus          Int
+  estatus             estatus     @relation(fields: [fk_estatus], references: [e_id], onDelete: NoAction, onUpdate: NoAction, map: "c_estatus_presupuesto_fk_estatus")
+  presupuesto         presupuesto @relation(fields: [fk_presupuesto], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_estatus_presupuesto_fk_presupuesto")
+
+  @@id([e_id, fk_estatus, fk_presupuesto], map: "c_estatus_presupuesto_pk")
+}
+
+model estatus_transaccion {
+  e_id                     Int                @default(autoincrement())
+  e_fecha_hora_establecida DateTime           @db.Timestamp(6)
+  e_fecha_fin              DateTime?          @db.Date
+  fk_estatus               Int
+  fk_transaccion_compra    Int
+  estatus                  estatus            @relation(fields: [fk_estatus], references: [e_id], onDelete: NoAction, onUpdate: NoAction, map: "c_estatus_transaccion_fk_estatus")
+  transaccion_compra       transaccion_compra @relation(fields: [fk_transaccion_compra], references: [t_id], onDelete: NoAction, onUpdate: NoAction, map: "c_estatus_transaccion_fk_transaccion_compra")
+
+  @@id([e_id, fk_estatus, fk_transaccion_compra], map: "c_estatus_transaccion_pk")
+}
+
+model historico_punto {
+  h_id            Int       @id(map: "c_historico_punto_id") @default(autoincrement())
+  h_valor         Decimal   @db.Decimal(10, 2)
+  h_fecha_emision DateTime  @db.Date
+  h_fecha_final   DateTime? @db.Date
+  fk_punto        Int
+  punto           punto     @relation(fields: [fk_punto], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_historico_punto_fk_punto")
+}
+
+model metodo_pago_cliente {
+  m_id                Int               @id(map: "c_metodo_pago_cliente_id") @default(autoincrement())
+  fk_efectivo         Int?
+  fk_tarjeta          Int?
+  fk_pagomovil        Int?
+  fk_zelle            Int?
+  fk_punto            Int?
+  fk_paypal           Int?
+  fk_cheque           Int?
+  fk_cliente_juridico Int?
+  fk_cliente_natural  Int?
+  cheque              cheque?           @relation(fields: [fk_cheque], references: [c_id], onDelete: NoAction, onUpdate: NoAction, map: "c_metodo_pago_cliente_fk_cheque")
+  cliente_juridico    cliente_juridico? @relation(fields: [fk_cliente_juridico], references: [c_id], onDelete: NoAction, onUpdate: NoAction, map: "c_metodo_pago_cliente_fk_cliente_juridico")
+  cliente_natural     cliente_natural?  @relation(fields: [fk_cliente_natural], references: [c_id], onDelete: NoAction, onUpdate: NoAction, map: "c_metodo_pago_cliente_fk_cliente_natural")
+  efectivo            efectivo?         @relation(fields: [fk_efectivo], references: [e_id], onDelete: NoAction, onUpdate: NoAction, map: "c_metodo_pago_cliente_fk_efectivo")
+  pagomovil           pagomovil?        @relation(fields: [fk_pagomovil], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_metodo_pago_cliente_fk_pagomovil")
+  paypal              paypal?           @relation(fields: [fk_paypal], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_metodo_pago_cliente_fk_paypal")
+  punto               punto?            @relation(fields: [fk_punto], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_metodo_pago_cliente_fk_punto")
+  tarjeta             tarjeta?          @relation(fields: [fk_tarjeta], references: [t_id], onDelete: NoAction, onUpdate: NoAction, map: "c_metodo_pago_cliente_fk_tarjeta")
+  zelle               zelle?            @relation(fields: [fk_zelle], references: [z_id], onDelete: NoAction, onUpdate: NoAction, map: "c_metodo_pago_cliente_fk_zelle")
+}
+
+model pago {
+  p_id                  Int                @id(map: "c_pago_id") @default(autoincrement())
+  p_monto_pago          Decimal            @db.Decimal(10, 2)
+  fk_efectivo           Int?
+  fk_pagomovil          Int?
+  fk_tarjeta            Int?
+  fk_zelle              Int?
+  fk_paypal             Int?
+  fk_cheque             Int?
+  fk_punto              Int?
+  fk_transaccion_compra Int
+  cheque                cheque?            @relation(fields: [fk_cheque], references: [c_id], onDelete: NoAction, onUpdate: NoAction, map: "c_pago_fk_cheque")
+  efectivo              efectivo?          @relation(fields: [fk_efectivo], references: [e_id], onDelete: NoAction, onUpdate: NoAction, map: "c_pago_fk_efectivo")
+  pagomovil             pagomovil?         @relation(fields: [fk_pagomovil], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_pago_fk_pagomovil")
+  paypal                paypal?            @relation(fields: [fk_paypal], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_pago_fk_paypal")
+  punto                 punto?             @relation(fields: [fk_punto], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_pago_fk_punto")
+  tarjeta               tarjeta?           @relation(fields: [fk_tarjeta], references: [t_id], onDelete: NoAction, onUpdate: NoAction, map: "c_pago_fk_tarjeta")
+  transaccion_compra    transaccion_compra @relation(fields: [fk_transaccion_compra], references: [t_id], onDelete: NoAction, onUpdate: NoAction, map: "c_pago_fk_transaccion_compra")
+  zelle                 zelle?             @relation(fields: [fk_zelle], references: [z_id], onDelete: NoAction, onUpdate: NoAction, map: "c_pago_fk_zelle")
+}
+
+model presupuesto {
+  p_id                 Int                    @id(map: "c_presupuesto_id") @default(autoincrement())
+  p_fecha_creacion     DateTime               @db.Date
+  p_total_presupuesto  Decimal                @db.Decimal(10, 2)
+  fk_cliente_juridico  Int?
+  fk_cliente_natural   Int?
+  cliente_juridico     cliente_juridico?      @relation(fields: [fk_cliente_juridico], references: [c_id], onDelete: NoAction, onUpdate: NoAction, map: "c_presupuesto_fk_cliente_juridico")
+  cliente_natural      cliente_natural?       @relation(fields: [fk_cliente_natural], references: [c_id], onDelete: NoAction, onUpdate: NoAction, map: "c_presupuesto_fk_cliente_natural")
+  estatus_presupuesto  estatus_presupuesto[]
+  producto_presupuesto producto_presupuesto[]
+}
+
+model producto_presupuesto {
+  p_id                Int         @default(autoincrement())
+  p_cantidad          Decimal     @db.Decimal(10, 0)
+  p_precio_por_unidad Decimal     @db.Decimal(10, 2)
+  fk_presupuesto      Int
+  fk_producto         Int
+  presupuesto         presupuesto @relation(fields: [fk_presupuesto], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_producto_presupuesto_fk_presupuesto")
+  producto            producto    @relation(fields: [fk_producto], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_producto_presupuesto_fk_producto")
+
+  @@id([p_id, fk_producto, fk_presupuesto], map: "c_producto_presupuesto_pk")
+}
+
+model transaccion_compra {
+  t_id                Int                   @id(map: "c_transaccion_compra_id") @default(autoincrement())
+  t_total_compra      Decimal               @db.Decimal(10, 0)
+  fk_cliente_juridico Int?
+  fk_cliente_natural  Int?
+  fk_tienda           Int
+  cliente_juridico    cliente_juridico?     @relation(fields: [fk_cliente_juridico], references: [c_id], onDelete: NoAction, onUpdate: NoAction, map: "c_transaccion_compra_fk_cliente_juridico")
+  cliente_natural     cliente_natural?      @relation(fields: [fk_cliente_natural], references: [c_id], onDelete: NoAction, onUpdate: NoAction, map: "c_transaccion_compra_fk_cliente_natural")
+  tienda              tienda                @relation(fields: [fk_tienda], references: [t_id], onDelete: NoAction, onUpdate: NoAction, map: "c_transaccion_compra_fk_tienda")
+  compra              compra[]
+  estatus_transaccion estatus_transaccion[]
+  pago                pago[]
+}
+
+model usuario {
+  u_id                Int               @id(map: "c_usuario_id") @default(autoincrement())
+  u_username          String            @unique @db.VarChar(20)
+  u_email             String            @unique @db.VarChar(30)
+  u_password          String            @db.VarChar(14)
+  fk_rol              Int
+  fk_cliente_juridico Int?
+  fk_cliente_natural  Int?
+  fk_empleado         Int?
+  cliente_juridico    cliente_juridico? @relation(fields: [fk_cliente_juridico], references: [c_id], onDelete: NoAction, onUpdate: NoAction, map: "c_usuario_fk_cliente_juridico")
+  cliente_natural     cliente_natural?  @relation(fields: [fk_cliente_natural], references: [c_id], onDelete: NoAction, onUpdate: NoAction, map: "c_usuario_fk_cliente_natural")
+  empleado            empleado?         @relation(fields: [fk_empleado], references: [e_id], onDelete: NoAction, onUpdate: NoAction, map: "c_usuario_fk_empleado")
+  rol                 rol               @relation(fields: [fk_rol], references: [r_id], onDelete: NoAction, onUpdate: NoAction, map: "c_usuario_fk_rol")
+}

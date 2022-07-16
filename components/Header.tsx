@@ -9,12 +9,14 @@ const Header: React.FC = () => {
 
   let left = (
     <div className="left">
-      <Link href="/">
+      {/* <Link href="/">
         <a className="bold" data-active={isActive("/")}>
           Feed
         </a>
-      </Link>
-      <style jsx>{`
+      </Link> */}
+      {/* <style jsx>{`
+
+        
         .bold {
           font-weight: bold;
         }
@@ -28,11 +30,7 @@ const Header: React.FC = () => {
         .left a[data-active="true"] {
           color: gray;
         }
-
-        a + a {
-          margin-left: 1rem;
-        }
-      `}</style>
+      `}</style> */}
     </div>
   );
 
@@ -42,13 +40,13 @@ const Header: React.FC = () => {
     <nav>
       {left}
       {right}
-      <style jsx>{`
+      {/* <style jsx>{`
         nav {
           display: flex;
           padding: 2rem;
           align-items: center;
         }
-      `}</style>
+      `}</style> */}
     </nav>
   );
 };

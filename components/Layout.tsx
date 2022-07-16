@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import Header from "./Header";
 
+
 type Props = {
   children: ReactNode;
 };
@@ -27,7 +28,7 @@ const Layout: React.FC<Props> = (props) => (
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
           Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
           "Segoe UI Symbol";
-        background: rgba(0, 0, 0, 0.05);
+        background: rgba(0, 0, 0, 0);
       }
 
       input,
@@ -38,10 +39,115 @@ const Layout: React.FC<Props> = (props) => (
       button {
         cursor: pointer;
       }
+
+      code {
+        font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+        monospace;
+        }
+
+        /* Header styling */
+        header{
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+      }
+      
+      header ul,
+      nav ul{
+          list-style: none;
+          margin: 0;
+          padding: 0;
+      }
+
+      header{
+          background-color: #FEE2E6;
+          position: sticky;
+      }
+        
+        .imagenLogo{
+            max-width: 100%;
+            height: 130px;
+        }
+        
+        .icons{
+            display: flex;
+            justify-content: flex-end;
+        }
+        
+        .icons *{
+            margin: 0 .6em 0 .2em;
+        }
+        
+        /* Nav Bar styling */
+        nav ul{
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            margin: auto 0;
+            padding: 0;
+            height: 50px;
+        }
+        
+        nav{
+            background-color: #E02464;
+        }
+        
+        nav a {
+            text-decoration: none;
+            display: block;
+            padding: 0.5em 1em;
+            color: white;
+            text-transform: uppercase;
+            font-size: 1.2em;
+        }
+        nav li{
+          flex: 1;
+          text-align: center;
+        }
+        
+        /* Main styling */
+        main{
+          height: 80vh;
+        }
+        
+        /* Footer styling */
+        footer{
+            text-align: center;
+        }
+
+        /*Table Styling*/ 
+        table{
+           table-layout: fixed;
+           border-collapse: collapse;
+           width: 80%;
+           align-self: center;
+           margin: 4em auto;
+        }
+
+        td, th{
+          border: 1.5px solid black;
+        }
+
+        th{
+          background-color: lightgray;
+        }
+
+        tbody td{
+           text-align: center;
+           padding: .9em 0;
+        }
+
+        thead th{
+          font-size: 1.2rem;
+        }
+
+        table{
+          letter-spacing: 1px;
+        }
     `}</style>
     <style jsx>{`
       .layout {
-        padding: 0 2rem;
+        padding: 0 0rem;
       }
     `}</style>
   </div>
