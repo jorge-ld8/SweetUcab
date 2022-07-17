@@ -1,56 +1,44 @@
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import styles from './crud.module.css';
 import Image from 'next/image';
 import prisma from "../lib/prisma";
-import useSWR from 'swr';
-import handlerPrisma from "../pages/api/[...nextcrud]";
 import Router from "next/router";
 
 type CrudProps<ArbType extends Object> = {
     copiedObj: ArbType; 
     mainObj: ArbType;
-    objType: any;
+    objType: string;
     id: any;
+    stateChanger: Function;
 }
 
 
 const CrudElement: React.FC<CrudProps<any>> = (props)=>{
-    // const [id, setId] = useState(props.copiedObj.id);
-    // async function handleDelete(e) {
-    //     const deletedObj = await prisma[props.objType].delete(
-    //         {where:{
-    //             [props.mainObj.id]: id,
-    //         }
-    //     }
-    //     )
-    // }
+    const[state, setState] = useState("active"); //u
 
+    useEffect(() => {
+      return () => {
+          console.log("CrudElement unmounted");
+          props.stateChanger("deleted");
+      }
+    }, [state])
+    
     async function handleDelete(e){
       console.log(props.id);
-      const response = await fetch(`/api/lugar/${props.id}`,{method: "DELETE"});
+      const response = await fetch(`/api/${props.objType}/${props.id}`,{method: "DELETE"});
       console.log(JSON.stringify(response));
+      setState("deleted");
     }
 
     function handleUpdate(e){
         console.log(props.id);
-        // Router.push("/updatelugar/[id]", `/updatelugar/${props.id}`);
-        Router.push("/updatelugar")
+        Router.push(`/update${props.objType}/[id]`, `/update${props.objType}/${props.id}`);
     }
-
-    
-
-    // const fetcher = (url: string) => fetch(url, {
-    //     method: 'GET',
-
-    // }).then((res) =>res.json());
-
-    // const {data, error} = useSWR('/api/user', fetcher);
-    
 
     return(<tr >
         {Object.keys(props.copiedObj).map((key)=>{
             return (
-            (key.includes("id")) ? <td onClick={() => Router.push("/lugar/[id]", `/lugar/${props.mainObj[key]}`)}>{props.mainObj[key]}</td>
+            (key.includes("id")) ? <td onClick={() => Router.push(`/${props.objType}/[id]`, `/${props.objType}/${props.mainObj[key]}`)}>{props.mainObj[key]}</td>
             :
             <td>{props.mainObj[key]}</td>);
         })}

@@ -4,6 +4,16 @@
     cursor: pointer;
 }
 
-.crudRow{
-    
+.errorMessage{
+    margin: .5em;
+    color: red;
+    font-size: 1.2em;
+}
+
+.addButton{
+    position: absolute;
+    right: 5rem;
+    top: 1rem;
+    background-color: transparent;
+    border: 0px;
 }

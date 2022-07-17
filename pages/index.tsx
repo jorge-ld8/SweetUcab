@@ -24,7 +24,11 @@ export const getStaticProps: GetStaticProps = async () => {
   //   },
   // ]
 
-  const feed = await prisma.lugar.findMany();
+  const feed = await prisma.lugar.findMany(
+    {orderBy:{
+      l_id: 'asc',
+    }}
+  );
   return { 
     props: { feed }, 
     revalidate: 10 
@@ -39,10 +43,9 @@ const Blog: React.FC<Props<lugar>> = (props) => {
   const navElements = [{link:"#", title:"Link 1"},
   {link:"#", title:"Link 2"},
   {link:"#", title:"Link 3"}];
-
   return (
     <Page navElements={navElements}>
-      <Crud content={props.feed}/>
+      <Crud content={props.feed} name={'lugar'}/>
       {/* {props.feed.map((post) => (
       <div key={post.id} className="post">
         <Post post={post} />

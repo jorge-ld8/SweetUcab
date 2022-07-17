@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useEffect, useState } from "react";
 import reactMarkdown from "react-markdown";
 import CrudElement from "./CrudElement";
 import { PostProps } from "./Post";
@@ -6,29 +6,32 @@ import styles from './crud.module.css';
 import Image from "next/image";
 import Link from "next/link";
 import { lugar } from "@prisma/client";
+import Router from "next/router";
 
-
-const objectMap = (obj, fn) =>
-  Object.fromEntries(
-    Object.entries(obj).map(
-      ([k, v], i) => [k, fn(v, k, i)]
-    )
-  )
-
-type CrudProps = {
-    header: String[],
-    content: lugar[]
-}
 
 interface Props<ArbType extends Object>{
-    content: ArbType[]
+    content: ArbType[],
+    name: string, 
 }
 
 
-const Crud: React.FC<Props<any>> = (props)=>{    
+const Crud: React.FC<Props<any>> = (props)=>{
     let copiedHeaders = Object.keys(JSON.parse(JSON.stringify(props.content[0])));
+    const [state, setState] = useState("active");
+    useEffect(() => {
+        console.log(`Crud state: ${state}`);
+        return ()=>{ 
+            Router.reload();
+        };}
+    , [state]);
+
+    function handleStateChange(newState){
+        setState(newState);
+    }
     return (
     <div >
+        <h2>{props.name.toUpperCase()}</h2>
+        <button className={styles.addButton} onClick={()=>{Router.push("createLugar")}}><Image src={"/images/iconoAdd.png"} width={90} height={90}></Image></button>
         <table>
             <thead>
                 <tr>
@@ -42,7 +45,7 @@ const Crud: React.FC<Props<any>> = (props)=>{
                 let copiedEl = JSON.parse(JSON.stringify(element));
                 const elId = Object.keys(copiedEl).find((el)=>(el.includes("id")));
                 return(
-                    <CrudElement copiedObj={copiedEl} mainObj={element} objType={'lugar'} key={element[elId]} id={element[elId]}/>
+                    <CrudElement copiedObj={copiedEl} mainObj={element} objType={props.name} key={element[elId]} id={element[elId]} stateChanger={handleStateChange}/>
                 )
             })}
             </tbody>

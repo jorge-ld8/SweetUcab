@@ -29,6 +29,7 @@ const Layout: React.FC<Props> = (props) => (
           Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
           "Segoe UI Symbol";
         background: rgba(0, 0, 0, 0);
+        position: relative;
       }
 
       input,
@@ -62,6 +63,10 @@ const Layout: React.FC<Props> = (props) => (
       header{
           background-color: #FEE2E6;
           position: sticky;
+      }
+
+      .header{
+        position: sticky;
       }
         
         .imagenLogo{
@@ -107,6 +112,8 @@ const Layout: React.FC<Props> = (props) => (
         
         /* Main styling */
         main{
+          text-align: center;
+          position: relative;
         }
         
         /* Footer styling */
@@ -115,12 +122,12 @@ const Layout: React.FC<Props> = (props) => (
         }
 
         /*Table Styling*/ 
-        table{
+        main table{
            table-layout: fixed;
            border-collapse: collapse;
            width: 80%;
            align-self: center;
-           margin: 4em auto;
+           margin: 6em auto;
         }
 
         td:nth-of-type(1){
@@ -156,14 +163,16 @@ const Layout: React.FC<Props> = (props) => (
 
         /*Form Styling*/
         form{
-          margin: 0 auto;
+          margin: 4em auto;
           padding: 1em;
         }
         form ul{
           list-style: none;
           padding: 0;
           margin: 0;
+          text-align: center;
         }
+
         form li + li{
           margin-top: 1.5em;
         }
@@ -172,6 +181,25 @@ const Layout: React.FC<Props> = (props) => (
           display: inline-block;
           width: 100px;
           text-align: right;
+          margin-right: .5em;
+        }
+
+        input,
+        textarea {
+          /* To make sure that all text fields have the same font settings
+            By default, textareas have a monospace font */
+          font: 1em sans-serif;
+
+          /* Uniform text field size */
+          width: 300px;
+          box-sizing: border-box;
+
+          /* Match form field borders */
+          border: 1px solid #999;
+        }
+
+        main button{
+          position: absolute;
         }
     `}</style>
     <style jsx>{`

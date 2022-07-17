@@ -8,6 +8,7 @@ const Page: React.FC<{children: ReactNode, navElements: NavElement[]}> = (props)
    useEffect(()=>{
     console.log("Page Component mounted");
    })
+
    return (
     <div>
       {/* <h2>{post.l_descripcion}</h2> */}
@@ -21,6 +22,7 @@ const Page: React.FC<{children: ReactNode, navElements: NavElement[]}> = (props)
         }
       `}</style> */}
        <Layout> 
+        <div className="header">
             <header>
                 <a href="/"><Image src="/images/logoSweetUcab.png" alt="SweetUcab logo" className="imagenLogo" width={300} height={130}/></a>
                 <ul className="icons">
@@ -37,6 +39,7 @@ const Page: React.FC<{children: ReactNode, navElements: NavElement[]}> = (props)
                 </ul>
             </header>
         <NavBar links={props.navElements}/>
+        </div>
         <main id="root">
             {props.children}
         </main>
