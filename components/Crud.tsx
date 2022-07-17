@@ -40,8 +40,9 @@ const Crud: React.FC<Props<any>> = (props)=>{
             <tbody>
             {props.content.map((element)=>{
                 let copiedEl = JSON.parse(JSON.stringify(element));
+                const elId = Object.keys(copiedEl).find((el)=>(el.includes("id")));
                 return(
-                    <CrudElement copiedObj={copiedEl} mainObj={element} objType={'lugar'}/>
+                    <CrudElement copiedObj={copiedEl} mainObj={element} objType={'lugar'} key={element[elId]} id={element[elId]}/>
                 )
             })}
             </tbody>

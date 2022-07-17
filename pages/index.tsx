@@ -40,8 +40,6 @@ const Blog: React.FC<Props<lugar>> = (props) => {
   {link:"#", title:"Link 2"},
   {link:"#", title:"Link 3"}];
 
-  const CrudHeaders = ['l_id', 'l_descripcion', 'l_tipo', 'fk_lugar'];
-
   return (
     <Page navElements={navElements}>
       <Crud content={props.feed}/>

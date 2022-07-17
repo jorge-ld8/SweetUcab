@@ -107,7 +107,6 @@ const Layout: React.FC<Props> = (props) => (
         
         /* Main styling */
         main{
-          height: 80vh;
         }
         
         /* Footer styling */
@@ -122,6 +121,16 @@ const Layout: React.FC<Props> = (props) => (
            width: 80%;
            align-self: center;
            margin: 4em auto;
+        }
+
+        td:nth-of-type(1){
+          text-decoration: underline;
+        }
+
+        td:nth-of-type(1):hover{
+          background-color: rgba(0, 0, 0, 0.2);
+          border: 2px solid black;
+          cursor: pointer;
         }
 
         td, th{
@@ -143,6 +152,26 @@ const Layout: React.FC<Props> = (props) => (
 
         table{
           letter-spacing: 1px;
+        }
+
+        /*Form Styling*/
+        form{
+          margin: 0 auto;
+          padding: 1em;
+        }
+        form ul{
+          list-style: none;
+          padding: 0;
+          margin: 0;
+        }
+        form li + li{
+          margin-top: 1.5em;
+        }
+
+        label{
+          display: inline-block;
+          width: 100px;
+          text-align: right;
         }
     `}</style>
     <style jsx>{`
