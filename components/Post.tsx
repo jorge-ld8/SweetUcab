@@ -4,15 +4,6 @@ import ReactMarkdown from "react-markdown";
 import { lugar } from "@prisma/client";
 
 export type PostProps = {
-  // id: string;
-  // title: string;
-  // author: {
-  //   name: string;
-  //   email: string;
-  // } | null;
-  // content: string;
-  // published: boolean;
-
   l_descripcion: string;
   l_tipo: string;
   l_id: Number;

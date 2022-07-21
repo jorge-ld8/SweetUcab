@@ -1,6 +1,10 @@
-import React, { ReactNode } from "react";
 import reactMarkdown from "react-markdown";
+import React, { ReactNode } from 'react';
 
-const Component: React.FC<ReactNode> = ()=>null;
+//Template para crear componentes 
+const Component: React.FC<ReactNode> = ()=>
+{
+    return(<div></div>);
+};
 
 export default Component;
