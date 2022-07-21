@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect }  from "react";
+import React, { ReactNode, useEffect, useState }  from "react";
 import Image from "next/image";
 import Layout from "./Layout";
 import NavBar, {NavElement} from "./NavBar";
@@ -38,7 +38,9 @@ const Page: React.FC<{children: ReactNode, navElements: NavElement[]}> = (props)
                     </li>
                 </ul>
             </header>
-        <NavBar links={props.navElements}/>
+        <NavBar links={[{link:"#", title:"Link 1"},
+    {link:"#", title:"Link 2"},
+    {link:"#", title:"Link 3"}]}/>
         </div>
         <main id="root">
             {props.children}

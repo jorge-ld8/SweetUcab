@@ -5,37 +5,38 @@ import { PostProps } from "./Post";
 import styles from './crud.module.css';
 import Image from "next/image";
 import Link from "next/link";
-import { lugar } from "@prisma/client";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 
 
 interface Props<ArbType extends Object>{
+    headers: String[],
     content: ArbType[],
     name: string, 
+    stateChanger: Function,
 }
 
 
 const Crud: React.FC<Props<any>> = (props)=>{
-    let copiedHeaders = Object.keys(JSON.parse(JSON.stringify(props.content[0])));
     const [state, setState] = useState("active");
     useEffect(() => {
         console.log(`Crud state: ${state}`);
         return ()=>{ 
-            Router.reload();
+            props.stateChanger(props.content);
         };}
     , [state]);
 
     function handleStateChange(newState){
         setState(newState);
     }
+
     return (
     <div >
         <h2>{props.name.toUpperCase()}</h2>
-        <button className={styles.addButton} onClick={()=>{Router.push("createLugar")}}><Image src={"/images/iconoAdd.png"} width={90} height={90}></Image></button>
+        <button className={styles.addButton} onClick={()=>{Router.push(`create${props.name}`)}}><Image src={"/images/iconoAdd.png"} width={90} height={90}></Image></button>
         <table>
             <thead>
                 <tr>
-                    {copiedHeaders.map((h)=>(<th>{h}</th>))}
+                    {props.headers.map((h)=>(<th>{h}</th>))}
                     <th></th>
                     <th></th>
                 </tr>
@@ -51,8 +52,8 @@ const Crud: React.FC<Props<any>> = (props)=>{
             </tbody>
         </table>
         <style jsx>{`
-            thead th:nth-child(5),
-            thead th:nth-child(6){
+            thead th:nth-last-child(1),
+            thead th:nth-last-child(2){
                 width: 10%;
                 border: 0;
                 background-color: white;

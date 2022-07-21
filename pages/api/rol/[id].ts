@@ -4,35 +4,32 @@ import prisma from '../../../lib/prisma';
 export default async function handler(req: NextApiRequest, res: NextApiResponse){
     const {id} = req.query;
     if(req.method === "GET"){
-        const response = await prisma.lugar.findUnique({     
+        const response = await prisma.rol.findUnique({     
             where:{
-                    l_id: Number(id)
+                    r_id: Number(id)
                 }
          }
         );
         res.json(response);
     }
     else if(req.method === "DELETE"){
-        const response = await prisma.lugar.delete({
+        const response = await prisma.rol.delete({
             where:{
-                l_id: Number(id)
+                r_id: Number(id)
             }
         });
         res.json(response);
     }
     else if(req.method === "POST"){
-        const response = await prisma.lugar.update({
-            include:{
-                lugar: true,
-            },
+        const response = await prisma.rol.update({
             where:{
-                l_id: Number(id)
+                r_id: Number(id)
             },
             data: {
-                l_descripcion: String(JSON.parse(req.body)['descripcion']),
-                l_tipo: String(JSON.parse(req.body)['tipo']),
+                r_descripcion: String(JSON.parse(req.body)['descripcion']),
+                r_tipo: String(JSON.parse(req.body)['tipo']),
             }
         })
         res.json(response);
     }
-};
+}

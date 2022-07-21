@@ -2,28 +2,35 @@ import React from "react"
 import { GetServerSideProps } from "next"
 import ReactMarkdown from "react-markdown"
 import Layout from "../../components/Layout"
+import { PostProps } from "../../components/Post"
 import prisma from '../../lib/prisma';
-import { lugar } from "@prisma/client"
+import { useRouter } from "next/router"
+import { usuario } from "@prisma/client"
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-    const lugar = await prisma.lugar.findUnique({
+    const usuario = await prisma.usuario.findUnique({
       where: {
-        l_id : Number(params?.id),
+        u_id : Number(params?.id),
       },
     });
     return {
-      props: lugar,
+      props: usuario,
     }
   }
-  
-  const LugarPost: React.FC<lugar> = (props) => {
+
+  const UsuarioPost: React.FC<usuario> = (props) => {
+    const markdown = `
+    ## ${props.u_username}
+    ** ID: ${props.u_id} **
+    * Email: ${props.u_email}
+    * Rol: ${props.fk_rol}`;
     return (
       <Layout>
         <div>
-          <h2>{props.l_descripcion}</h2>
-          <p>{props.l_id}</p>
-          <p>{props.fk_lugar}</p>
-          <p>Tipo {props.l_tipo || "Unknown type"}</p> 
+            <h2>{props.u_username}</h2>
+            <p><b>ID {props.u_id}</b></p>
+            <p>Email: {props.u_email}</p>
+            <p>Rol: {props.fk_rol}</p>
         </div>
         <style jsx>{`
           .page {
@@ -50,4 +57,4 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     )
   }
   
-  export default LugarPost;
+  export default UsuarioPost;

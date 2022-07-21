@@ -114,6 +114,8 @@ const Layout: React.FC<Props> = (props) => (
         main{
           text-align: center;
           position: relative;
+          margin-top: 1em;
+          min-height: 100vh;
         }
         
         /* Footer styling */
@@ -142,6 +144,7 @@ const Layout: React.FC<Props> = (props) => (
 
         td, th{
           border: 1.5px solid black;
+          word-wrap: break-word;
         }
 
         th{

@@ -1,29 +1,13 @@
-import React from "react"
+import React, {useEffect, useState} from "react"
 import { GetStaticProps } from "next"
-import Layout from "../components/Layout"
-import Post, { PostProps } from "../components/Post"
 import prisma from '../lib/prisma';
-import Image from "next/image";
-import Head from "next/head"
 import Link from "next/link";
 import Page from "../components/Page";
-import Crud from "../components/Crud";
 import { lugar } from "@prisma/client";
+import RolPost from "./rol/[id]";
+import UserProfile from "./userSession";
 
 export const getStaticProps: GetStaticProps = async () => {
-  // const feed = [
-  //   {
-  //     id: "1",
-  //     title: "Prisma is the perfect ORM for Next.js",
-  //     content: "[Prisma](https://github.com/prisma/prisma) and Next.js go _great_ together!",
-  //     published: false,
-  //     author: {
-  //       name: "Nikolas Burk",
-  //       email: "burk@prisma.io",
-  //     },
-  //   },
-  // ]
-
   const feed = await prisma.lugar.findMany(
     {orderBy:{
       l_id: 'asc',
@@ -39,20 +23,49 @@ type Props<ArbType extends Object> = {
   feed: ArbType[]
 }
 
-const Blog: React.FC<Props<lugar>> = (props) => {
+const Component: React.FC<Props<lugar>> = (props) => {
   const navElements = [{link:"#", title:"Link 1"},
   {link:"#", title:"Link 2"},
   {link:"#", title:"Link 3"}];
+
+  const [state, stateHandler] = useState(false);
+
+  UserProfile.setName("Jorge");
+  console.log(UserProfile.getName());
+  //   function onChangeStateHandler(){
+  //     stateHandler(!state);
+  //   }
+
+  //  useEffect(() => {
+  //    first
+  
+  //    return () => {
+  //      second
+  //    }
+  //  }, [third])
+ 
   return (
     <Page navElements={navElements}>
-      <Crud content={props.feed} name={'lugar'}/>
-      {/* {props.feed.map((post) => (
-      <div key={post.id} className="post">
-        <Post post={post} />
+      <div><Link href="/lugar">LUGAR</Link></div>
+      <div>
+          <Link href="/usuario">USUARIO</Link>
       </div>
-   ))} */}
+      <div>
+          <Link href="/rol">ROL</Link>
+      </div>
+      <div>
+          <Link href="/producto">PRODUCTO</Link>
+      </div>
+      <div>
+          <Link href="/imagesTest">HISTORICO_PUNTO</Link>
+      </div>
+      <div>
+          <Link href="/inicio_de_sesion">PRESUPUESTO</Link>
+      </div>
+      <div>
+          <Link href="#">DESCUENTO</Link>
+      </div>
     </Page>
   )
 }
-
-export default Blog
+export default Component;

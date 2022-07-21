@@ -14,10 +14,10 @@ const NavBar: React.FC<NavBarProps> = ({links}) => {
     return(
         <nav>
             <ul> 
-                {links.map(({link, title})=>{
-                    return                     (<li key={link}>
+                {links.map(({link, title}, index)=>{
+                    return (<li key={index}>
                         <a href={link}>{title}</a>
-                </li>);
+                    </li>);
                 })}
             </ul>
             <style jsx>{`

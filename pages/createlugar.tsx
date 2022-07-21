@@ -12,6 +12,8 @@ import * as Yup from 'yup';
 import styles from '../components/crud.module.css';
 import DropDownList from "../components/Dropdownlist";
 import { lugar } from "@prisma/client";
+import ErrorMessage from "../components/ErrorMessage";
+import UserProfile from "./userSession";
 
 export const getServerSideProps: GetServerSideProps = async () => {
     const feed = await prisma.lugar.findMany();
@@ -31,7 +33,7 @@ const Component: React.FC<Props<lugar>> = (props)=>
     {link:"#", title:"Link 2"},
     {link:"#", title:"Link 3"}];
 
-
+    console.log(UserProfile.getName());
     const formik = useFormik({
         initialValues:{
           descripcion: '',
@@ -40,8 +42,8 @@ const Component: React.FC<Props<lugar>> = (props)=>
         },
         validationSchema: Yup.object(
           {
-            descripcion: Yup.string().max(30, 'Máximo 30 caracteres de longitud'),
-            tipo: Yup.string().max(20, 'Maximo 20 caracteres de longitud'),
+            descripcion: Yup.string().max(30, 'Máximo 30 caracteres de longitud').required("Obligatorio"),
+            tipo: Yup.string().max(20, 'Maximo 20 caracteres de longitud').required("Obligatorio"),
           }
         ),
         onSubmit: values => {console.log(values);},
@@ -57,9 +59,12 @@ const Component: React.FC<Props<lugar>> = (props)=>
         body: JSON.stringify({descripcion: formik.values.descripcion, 
                               tipo: formik.values.tipo,
                               relacion: formik.values.relacion})
-        });
-        const data = await response.json();
-        console.log(data);
+        }).then(response =>{ 
+          if(response.ok)
+            return response.json()
+          }
+        ).catch(e => console.error(e))
+        console.log(response);
         Router.back();
       }
   
@@ -73,24 +78,20 @@ const Component: React.FC<Props<lugar>> = (props)=>
                       <label htmlFor="descripcion">Descripcion:</label>
                       <input type="text" id="descripcion"
                       {...formik.getFieldProps('descripcion')}/>
-                      {formik.touched.descripcion && formik.errors.descripcion ? (
-                        <div className={styles.errorMessage}>{formik.errors.descripcion}</div>
-                      ) : null}
+                      <ErrorMessage touched={formik.touched.descripcion} errors={formik.errors.descripcion}/>
                   </li>
                   <li>
                       <label htmlFor="tipo">Tipo:</label>
                       <input type="text" id="tipo"
                       {...formik.getFieldProps('tipo')}/>
-                      {formik.touched.tipo && formik.errors.tipo ? (
-                        <div className={styles.errorMessage}>{formik.errors.tipo}</div>
-                      ) : null}
+                      <ErrorMessage touched={formik.touched.tipo} errors={formik.errors.tipo}/>
                   </li>
                   <li>
                     <label htmlFor="relacion">Elija un lugar con el que tiene relacion:</label>
                     <DropDownList content={props.feed} attValueName={"l_descripcion"} objType={"lugar"} name={"relacion"} onChange={formik.handleChange} value={formik.values.relacion}/>
                   </li>
                   <li className="button">
-                      <button type="submit">Crear</button>
+                      <button type="submit" disabled={!(formik.isValid && formik.dirty)}>Crear</button>
                   </li>
               </ul>
           </form>

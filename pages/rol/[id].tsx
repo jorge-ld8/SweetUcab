@@ -1,31 +1,32 @@
 import React from "react"
 import { GetServerSideProps } from "next"
-import ReactMarkdown from "react-markdown"
 import Layout from "../../components/Layout"
 import prisma from '../../lib/prisma';
-import { lugar } from "@prisma/client"
+import { rol } from "@prisma/client"
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-    const lugar = await prisma.lugar.findUnique({
+    const rol = await prisma.rol.findUnique({
       where: {
-        l_id : Number(params?.id),
+        r_id : Number(params?.id),
       },
     });
     return {
-      props: lugar,
+      props: rol,
     }
   }
   
-  const LugarPost: React.FC<lugar> = (props) => {
+  const RolPost: React.FC<rol> = (props) => {
     return (
       <Layout>
-        <div>
-          <h2>{props.l_descripcion}</h2>
-          <p>{props.l_id}</p>
-          <p>{props.fk_lugar}</p>
-          <p>Tipo {props.l_tipo || "Unknown type"}</p> 
+        <div className="stylish">
+          <h2>{props.r_tipo}</h2>
+          <p>{props.r_id}</p>
+          <p>{props.r_descripcion}</p>
         </div>
         <style jsx>{`
+          .stylish{
+            margin-left: .5em;
+          }
           .page {
             background: white;
             padding: 2rem;
@@ -50,4 +51,4 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     )
   }
   
-  export default LugarPost;
+  export default RolPost;

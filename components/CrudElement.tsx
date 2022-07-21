@@ -14,20 +14,25 @@ type CrudProps<ArbType extends Object> = {
 
 
 const CrudElement: React.FC<CrudProps<any>> = (props)=>{
-    const[state, setState] = useState("active"); //u
+    const[state, setState] = useState("active"); //state hook
 
     useEffect(() => {
+      //componente mounts
       return () => {
           console.log("CrudElement unmounted");
-          props.stateChanger("deleted");
+          props.stateChanger(state);
       }
-    }, [state])
+    }, [state]) //effect hook
     
     async function handleDelete(e){
       console.log(props.id);
-      const response = await fetch(`/api/${props.objType}/${props.id}`,{method: "DELETE"});
-      console.log(JSON.stringify(response));
-      setState("deleted");
+      const response = await fetch(`/api/${props.objType}/${props.id}`,{method: "DELETE"}).then( 
+        response =>{
+          if(response.ok)
+            return response.json()
+        }
+      ).catch(e => console.error(e));
+     Router.push("/");
     }
 
     function handleUpdate(e){
@@ -35,15 +40,15 @@ const CrudElement: React.FC<CrudProps<any>> = (props)=>{
         Router.push(`/update${props.objType}/[id]`, `/update${props.objType}/${props.id}`);
     }
 
-    return(<tr >
-        {Object.keys(props.copiedObj).map((key)=>{
+    return(<tr key={props.id}>
+        {Object.keys(props.copiedObj).map((key, index)=>{
             return (
-            (key.includes("id")) ? <td onClick={() => Router.push(`/${props.objType}/[id]`, `/${props.objType}/${props.mainObj[key]}`)}>{props.mainObj[key]}</td>
+            (key.includes("id")) ? <td onClick={() => Router.push(`/${props.objType}/[id]`, `/${props.objType}/${props.mainObj[key]}`)} key={index}>{props.mainObj[key]}</td>
             :
-            <td>{props.mainObj[key]}</td>);
+            <td key={index}>{props.mainObj[key]}</td>);
         })}
-        <td className={styles.crudIcon}><Image src="/images/iconoDelete.png" width={30} height={30} onClick={handleDelete}/></td>
-        <td className={styles.crudIcon}><Image src="/images/iconoUpdate.png" width={30} height={30} onClick={handleUpdate}/></td>
+        <td className={styles.crudIcon}><Image src="/images/iconoDelete.png" width={30} height={30} onClick={handleDelete} key={5}/></td>
+        <td className={styles.crudIcon}><Image src="/images/iconoUpdate.png" width={30} height={30} onClick={handleUpdate} key={6}/></td>
     </tr>);
 };
 
