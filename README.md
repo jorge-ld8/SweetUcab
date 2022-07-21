@@ -1,3 +1,7 @@
-# Fullstack Authentication Example with Next.js and NextAuth.js
+# Proyecto de Sistemas de Bases de Datos 1
 
-This is the starter project for the fullstack tutorial with Next.js and Prisma. You can find the final version of this project in the [`final`](https://github.com/prisma/blogr-nextjs-prisma/tree/final) branch of this repo.
+Proyecto correspondiente al curso del tercer año del curriculum de Ingeniería Informática de la Universidad Católica Andrés Bello. Este es una aplicación fullstack de un ECommerce para la empresa de dulces ficticia SweetUcab.
+
+Se usan como tecnologías ReactJS, TypeScript, NextJS, Prisma y la base de datos con el manejador PostgreSQL.
+
+
