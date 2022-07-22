@@ -111,7 +111,7 @@ const NewPresupuesto: React.FC<Props> = (props)=>
                     </form>
                 </li>
               <li className="button">
-                   <Button type={"submit"}variant="contained" disabled={!(formik.isValid && formik.dirty && listaProds.length >= 1)} color={"success"}>Crear Presupuesto</Button>
+                   <Button type={"submit"}variant="contained" disabled={!(formik.isValid && formik.dirty)} color={"success"}>Crear Presupuesto</Button>
               </li>
               </ul>
           </form>
