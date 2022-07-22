@@ -8,6 +8,7 @@ import { Formik, FormikProvider, useFormik } from "formik";
 import * as Yup from 'yup';
 import { lugar, permiso, rol } from "@prisma/client";
 import ErrorMessage from "../components/ErrorMessage";
+import Button from "@mui/material/Button";
 import DropDownList from "../components/Dropdownlist";
 
 export const getServerSideProps: GetServerSideProps = async () => {
@@ -87,8 +88,8 @@ const NewRole: React.FC<Props> = (props)=>
                     <label htmlFor="relacion">Seleccione los permisos del rol: </label>
                     <DropDownList content={props.permisos} attValueName={"p_tipo"} objType={"rol"} name={"relacion"} onChange={formik.handleChange} value={formik.values.relacion} multiple={true}/>
                   </li>
-                  <li className="button">
-                      <button type="submit" disabled={!(formik.isValid && formik.dirty)}>Crear</button>
+                  <li className="Button">
+                      <Button type={"submit"} variant="contained" color={"success"}  disabled={!(formik.isValid && formik.dirty)}>Crear</Button>
                   </li>
               </ul>
           </form>

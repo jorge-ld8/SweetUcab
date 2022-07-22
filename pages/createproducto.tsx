@@ -9,6 +9,7 @@ import * as Yup from 'yup';
 import { lugar, producto } from "@prisma/client";
 import ErrorMessage from "../components/ErrorMessage";
 import UploadImages from "./uploadImages";
+import Button from "@mui/material/Button";
 import { FileUploadButton } from "../components/FileUploadButton";
 
 export const getServerSideProps: GetServerSideProps = async () => {
@@ -98,8 +99,8 @@ const Component: React.FC<Props<producto>> = (props)=>
                       <ErrorMessage touched={formik.touched.precio_actual} errors={formik.errors.precio_actual}/>
                   </li>
                   <input type="file" accept="image/*" id="image" name="image" onChange={(event) => {formik.setFieldValue("image", event.currentTarget.files[0].name)}} multiple={true}/>
-                  <li className="button">
-                      <button type="submit" disabled={!(formik.isValid && formik.dirty)}>Crear</button>
+                  <li className="Button">
+                      <Button type={"submit"} variant="contained" color={"success"} disabled={!(formik.isValid && formik.dirty)}>Crear</Button>
                   </li>
               </ul>
           </form>
