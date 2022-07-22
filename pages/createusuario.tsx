@@ -9,6 +9,7 @@ import Page from "../components/Page"
 import Router from "next/router"
 import { Formik, FormikProvider, useFormik } from "formik";
 import * as Yup from 'yup';
+import Button from "@mui/material/Button";
 import styles from '../components/crud.module.css';
 import DropDownList from "../components/Dropdownlist";
 import { lugar, rol, usuario } from "@prisma/client";
@@ -185,8 +186,8 @@ const Component: React.FC<Props<rol>> = (props)=>
                     )    
                 }
                 </li>
-                  <li className="button">
-                      <button type="submit" disabled={!(formik.isValid && formik.dirty)}>Crear</button>
+                  <li className="Button">
+                      <Button type={"submit"} variant="contained" color={"success"} disabled={!(formik.isValid && formik.dirty)}>Crear</Button>
                   </li>
               </ul>
           </form>

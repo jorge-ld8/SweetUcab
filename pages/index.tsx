@@ -54,6 +54,12 @@ const Component: React.FC<Props<lugar>> = (props) => {
       <div>
           <Link href="/oferta">OFERTA</Link>
       </div>
+      <div>
+                <Link href="/cliente_juridico">CLIENTE JURIDICO</Link>
+            </div>
+            <div>
+                      <Link href="/cliente_natural">CLIENTE NATURAL</Link>
+                  </div>
     </Page>
   )
 }

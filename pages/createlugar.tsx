@@ -13,6 +13,7 @@ import styles from '../components/crud.module.css';
 import DropDownList from "../components/Dropdownlist";
 import { lugar } from "@prisma/client";
 import ErrorMessage from "../components/ErrorMessage";
+import Button from "@mui/material/Button";
 import UserProfile from "./userSession";
 
 export const getServerSideProps: GetServerSideProps = async () => {
@@ -52,7 +53,7 @@ const Component: React.FC<Props<lugar>> = (props)=>
         if(formik.values.relacion === 'N/A') 
             formik.values.relacion = null;
         const response = await fetch(`/api/lugar`,{method: 'POST', 
-        body: JSON.stringify({descripcion: formik.values.descripcion, 
+        body: JSON.stringify({descripcion: formik.values.descripcion,
                               tipo: formik.values.tipo,
                               relacion: formik.values.relacion})
         }).then(response =>{ 
@@ -86,8 +87,8 @@ const Component: React.FC<Props<lugar>> = (props)=>
                     <label htmlFor="relacion">Elija un lugar con el que tiene relacion:</label>
                     <DropDownList content={props.feed} attValueName={"l_descripcion"} objType={"lugar"} name={"relacion"} onChange={formik.handleChange} value={formik.values.relacion}/>
                   </li>
-                  <li className="button">
-                      <button type="submit" disabled={!(formik.isValid && formik.dirty)}>Crear</button>
+                  <li className="Button">
+                      <Button type={"submit"} variant="contained" color={"success"} disabled={!(formik.isValid && formik.dirty)}>Crear</Button>
                   </li>
               </ul>
           </form>
@@ -101,7 +102,7 @@ const Component: React.FC<Props<lugar>> = (props)=>
               margin-top: 2rem;
             }
     
-            button {
+            Button {
               background: #ececec;
               border: 0;
               border-radius: 0.125rem;
