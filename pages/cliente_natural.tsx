@@ -26,7 +26,6 @@ export const getStaticProps: GetStaticProps = async () => {
         c_cedula: true,
         c_cantidad_puntos: true,
         c_codigo_registro: true,
-        fk_lugar: true,
         fk_tienda: true,
     }
    },
@@ -42,10 +41,6 @@ type Props<ArbType extends Object> = {
 }
 
 const Blog: React.FC<Props<usuario>> = (props) => {
-  const navElements = [{link:"#", title:"Link 1"},
-  {link:"#", title:"Link 2"},
-  {link:"#", title:"Link 3"}];
-
 
   const[state, setState] = useState("active"); //state hook
 
@@ -62,7 +57,7 @@ const Blog: React.FC<Props<usuario>> = (props) => {
     <Page>
       <Crud headers={["ID", "RIF", "Primer Nombre","Segundo Nombre", "Primer Apellido","Segundo Apellido",
       "Dirección", "Cédula", "Cantidad de puntos", "Código de registro",
-      "Código de lugar",  "Código de tienda de registro"]} content={props.feed} name={'cliente_natural'} stateChanger={handleStateChange}/>
+      "Código de tienda registro"]} content={props.feed} name={'cliente_natural'} stateChanger={handleStateChange}/>
     </Page>
   )
 }

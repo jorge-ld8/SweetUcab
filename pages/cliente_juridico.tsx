@@ -42,11 +42,7 @@ type Props<ArbType extends Object> = {
   feed: ArbType[]
 }
 
-const Blog: React.FC<Props<usuario>> = (props) => {
-  const navElements = [{link:"#", title:"Link 1"},
-  {link:"#", title:"Link 2"},
-  {link:"#", title:"Link 3"}];
-
+const Blog: React.FC<Props<any>> = (props) => {
 
   const[state, setState] = useState("active"); //state hook
 

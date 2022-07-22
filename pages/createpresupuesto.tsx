@@ -86,19 +86,11 @@ const NewPresupuesto: React.FC<Props> = (props)=>
             FechaServidor = formik.values.fecha_creacion;
         }
         
-        console.log(UserProfile.getName());
-        
     return (
         <Layout>
           <Page>
           <form  onSubmit={handleSubmit} >
               <ul>
-              <li>
-                    <label htmlFor="fecha_inicio">Fecha creación:</label>
-                    <input type="date" id="fecha_inicio"
-                    {...formik.getFieldProps('fecha_inicio')}/>
-                    <ErrorMessage touched={formik.touched.fecha_creacion} errors={formik.errors.fecha_creacion}/>
-              </li>
               <li>
                     <form >
                         <ul>
