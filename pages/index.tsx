@@ -66,7 +66,7 @@ const Component: React.FC<Props<lugar>> = (props) => {
               <Link href="/cliente_juridico">CLIENTE JURIDICO</Link>
         </div>
       </AccessControl >
-            <AccessControl userPermissions={UserProfile.getRol()} allowedPermissions={["cliente_natural:ad"]} mode={"all"}>
+            <AccessControl userPermissions={UserProfile.getRol()} allowedPermissions={["cliente_natural:read"]} mode={"all"}>
               <div>
                 <Link href="/cliente_natural">CLIENTE NATURAL</Link>
               </div>
