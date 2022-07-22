@@ -1,31 +1,43 @@
 var UserProfile = (function() {
   let full_name = "";
   let user_id = "";
-  let user_rol = "";
+  let user_rol:string[] = [];
 
-  let getName = function() {
+  let getName : () => string;
+  getName = function() {
     return full_name; 
   };
 
-  let setName = function(name) {
+  let setName: (name: string) => void;
+  setName = function(name) {
     full_name = name;     
   };
 
-  let setUser = function (id){
+  let setUser: (id: string) => void;
+  setUser = function (id){
     user_id = id;
   }
 
-  let getUser = function (){
+  let getUser: ()=>string;
+  getUser = function (){
     return user_id; 
   }
 
-  let setRol = function(rol){
-    user_rol = rol;
+  let setRol: (rol: string[]) => void;
+  setRol = function(rol){
+    user_rol = [];
+    for(let valor of rol)
+        user_rol.push(valor);
   }
 
-  let getRol = function(){
+  let getRol: () => string[];
+
+  getRol = function(){
     return user_rol;
   }
+  
+  let isLoggedIn: () => boolean
+  isLoggedIn = function(){ return !!full_name;}
 
   return {
     getName: getName,
@@ -33,7 +45,8 @@ var UserProfile = (function() {
     getUser: getUser,
     setUser: setUser,
     setRol: setRol,
-    getRol: getRol
+    getRol: getRol,
+    loggedIn: isLoggedIn
   }
 
 })();

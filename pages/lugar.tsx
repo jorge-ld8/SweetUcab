@@ -29,9 +29,6 @@ type Props<ArbType extends Object> = {
 }
 
 const Blog: React.FC<Props<lugar>> = (props) => {
-  const navElements = [{link:"#", title:"Link 1"},
-  {link:"#", title:"Link 2"},
-  {link:"#", title:"Link 3"}];
   console.log(UserProfile.getName());
 
   const[state, setState] = useState(props.feed); //state hook
@@ -54,7 +51,7 @@ const Blog: React.FC<Props<lugar>> = (props) => {
   }
 
   return (
-    <Page navElements={navElements}>
+    <Page>
       <Crud headers={["ID", "Nombre", "Tipo", "FK_Lugar"]}content={state} name={'lugar'} stateChanger={handleStateChange}/>
     </Page>
   )

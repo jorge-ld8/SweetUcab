@@ -26,10 +26,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
   
   const RolPost: React.FC<rol> = (props) => {
-    const navElements = [{link:"#", title:"Link 1"},
-    {link:"#", title:"Link 2"},
-    {link:"#", title:"Link 3"}];
-
     const formik = useFormik({
       initialValues:{
         descripcion: props.r_descripcion,
@@ -50,15 +46,18 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       const response = await fetch(`/api/rol/${props.r_id}`,{method: 'POST', 
       body: JSON.stringify({descripcion: formik.values.descripcion, 
                             tipo: formik.values.tipo})
-      });
-      const data = await response.json();
-      console.log(data);
+      }).then(response =>{ 
+        if(response.ok)
+          return response.json()
+        }
+      ).catch(e => console.error(e))
+      console.log(response);
       Router.back();
     }
 
     return (
       <Layout>
-        <Page navElements={navElements}>
+        <Page>
         <form  onSubmit={handleSubmit} >
             <ul>
             <li>

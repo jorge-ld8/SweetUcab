@@ -33,7 +33,7 @@ const Component: React.FC<Props<lugar>> = (props) => {
   {link:"#", title:"Link 2"},
   {link:"#", title:"Link 3"}];
   return (
-    <Page navElements={navElements}>
+    <Page>
     </Page>
   )
 }

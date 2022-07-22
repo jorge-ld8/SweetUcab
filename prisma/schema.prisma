@@ -81,7 +81,7 @@ model tarjeta {
   t_credito           Boolean
   t_nombre            String                @db.VarChar(20)
   t_clave             String?               @db.VarChar(4)
-  t_cod_seguridad     String                @db.VarChar(3)
+  t_cod_seguridad     String?               @db.VarChar(3)
   t_fecha_venc        DateTime              @db.Date
   t_num_tarjeta       String                @unique @db.VarChar(16)
   metodo_pago_cliente metodo_pago_cliente[]
@@ -90,8 +90,8 @@ model tarjeta {
 
 model asistencia_empleado {
   a_id                  Int      @default(autoincrement())
-  a_comentario          String?  @db.VarChar(30)
-  a_justificacion_falta String?  @db.VarChar(30)
+  a_comentario          String?  @db.VarChar(50)
+  a_justificacion_falta String?  @db.VarChar(50)
   a_fecha               DateTime @db.Date
   a_asistencia          Boolean
   fk_empleado           Int      @unique
@@ -215,18 +215,17 @@ model paypal {
 
 model permiso {
   p_id          Int           @id(map: "c_permiso_id") @default(autoincrement())
-  p_tipo        String        @db.VarChar(20)
-  p_descripcion String        @db.VarChar(30)
+  p_tipo        String        @db.VarChar(50)
+  p_descripcion String        @db.VarChar(50)
   permiso_rol   permiso_rol[]
 }
 
 model permiso_rol {
-  p_id           Int     @default(autoincrement())
-  fk_rol         Int
-  fk_permiso     Int
-  p_razonamiento String? @db.VarChar(20)
-  permiso        permiso @relation(fields: [fk_permiso], references: [p_id], onDelete: Cascade, onUpdate: NoAction, map: "c_permiso_rol_fk_permiso")
-  rol            rol     @relation(fields: [fk_rol], references: [r_id], onDelete: Cascade, onUpdate: NoAction, map: "c_permiso_rol_fk_rol")
+  p_id       Int     @default(autoincrement())
+  fk_rol     Int
+  fk_permiso Int
+  permiso    permiso @relation(fields: [fk_permiso], references: [p_id], onDelete: Cascade, onUpdate: NoAction, map: "c_permiso_rol_fk_permiso")
+  rol        rol     @relation(fields: [fk_rol], references: [r_id], onDelete: Cascade, onUpdate: NoAction, map: "c_permiso_rol_fk_rol")
 
   @@id([p_id, fk_rol, fk_permiso], map: "c_permiso_rol_pk")
 }
@@ -235,14 +234,15 @@ model punto {
   p_id                Int                   @id(map: "c_punto_id") @default(autoincrement())
   p_nombre            String                @db.VarChar(20)
   p_descripcion       String                @db.VarChar(30)
-  historico_punto     historico_punto[]
+  fk_historico_punto  Int
+  historico_punto     historico_punto       @relation(fields: [fk_historico_punto], references: [h_id], onDelete: Cascade, onUpdate: NoAction, map: "c_punto_fk_historico_punto")
   metodo_pago_cliente metodo_pago_cliente[]
   pago                pago[]
 }
 
 model rol {
   r_id          Int           @id(map: "c_rol_id") @default(autoincrement())
-  r_tipo        String        @db.VarChar(20)
+  r_tipo        String        @db.VarChar(30)
   r_descripcion String        @db.VarChar(30)
   permiso_rol   permiso_rol[]
   usuario       usuario[]
@@ -311,7 +311,7 @@ model cliente_juridico {
   c_capital_disponible                    Int
   c_direccion                             String                @db.VarChar(50)
   c_direccion_fiscal_ppal                 String                @db.VarChar(50)
-  c_pagina_web                            String                @unique @db.VarChar(30)
+  c_pagina_web                            String                @unique @db.VarChar(60)
   fk_lugar                                Int?
   fk_lugar2                               Int?
   fk_tienda                               Int
@@ -417,7 +417,6 @@ model pasillo {
 model pedido_fabrica {
   p_id             Int              @id(map: "c_pedido_fabrica_id") @default(autoincrement())
   p_fecha_creacion DateTime         @db.Date
-  p_numero         String           @unique @db.VarChar(10)
   fk_tienda        Int?
   tienda           tienda?          @relation(fields: [fk_tienda], references: [t_id], onDelete: Cascade, onUpdate: NoAction, map: "c_pedido_fabrica_fk_tienda")
   detalle_pedido   detalle_pedido[]
@@ -427,7 +426,6 @@ model pedido_fabrica {
 model pedido_interno {
   p_id                         Int                      @id(map: "c_pedido_interno_pk") @default(autoincrement())
   p_fecha_creacion             DateTime                 @db.Date
-  p_numero                     String                   @unique @db.VarChar(10)
   fk_almacen                   Int
   fk_producto_anaquel_id       Int
   fk_producto_anaquel_producto Int
@@ -440,8 +438,8 @@ model pedido_interno {
 
 model persona_contacto {
   p_id                Int              @id(map: "c_persona_contacto_id") @default(autoincrement())
-  c_nombre            String           @db.VarChar(20)
-  c_apellido          String           @db.VarChar(20)
+  c_nombre            String           @db.VarChar(30)
+  c_apellido          String           @db.VarChar(30)
   fk_cliente_juridico Int
   cliente_juridico    cliente_juridico @relation(fields: [fk_cliente_juridico], references: [c_id], onDelete: Cascade, onUpdate: NoAction, map: "c_persona_contacto_fk_cliente_juridico")
   telefono            telefono[]
@@ -564,8 +562,7 @@ model historico_punto {
   h_valor         Decimal   @db.Decimal(10, 2)
   h_fecha_emision DateTime  @db.Date
   h_fecha_final   DateTime? @db.Date
-  fk_punto        Int
-  punto           punto     @relation(fields: [fk_punto], references: [p_id], onDelete: Cascade, onUpdate: NoAction, map: "c_historico_punto_fk_punto")
+  punto           punto[]
 }
 
 model metodo_pago_cliente {
@@ -661,5 +658,5 @@ model usuario {
   cliente_juridico    cliente_juridico? @relation(fields: [fk_cliente_juridico], references: [c_id], onDelete: NoAction, onUpdate: NoAction, map: "c_usuario_fk_cliente_juridico")
   cliente_natural     cliente_natural?  @relation(fields: [fk_cliente_natural], references: [c_id], onDelete: NoAction, onUpdate: NoAction, map: "c_usuario_fk_cliente_natural")
   empleado            empleado?         @relation(fields: [fk_empleado], references: [e_id], onDelete: NoAction, onUpdate: NoAction, map: "c_usuario_fk_empleado")
-  rol                 rol               @relation(fields: [fk_rol], references: [r_id], onDelete: NoAction, onUpdate: NoAction, map: "c_usuario_fk_rol")
+  rol                 rol               @relation(fields: [fk_rol], references: [r_id], onDelete: Cascade, onUpdate: NoAction, map: "c_usuario_fk_rol")
 }

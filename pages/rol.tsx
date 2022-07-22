@@ -44,7 +44,7 @@ const Blog: React.FC<Props<rol>> = (props) => {
     setState(newState);
   }
   return (
-    <Page navElements={navElements}>
+    <Page>
       <Crud headers={["ID", "Tipo", "Descripcion"]}content={props.feed} name={'rol'} stateChanger={handleStateChange}/>
     </Page>
   )

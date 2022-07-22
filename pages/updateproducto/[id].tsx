@@ -26,16 +26,12 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
   
   const ProductoPost: React.FC<producto> = (props) => {
-    const navElements = [{link:"#", title:"Link 1"},
-    {link:"#", title:"Link 2"},
-    {link:"#", title:"Link 3"}];
-
     const formik = useFormik({
         initialValues:{
           nombre: props.p_nombre,
           descripcion: props.p_descripcion,
           peso: props.p_peso,
-          precio_actual: props.p_peso
+          precio_actual: props.p_precio_actual
         },
         validationSchema: Yup.object(
            {
@@ -72,7 +68,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
     return (
         <Layout>
-          <Page navElements={navElements}>
+          <Page>
           <form  onSubmit={handleSubmit} >
               <ul>
                   <li>

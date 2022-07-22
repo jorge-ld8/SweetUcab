@@ -52,7 +52,7 @@ const Blog: React.FC<Props<usuario>> = (props) => {
   }
 
   return (
-    <Page navElements={navElements}>
+    <Page>
       <Crud headers={["ID", "Username","Email", "Rol"]} content={props.feed} name={'usuario'} stateChanger={handleStateChange}/>
     </Page>
   )

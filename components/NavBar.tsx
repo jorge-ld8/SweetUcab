@@ -1,24 +1,17 @@
 import React from "react";
-import Link from "next/link";
+import UserProfile from "../pages/userSession";
+import AccessControl from "./AcesssControl";
 
-type NavBarProps = {
-    links: NavElement[];
-}
-
-export type NavElement = {
-    link: string,
-    title: string
-}
-
-const NavBar: React.FC<NavBarProps> = ({links}) => {
+const NavBar: React.FC = () => {
+    const navElements =[<li key={1}><a href="#">INICIO</a></li>,  
+                            <AccessControl userPermissions={UserProfile.getRol()} allowedPermissions={["comprar"]} mode={"all"} children={<li key={2}><a href="#">COMPRA</a></li>}/>, 
+                            <AccessControl userPermissions={UserProfile.getRol()} allowedPermissions={["usuario:read", "rol:read", "producto:read", "historico_punto:read",
+                                                                                                       "presupuesto:read", "descuento:read"]} mode={"one"} children={<li key={3}><a href="#">GESTIÓN SWEET UCAB</a></li>}></AccessControl>];
+                                                                                                   
     return(
         <nav>
-            <ul> 
-                {links.map(({link, title}, index)=>{
-                    return (<li key={index}>
-                        <a href={link}>{title}</a>
-                    </li>);
-                })}
+            <ul>
+                {navElements.map((element)=>{return element;})}
             </ul>
             <style jsx>{`
                 nav a:hover{

@@ -3,6 +3,10 @@ import styles from './crud.module.css';
 import Image from 'next/image';
 import prisma from "../lib/prisma";
 import Router from "next/router";
+import { IconButton } from "@mui/material";
+import {Delete, Edit} from "@mui/icons-material";
+import AccessControl from "./AcesssControl";
+import UserProfile from "../pages/userSession";
 
 type CrudProps<ArbType extends Object> = {
     copiedObj: ArbType; 
@@ -39,7 +43,7 @@ const CrudElement: React.FC<CrudProps<any>> = (props)=>{
         console.log(props.id);
         Router.push(`/update${props.objType}/[id]`, `/update${props.objType}/${props.id}`);
     }
-
+    
     return(<tr key={props.id}>
         {Object.keys(props.copiedObj).map((key, index)=>{
             return (
@@ -47,8 +51,12 @@ const CrudElement: React.FC<CrudProps<any>> = (props)=>{
             :
             <td key={index}>{props.mainObj[key]}</td>);
         })}
-        <td className={styles.crudIcon}><Image src="/images/iconoDelete.png" width={30} height={30} onClick={handleDelete} key={5}/></td>
-        <td className={styles.crudIcon}><Image src="/images/iconoUpdate.png" width={30} height={30} onClick={handleUpdate} key={6}/></td>
+        <AccessControl userPermissions={UserProfile.getRol()} allowedPermissions={[`${props.objType}:delete`]} mode={"all"} >
+          <td className={styles.crudIcon}><IconButton aria-label="delete" size="medium" onClick={handleDelete}><Delete sx={{color:'black'}}/></IconButton></td>
+        </AccessControl> 
+        <AccessControl userPermissions={UserProfile.getRol()} allowedPermissions={[`${props.objType}:update`]} mode={"all"}>
+          <td className={styles.crudIcon}><IconButton aria-label="update" size="medium" onClick={handleUpdate}><Edit sx={{color:'black'}}/></IconButton></td>
+        </AccessControl>
     </tr>);
 };
 

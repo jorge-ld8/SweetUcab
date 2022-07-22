@@ -33,10 +33,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   }
 
   const LugarPost: React.FC<LugarPostProps> = (props) => {
-    const navElements = [{link:"#", title:"Link 1"},
-    {link:"#", title:"Link 2"},
-    {link:"#", title:"Link 3"}];
-
     const formik = useFormik({
       initialValues:{
         username: props.usuario.u_username,
@@ -78,15 +74,18 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       body: JSON.stringify({username: formik.values.username, 
                             email: formik.values.email,
                             password: formik.values.password})
-      });
-      const data = await response.json();
-      console.log(data);
+      }).then(response =>{ 
+        if(response.ok)
+          return response.json()
+        }
+      ).catch(e => console.error(e))
+      console.log(response);
       Router.back();
     }
 
     return (
       <Layout>
-        <Page navElements={navElements}>
+        <Page>
         <form  onSubmit={handleSubmit} >
             <ul>
                 <li>
