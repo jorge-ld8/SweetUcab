@@ -1,5 +1,4 @@
 import React, { ReactNode } from "react";
-import reactMarkdown from "react-markdown";
 import { DropDownListProps } from "./Dropdownlist";
 
 //Para aceptar valores que se introduzcan y/o elijan. Mejor opcion que DropDownList para numeros y asi

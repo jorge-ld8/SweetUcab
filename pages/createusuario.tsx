@@ -114,11 +114,6 @@ const Component: React.FC<Props<rol>> = (props)=>
             formik.values.fk_rol = null;
         if(formik.values.fk_c_e === "N/A" || formik.values.fk_c_e === "")
             formik.values.fk_c_e = null;
-
-        console.log("ROLES");
-        console.log(formik.values.fk_rol);
-        
-        
         const response = await fetch(`/api/usuario`,{method: 'POST', 
         body: superjson.stringify({username: formik.values.username, 
                               email: formik.values.email,
