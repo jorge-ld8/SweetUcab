@@ -5,6 +5,7 @@ import Page from "../components/Page";
 import Crud from "../components/Crud";
 import { producto } from "@prisma/client";
 import superjson from "superjson";
+import UserProfile from "./userSession";
 
 export const getStaticProps: GetStaticProps = async () => {
     const feed = await prisma.presupuesto.findMany(
@@ -48,6 +49,8 @@ const Blog: React.FC<Props<any>> = (props) => {
   function handleStateChange(newState){
     setState(newState);
   }
+  
+  UserProfile.initializeProductoPresupuesto();
 
   return (
     <Page>

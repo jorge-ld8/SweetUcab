@@ -2,10 +2,13 @@
   "name": "hello-next",
   "version": "1.0.0",
   "description": "",
+  "homepage": "https://jorge-ld8.github.io/index",
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "keywords": [],
   "author": "",
@@ -34,6 +37,7 @@
   "devDependencies": {
     "@types/node": "17.0.14",
     "@types/react": "17.0.38",
+    "gh-pages": "^4.0.0",
     "prisma": "^4.0.0",
     "typescript": "4.5.5"
   }

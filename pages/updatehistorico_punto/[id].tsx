@@ -91,13 +91,13 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
                     <ErrorMessage touched={formik.touched.valor} errors={formik.errors.valor}/>
                 </li>
                 <li>
-                    <label htmlFor="fecha_inicio">Fecha_inicio</label>
+                    <label htmlFor="fecha_inicio">Fecha inicio: </label>
                     <input type="date" id="fecha_inicio"
                     {...formik.getFieldProps('fecha_inicio')}/>
                     <ErrorMessage touched={formik.touched.fecha_inicio} errors={formik.errors.fecha_inicio}/>
                 </li>
                 <li>
-                    <label htmlFor="fecha_final">Fecha_final</label>
+                    <label htmlFor="fecha_final">Fecha final:</label>
                     <input type="date" id="fecha_final"
                     {...formik.getFieldProps('fecha_final')}/>
                     <ErrorMessage touched={formik.touched.fecha_final} errors={formik.errors.fecha_final}/>

@@ -2,12 +2,24 @@ var UserProfile = (function() {
   let full_name = "";
   let user_id = "";
   let user_rol:string[] = [];
+  let productosPresupuesto = [];
 
   let getName : () => string;
   getName = function() {
     return full_name; 
   };
 
+  function initializeProductoPresupuesto(){
+    productosPresupuesto = []; 
+  }
+
+  function addProductoCantidad(prod, cantidad){
+    productosPresupuesto.push([prod, cantidad]);
+  }
+
+  function getProductosPresupuesto(){
+    return productosPresupuesto;
+  }
   let setName: (name: string) => void;
   setName = function(name) {
     full_name = name;     
@@ -46,7 +58,10 @@ var UserProfile = (function() {
     setUser: setUser,
     setRol: setRol,
     getRol: getRol,
-    loggedIn: isLoggedIn
+    loggedIn: isLoggedIn,
+    initializeProductoPresupuesto: initializeProductoPresupuesto,
+    addProductoCantidad: addProductoCantidad,
+    getProductosPresupuesto: getProductosPresupuesto,
   }
 
 })();

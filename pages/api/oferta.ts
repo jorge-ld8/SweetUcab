@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from '../../lib/prisma';
 import superjson from "superjson";
+import UserProfile from "../userSession";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse){
     let oferta = null, response = null;

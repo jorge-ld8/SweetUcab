@@ -90,6 +90,7 @@ const Component: React.FC<inicio_de_sesionProps> = (props)=>
             }
         }
         UserProfile.setRol(rolUsuarioPermisos);
+        UserProfile.setName(formik.values.username);
         Router.back();
       }
       
