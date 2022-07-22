@@ -61,7 +61,6 @@ type Props<ArbType extends Object> = {
 
 const Component: React.FC<Props<rol>> = (props)=>
 {
-    console.log(props.feed);
     const formik = useFormik({
         initialValues:{
           username: '',
@@ -115,6 +114,10 @@ const Component: React.FC<Props<rol>> = (props)=>
         if(formik.values.fk_c_e === "N/A" || formik.values.fk_c_e === "")
             formik.values.fk_c_e = null;
 
+        console.log("ROLES");
+        console.log(formik.values.fk_rol);
+        
+        
         const response = await fetch(`/api/usuario`,{method: 'POST', 
         body: superjson.stringify({username: formik.values.username, 
                               email: formik.values.email,
@@ -130,12 +133,9 @@ const Component: React.FC<Props<rol>> = (props)=>
         Router.back();
       }
 
-      const navElements = [{link:"#", title:"Link 1"},
-      {link:"#", title:"Link 2"},
-      {link:"#", title:"Link 3"}];
     return (
         <Layout>
-          <Page navElements={navElements}>
+          <Page>
           <form  onSubmit={handleSubmit} >
               <ul>
               <li>
@@ -158,7 +158,7 @@ const Component: React.FC<Props<rol>> = (props)=>
                 </li>
                 <li>
                     <label htmlFor="relacion">Elija un rol:</label>
-                    <DropDownList content={props.roles} attValueName={"r_tipo"} objType={"rol"} name={"fk_rol"} onChange={formik.handleChange} value={formik.values.fk_rol} multiple={true}/>
+                    <DropDownList content={props.roles} attValueName={"r_tipo"} objType={"rol"} name={"fk_rol"} onChange={formik.handleChange} value={formik.values.fk_rol}/>
                 </li>
                 <li>
                     <fieldset {...formik.getFieldProps('fk_c_e')}>

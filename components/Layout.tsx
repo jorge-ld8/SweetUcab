@@ -51,6 +51,7 @@ const Layout: React.FC<Props> = (props) => (
           display: flex;
           justify-content: space-between;
           align-items: center;
+          t
       }
       
       header ul,
@@ -127,7 +128,7 @@ const Layout: React.FC<Props> = (props) => (
         main table{
            table-layout: fixed;
            border-collapse: collapse;
-           width: 80%;
+           width: 90%;
            align-self: center;
            margin: 6em auto;
         }
@@ -199,10 +200,6 @@ const Layout: React.FC<Props> = (props) => (
 
           /* Match form field borders */
           border: 1px solid #999;
-        }
-
-        main button{
-          position: absolute;
         }
     `}</style>
     <style jsx>{`

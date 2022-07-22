@@ -2,7 +2,7 @@ import React from "react"
 import { GetServerSideProps } from "next"
 import Layout from "../../components/Layout"
 import prisma from '../../lib/prisma';
-import { rol } from "@prisma/client"
+import { permiso, rol } from "@prisma/client"
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     const rol = await prisma.rol.findUnique({
@@ -10,20 +10,50 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         r_id : Number(params?.id),
       },
     });
+
+    const p_roles = await prisma.permiso_rol.findMany({
+      where: {
+        fk_rol: Number(params?.id),
+      },
+      select: {
+        fk_permiso: true
+      }
+    })
+    const mapped_p_roles = p_roles.map((value)=>Number(value.fk_permiso));
+
+    const permisos = await prisma.permiso.findMany({
+      where: {
+        p_id: {in: mapped_p_roles},
+      }
+    })
+    
     return {
-      props: rol,
+      props: {rol, permisos}
     }
   }
+
+  type RolPostProps = {
+    rol: rol
+    permisos: permiso[]
+  }
   
-  const RolPost: React.FC<rol> = (props) => {
+  const RolPost: React.FC<RolPostProps> = (props) => {
     return (
       <Layout>
         <div className="stylish">
-          <h2>{props.r_tipo}</h2>
-          <p>{props.r_id}</p>
-          <p>{props.r_descripcion}</p>
+          <h2>{props.rol.r_tipo}</h2>
+          <p>{props.rol.r_id}</p>
+          <p>{props.rol.r_descripcion}</p>
+          <br/>
+          <p>Permisos que posee: </p>
+          <ul>
+            {props.permisos.map((value,index)=>{
+              return (<li key={index}>{value.p_tipo}</li>);
+            })}
+          </ul>
         </div>
         <style jsx>{`
+          
           .stylish{
             margin-left: .5em;
           }

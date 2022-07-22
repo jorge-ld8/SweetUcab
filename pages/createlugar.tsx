@@ -29,10 +29,6 @@ type Props<ArbType extends Object> = {
 
 const Component: React.FC<Props<lugar>> = (props)=>
 {
-    const navElements = [{link:"#", title:"Link 1"},
-    {link:"#", title:"Link 2"},
-    {link:"#", title:"Link 3"}];
-
     console.log(UserProfile.getName());
     const formik = useFormik({
         initialValues:{
@@ -71,7 +67,7 @@ const Component: React.FC<Props<lugar>> = (props)=>
 
     return (
         <Layout>
-          <Page navElements={navElements}>
+          <Page>
           <form  onSubmit={handleSubmit} >
               <ul>
                   <li>

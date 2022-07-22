@@ -4,23 +4,30 @@ import prisma from '../lib/prisma';
 import Page from "../components/Page";
 import Crud from "../components/Crud";
 import { producto } from "@prisma/client";
+import superjson from "superjson";
 
 export const getStaticProps: GetStaticProps = async () => {
-    const feed = await prisma.producto.findMany(
+    const feed = await prisma.presupuesto.findMany(
         {orderBy:{
-        p_id: 'asc',
+            p_id: 'asc',
         },
-        select:{
+        select: {
             p_id: true,
-            p_nombre: true,
-            p_descripcion: true,
-            p_peso: true,
-            p_precio_actual: true,
+            p_fecha_creacion: true,
+            p_total_presupuesto: true,
         }
         }
     );
+
+    let feedJSON = feed.map(({p_id, p_fecha_creacion, p_total_presupuesto})=>{
+        return {p_id: p_id,
+                p_fecha_creacion: new Date(p_fecha_creacion.setUTCHours(5)).toDateString(),
+                p_total_presupuesto: Number(p_total_presupuesto),
+        }}
+    );
+
     return { 
-      props: { feed }, 
+      props: { feed: feedJSON }, 
       revalidate: 10 
     } 
 }
@@ -29,7 +36,7 @@ type Props<ArbType extends Object> = {
   feed: ArbType[]
 }
 
-const Blog: React.FC<Props<producto>> = (props) => {
+const Blog: React.FC<Props<any>> = (props) => {
   const[state, setState] = useState("active"); //state hook
 
   useEffect(() => {
@@ -44,7 +51,7 @@ const Blog: React.FC<Props<producto>> = (props) => {
 
   return (
     <Page>
-      <Crud headers={["ID", "Nombre", "Descripcion", "Peso", "Precio"]}content={props.feed} name={'producto'} stateChanger={handleStateChange}/>
+      <Crud headers={["ID", "Fecha", "Monto"]} content={props.feed} name={'presupuesto'} stateChanger={handleStateChange}/>
     </Page>
   )
 }

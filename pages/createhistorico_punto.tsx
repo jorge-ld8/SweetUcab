@@ -6,21 +6,16 @@ import Page from "../components/Page"
 import Router from "next/router"
 import { Formik, FormikProvider, useFormik } from "formik";
 import * as Yup from 'yup';
+import styles from '../components/crud.module.css';
 import { lugar, permiso, rol } from "@prisma/client";
 import ErrorMessage from "../components/ErrorMessage";
 import DropDownList from "../components/Dropdownlist";
+import Button from "@mui/material/Button";
+import superjson from "superjson";
 
 export const getServerSideProps: GetServerSideProps = async () => {
-    const feed = await prisma.rol.findMany();
-    const permisos = await prisma.permiso.findMany(
-      {
-        orderBy:{
-          p_id: 'asc'
-        }
-      }
-    );
     return {
-      props: {feed, permisos},
+      props: {},
     }
   }
 
@@ -35,15 +30,11 @@ const NewRole: React.FC<Props> = (props)=>
 
     const formik = useFormik({
         initialValues:{
-          descripcion: '',
-          tipo: '',
-          relacion: '',
+          valor: 0,
         },
         validationSchema: Yup.object(
           {
-            descripcion: Yup.string().max(30, 'Máximo 30 caracteres de longitud').required("Obligatorio"),
-            tipo: Yup.string().max(20, 'Maximo 20 caracteres de longitud').required("Obligatorio"),
-            relacion: Yup.array().required()
+            valor: Yup.number().min(0, "Numero debe ser positivo").required("Obligatorio")
           }
         ),
         onSubmit: values => {console.log(values);},
@@ -52,10 +43,9 @@ const NewRole: React.FC<Props> = (props)=>
   
       async function handleSubmit(e){
         e.preventDefault();
-        const response = await fetch(`/api/rol`,{method: 'POST', 
-        body: JSON.stringify({descripcion: formik.values.descripcion, 
-                              tipo: formik.values.tipo,
-                              relacion: formik.values.relacion,})
+        console.log(JSON.stringify(formik.values.valor));
+        const response = await fetch(`/api/historico_punto`,{method: 'POST', 
+        body: superjson.stringify({h_valor: formik.values.valor,})
         }).then(response =>{ 
           if(response.ok)
             return response.json()
@@ -72,23 +62,13 @@ const NewRole: React.FC<Props> = (props)=>
           <form  onSubmit={handleSubmit} >
               <ul>
                   <li>
-                      <label htmlFor="tipo">Tipo:</label>
-                      <input type="text" id="tipo"
-                      {...formik.getFieldProps('tipo')}/>
-                      <ErrorMessage touched={formik.touched.tipo} errors={formik.errors.tipo}/>
-                  </li>
-                  <li>
-                      <label htmlFor="descripcion">Descripcion:</label>
-                      <input type="text" id="descripcion"
-                      {...formik.getFieldProps('descripcion')}/>
-                      <ErrorMessage touched={formik.touched.descripcion} errors={formik.errors.descripcion}/>
-                  </li>
-                  <li>
-                    <label htmlFor="relacion">Seleccione los permisos del rol: </label>
-                    <DropDownList content={props.permisos} attValueName={"p_tipo"} objType={"rol"} name={"relacion"} onChange={formik.handleChange} value={formik.values.relacion} multiple={true}/>
+                      <label htmlFor="valor">Nuevo Valor del punto:</label>
+                      <input type="number" id="valor"
+                      {...formik.getFieldProps('valor')}/>
+                      <ErrorMessage touched={formik.touched.valor} errors={formik.errors.valor}/>
                   </li>
                   <li className="button">
-                      <button type="submit" disabled={!(formik.isValid && formik.dirty)}>Crear</button>
+                        <Button type={"submit"}variant="contained" disabled={!(formik.isValid && formik.dirty)} color={"success"}>Crear Punto</Button>
                   </li>
               </ul>
           </form>

@@ -2,6 +2,7 @@
     border: 0;
     width: 10%;
     cursor: pointer;
+    background-color: white;
 }
 
 .errorMessage{
@@ -16,4 +17,14 @@
     top: 1rem;
     background-color: transparent;
     border: 0px;
+}
+
+.puntoRojoLogin{
+    position: absolute;
+    right: 186px;
+    top: 59px;
+}
+
+.cursor{
+    cursor: pointer;
 }

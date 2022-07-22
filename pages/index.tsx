@@ -6,6 +6,7 @@ import Page from "../components/Page";
 import { lugar } from "@prisma/client";
 import RolPost from "./rol/[id]";
 import UserProfile from "./userSession";
+import AccessControl from "../components/AcesssControl";
 
 export const getStaticProps: GetStaticProps = async () => {
   const feed = await prisma.lugar.findMany(
@@ -24,29 +25,17 @@ type Props<ArbType extends Object> = {
 }
 
 const Component: React.FC<Props<lugar>> = (props) => {
-  const navElements = [{link:"#", title:"Link 1"},
-  {link:"#", title:"Link 2"},
-  {link:"#", title:"Link 3"}];
-
   const [state, stateHandler] = useState(false);
 
-  UserProfile.setName("Jorge");
-  console.log(UserProfile.getName());
-  //   function onChangeStateHandler(){
-  //     stateHandler(!state);
-  //   }
-
-  //  useEffect(() => {
-  //    first
-  
-  //    return () => {
-  //      second
-  //    }
-  //  }, [third])
- 
+  console.log(UserProfile.getRol());
+  console.log(`Is logged in?: ${UserProfile.loggedIn()}`);
   return (
-    <Page navElements={navElements}>
-      <div><Link href="/lugar">LUGAR</Link></div>
+    <Page>
+      <AccessControl userPermissions={UserProfile.getRol()} allowedPermissions={["lugar:read"]} mode={""}>
+        <div>
+          <Link href="/lugar">LUGAR</Link>
+        </div>
+      </AccessControl>
       <div>
           <Link href="/usuario">USUARIO</Link>
       </div>
@@ -57,13 +46,13 @@ const Component: React.FC<Props<lugar>> = (props) => {
           <Link href="/producto">PRODUCTO</Link>
       </div>
       <div>
-          <Link href="/imagesTest">HISTORICO_PUNTO</Link>
+          <Link href="/historico_punto">HISTORICO_PUNTO</Link>
       </div>
       <div>
-          <Link href="/inicio_de_sesion">PRESUPUESTO</Link>
+          <Link href="/presupuesto">PRESUPUESTO</Link>
       </div>
       <div>
-          <Link href="#">DESCUENTO</Link>
+          <Link href="/oferta">OFERTA</Link>
       </div>
     </Page>
   )

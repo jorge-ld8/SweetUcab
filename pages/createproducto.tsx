@@ -25,10 +25,6 @@ type Props<ArbType extends Object> = {
 
 const Component: React.FC<Props<producto>> = (props)=>
 {
-    const navElements = [{link:"#", title:"Link 1"},
-    {link:"#", title:"Link 2"},
-    {link:"#", title:"Link 3"}];
-
     const formik = useFormik({
         initialValues:{
           nombre: '',
@@ -74,7 +70,7 @@ const Component: React.FC<Props<producto>> = (props)=>
 
     return (
         <Layout>
-          <Page navElements={navElements}>
+          <Page>
           <form  onSubmit={handleSubmit} >
               <ul>
                   <li>

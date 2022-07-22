@@ -8,7 +8,7 @@ export type DropDownListProps<ArbType extends Object> = {
     objType: string
     name: string
     onChange: any
-    value: string
+    value: any
     multiple?: boolean
     message?: string  //en DropDownList no se usa pero en  DataList si :)
 }
