@@ -9,7 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if(req.method === "POST"){
         let {p_id} = await prisma.producto.findFirst({
             where: {
-                p_nombre: superjson.parse(req.body)['p_nombre']
+                p_nombre: superjson.parse(req.body)['fk_producto']
             },
             select: {
                 p_id: true
@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 o_porcentaje_descuento: Number(superjson.parse(req.body)['p_descuento']),
                 o_fecha_inicio: new Date(superjson.parse(req.body)['fecha_inicio']),
                 o_fecha_fin: new Date(superjson.parse(req.body)['fecha_fin']),
-                fk_producto: Number(p_id)
+                fk_producto: p_id
             },
         });
     res.json(oferta);

@@ -21,7 +21,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
             },
         })
     }
-    else{
+    else if(ppto.fk_cliente_natural){
         cNatural = await prisma.cliente_natural.findUnique({
             where: {
                 c_id: ppto.fk_cliente_natural
