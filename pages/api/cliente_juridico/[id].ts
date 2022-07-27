@@ -28,17 +28,34 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
         });
 
+        //hallar codigo de registro
+        let cuenta = await prisma.tienda.findUnique({
+            where:{
+                t_id: tienda.t_id
+            },
+            select:{
+                _count: {
+                    select: {
+                        cliente_juridico: true,
+                        cliente_natural: true,
+                    },
+                },
+            },
+        })
+
+        let nroCliente = cuenta._count.cliente_juridico + cuenta._count.cliente_natural + 1;
+        let codRegistro = String(tienda.t_id).padStart(2, "0")+"-"+String(nroCliente).padStart(8,"0");
         let cliente_juridico = await prisma.cliente_juridico.create({
             data: {
-                c_rif: superjson.parse(req.body)['rif'],
-                c_cantidad_puntos: 1,
-                c_codigo_registro: superjson.parse(req.body)['codigo_registro'],
-                c_razon_social: superjson.parse(req.body)['razon_social'],
-                c_denom_comercial: superjson.parse(req.body)['denom_comercial'],
+                c_rif: JSON.parse(req.body)['rif'],
+                c_cantidad_puntos: 0,
+                c_codigo_registro: codRegistro,
+                c_razon_social: JSON.parse(req.body)['razon_social'],
+                c_denom_comercial: JSON.parse(req.body)['denom_comercial'],
                 c_capital_disponible: Number(superjson.parse(req.body)['capital_disponible']),
-                c_direccion: superjson.parse(req.body)['direccion'],
-                c_direccion_fiscal_ppal: superjson.parse(req.body)['direccion_fiscal_ppal'],
-                c_pagina_web: superjson.parse(req.body)['pagina_web'],
+                c_direccion: JSON.parse(req.body)['direccion'],
+                c_direccion_fiscal_ppal: JSON.parse(req.body)['direccion_fiscal_ppal'],
+                c_pagina_web: JSON.parse(req.body)['pagina_web'],
                 fk_tienda: tienda.t_id
             }
         });

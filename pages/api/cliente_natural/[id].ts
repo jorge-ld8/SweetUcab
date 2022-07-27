@@ -28,20 +28,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
         });
 
-        let cliente_juridico = await prisma.cliente_juridico.create({
+        let cliente_natural = await prisma.cliente_natural.create({
             data: {
                 c_rif: superjson.parse(req.body)['rif'],
-                c_cantidad_puntos: 1,
+                c_cantidad_puntos: Number(JSON.parse(req.body)['cantidad_puntos']),
                 c_codigo_registro: superjson.parse(req.body)['codigo_registro'],
-                c_razon_social: superjson.parse(req.body)['razon_social'],
-                c_denom_comercial: superjson.parse(req.body)['denom_comercial'],
-                c_capital_disponible: Number(superjson.parse(req.body)['capital_disponible']),
-                c_direccion: superjson.parse(req.body)['direccion'],
-                c_direccion_fiscal_ppal: superjson.parse(req.body)['direccion_fiscal_ppal'],
-                c_pagina_web: superjson.parse(req.body)['pagina_web'],
+                c_nombre1: JSON.parse(req.body)['nombre1'],
+                c_nombre2:  JSON.parse(req.body)['nombre2'],
+                c_apellido1:  JSON.parse(req.body)['apellido1'],
+                c_apellido2: JSON.parse(req.body)['apellido2'],
+                c_cedula: JSON.parse(req.body)['cedula'],
+                c_direccion: JSON.parse(req.body)['direccion'],
                 fk_tienda: tienda.t_id
             }
         });
-        res.json(cliente_juridico);
+        res.json(cliente_natural);
     }
 }

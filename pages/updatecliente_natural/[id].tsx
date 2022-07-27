@@ -1,43 +1,50 @@
 import React, { ReactNode } from "react";
 import { GetServerSideProps } from "next"
-import Layout from "../components/Layout"
-import prisma from '../lib/prisma';
-import Page from "../components/Page"
+import Layout from "../../components/Layout"
+import prisma from '../../lib/prisma';
+import Page from "../../components/Page"
 import Router from "next/router"
 import { Formik, FormikProvider, useFormik } from "formik";
 import * as Yup from 'yup';
 import { cliente_natural, lugar, producto, tienda } from "@prisma/client";
-import ErrorMessage from "../components/ErrorMessage";
+import ErrorMessage from "../../components/ErrorMessage";
 import Button from "@mui/material/Button";
 import { FileUploadButton } from "../components/FileUploadButton";
-import DropDownList from "../components/Dropdownlist";
+import DropDownList from "../../components/Dropdownlist";
 import superjson from "superjson";
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async ({params}) => {
     const feed = await prisma.tienda.findMany();
     const c_naturales = await prisma.cliente_natural.findMany();
+    const cliente = await prisma.cliente_natural.findUnique({
+        where:{
+            c_id: Number(params?.id),
+        }
+    });
     return {
-      props: {feed},
+      props: {feed: feed, c_naturales: c_naturales, cliente: cliente},
     }
   }
 
 type Props = {
     feed: tienda[]
     c_naturales: cliente_natural[]
+    cliente: cliente_natural
 }
 
 const Component: React.FC<Props> = (props)=>
 {
     const formik = useFormik({
         initialValues:{
-          rif: '',
-          nombre1: '',
-          nombre2: '',
-          apellido1: '',
-          apellido2: '',
-          cedula: '',
-          direccion: '',
-          tienda: ''
+          rif: String(props.cliente.c_rif),
+          cantidad_puntos: Number(props.cliente.c_cantidad_puntos),
+          nombre1: String(props.cliente.c_nombre1),
+          nombre2: String(props.cliente.c_nombre2),
+          apellido1: String(props.cliente.c_apellido1),
+          apellido2: String(props.cliente.c_apellido2),
+          cedula: String(props.cliente.c_cedula),
+          direccion: String(props.cliente.c_direccion),
+          tienda: {} //colocar tiend
         },
         validationSchema: Yup.object(
           {

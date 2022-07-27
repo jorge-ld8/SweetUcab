@@ -89,13 +89,15 @@ model tarjeta {
 }
 
 model asistencia_empleado {
-  a_id                  Int      @default(autoincrement())
-  a_comentario          String?  @db.VarChar(50)
-  a_justificacion_falta String?  @db.VarChar(50)
-  a_fecha               DateTime @db.Date
+  a_id                  Int       @default(autoincrement())
+  a_comentario          String?   @db.VarChar(50)
+  a_justificacion_falta String?   @db.VarChar(50)
+  a_fecha               DateTime  @db.Date
   a_asistencia          Boolean
-  fk_empleado           Int      @unique
-  empleado              empleado @relation(fields: [fk_empleado], references: [e_id], onDelete: Cascade, onUpdate: NoAction, map: "c_asistencia_empleado_fk_empleado")
+  fk_empleado           Int       @unique
+  a_hora_entrada        DateTime? @db.Time(6)
+  a_hora_salida         DateTime? @db.Time(6)
+  empleado              empleado  @relation(fields: [fk_empleado], references: [e_id], onDelete: Cascade, onUpdate: NoAction, map: "c_asistencia_empleado_fk_empleado")
 
   @@id([a_id, fk_empleado], map: "c_asistencia_empleado_pk")
 }
@@ -106,7 +108,7 @@ model banco {
   b_descripcion String      @db.VarChar(30)
   fk_lugar      Int?
   b_direccion   String      @db.VarChar(50)
-  lugar         lugar?      @relation(fields: [fk_lugar], references: [l_id], onDelete: NoAction, onUpdate: NoAction, map: "c_banco_fk_lugar")
+  lugar         lugar?      @relation(fields: [fk_lugar], references: [l_id], onDelete: Cascade, onUpdate: NoAction, map: "c_banco_fk_lugar")
   cheque        cheque[]
   pagomovil     pagomovil[]
   zelle         zelle[]
@@ -264,7 +266,7 @@ model tienda {
   fk_lugar           Int?
   t_tipo             String               @db.VarChar(30)
   t_direccion        String               @db.VarChar(50)
-  lugar              lugar?               @relation(fields: [fk_lugar], references: [l_id], onDelete: NoAction, onUpdate: NoAction, map: "c_tienda_fk_lugar")
+  lugar              lugar?               @relation(fields: [fk_lugar], references: [l_id], onDelete: Cascade, onUpdate: NoAction, map: "c_tienda_fk_lugar")
   almacen            almacen[]
   cliente_juridico   cliente_juridico[]
   cliente_natural    cliente_natural[]
@@ -315,8 +317,8 @@ model cliente_juridico {
   fk_lugar                                Int?
   fk_lugar2                               Int?
   fk_tienda                               Int
-  lugar_cliente_juridico_fk_lugarTolugar  lugar?                @relation("cliente_juridico_fk_lugarTolugar", fields: [fk_lugar], references: [l_id], onDelete: NoAction, onUpdate: NoAction, map: "c_cliente_juridico_fk_lugar")
-  lugar_cliente_juridico_fk_lugar2Tolugar lugar?                @relation("cliente_juridico_fk_lugar2Tolugar", fields: [fk_lugar2], references: [l_id], onDelete: NoAction, onUpdate: NoAction, map: "c_cliente_juridico_fk_lugar2")
+  lugar_cliente_juridico_fk_lugarTolugar  lugar?                @relation("cliente_juridico_fk_lugarTolugar", fields: [fk_lugar], references: [l_id], onDelete: Cascade, onUpdate: NoAction, map: "c_cliente_juridico_fk_lugar")
+  lugar_cliente_juridico_fk_lugar2Tolugar lugar?                @relation("cliente_juridico_fk_lugar2Tolugar", fields: [fk_lugar2], references: [l_id], onDelete: Cascade, onUpdate: NoAction, map: "c_cliente_juridico_fk_lugar2")
   tienda                                  tienda                @relation(fields: [fk_tienda], references: [t_id], onDelete: Cascade, onUpdate: NoAction, map: "c_cliente_juridico_fk_tienda")
   metodo_pago_cliente                     metodo_pago_cliente[]
   persona_contacto                        persona_contacto[]
@@ -339,7 +341,7 @@ model cliente_natural {
   c_direccion         String                @db.VarChar(50)
   fk_lugar            Int?
   fk_tienda           Int
-  lugar               lugar?                @relation(fields: [fk_lugar], references: [l_id], onDelete: NoAction, onUpdate: NoAction, map: "c_cliente_natural_fk_lugar")
+  lugar               lugar?                @relation(fields: [fk_lugar], references: [l_id], onDelete: Cascade, onUpdate: NoAction, map: "c_cliente_natural_fk_lugar")
   tienda              tienda                @relation(fields: [fk_tienda], references: [t_id], onDelete: Cascade, onUpdate: NoAction, map: "c_cliente_natural_fk_tienda")
   metodo_pago_cliente metodo_pago_cliente[]
   presupuesto         presupuesto[]
@@ -463,7 +465,7 @@ model producto_anaquel {
   fk_producto    Int
   fk_empleado    Int?
   anaquel        anaquel          @relation(fields: [fk_anaquel], references: [a_id], onDelete: Cascade, onUpdate: NoAction, map: "c_producto_anaquel_fk_anaquel")
-  empleado       empleado?        @relation(fields: [fk_empleado], references: [e_id], onDelete: NoAction, onUpdate: NoAction, map: "c_producto_anaquel_fk_empleado")
+  empleado       empleado?        @relation(fields: [fk_empleado], references: [e_id], onUpdate: NoAction, map: "c_producto_anaquel_fk_empleado")
   producto       producto         @relation(fields: [fk_producto], references: [p_id], onDelete: Cascade, onUpdate: NoAction, map: "c_producto_anaquel_fk_producto")
   compra         compra[]
   pedido_interno pedido_interno[]
@@ -526,8 +528,8 @@ model compra {
   fk_producto_anaquel_producto Int
   fk_producto_anaquel_anaquel  Int
   fk_transaccion_compra        Int
-  producto                     producto           @relation(fields: [fk_producto], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_compra_fk_producto")
-  producto_anaquel             producto_anaquel   @relation(fields: [fk_producto_anaquel_id, fk_producto_anaquel_producto, fk_producto_anaquel_anaquel], references: [p_id, fk_producto, fk_anaquel], onDelete: NoAction, onUpdate: NoAction, map: "c_compra_fk_producto_anaquel")
+  producto                     producto           @relation(fields: [fk_producto], references: [p_id], onDelete: Cascade, onUpdate: NoAction, map: "c_compra_fk_producto")
+  producto_anaquel             producto_anaquel   @relation(fields: [fk_producto_anaquel_id, fk_producto_anaquel_producto, fk_producto_anaquel_anaquel], references: [p_id, fk_producto, fk_anaquel], onDelete: Cascade, onUpdate: NoAction, map: "c_compra_fk_producto_anaquel")
   transaccion_compra           transaccion_compra @relation(fields: [fk_transaccion_compra], references: [t_id], onDelete: Cascade, onUpdate: NoAction, map: "c_compra_fk_transaccion_compra")
 
   @@id([c_id, fk_producto, fk_transaccion_compra], map: "c_compra_pk")
@@ -627,7 +629,7 @@ model producto_presupuesto {
   fk_presupuesto      Int
   fk_producto         Int
   presupuesto         presupuesto @relation(fields: [fk_presupuesto], references: [p_id], onDelete: Cascade, onUpdate: NoAction, map: "c_producto_presupuesto_fk_presupuesto")
-  producto            producto    @relation(fields: [fk_producto], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_producto_presupuesto_fk_producto")
+  producto            producto    @relation(fields: [fk_producto], references: [p_id], onDelete: Cascade, onUpdate: NoAction, map: "c_producto_presupuesto_fk_producto")
 
   @@id([p_id, fk_producto, fk_presupuesto], map: "c_producto_presupuesto_pk")
 }
@@ -638,8 +640,9 @@ model transaccion_compra {
   fk_cliente_juridico Int?
   fk_cliente_natural  Int?
   fk_tienda           Int
-  cliente_juridico    cliente_juridico?     @relation(fields: [fk_cliente_juridico], references: [c_id], onDelete: NoAction, onUpdate: NoAction, map: "c_transaccion_compra_fk_cliente_juridico")
-  cliente_natural     cliente_natural?      @relation(fields: [fk_cliente_natural], references: [c_id], onDelete: NoAction, onUpdate: NoAction, map: "c_transaccion_compra_fk_cliente_natural")
+  t_fecha_creacion    DateTime?             @db.Date
+  cliente_juridico    cliente_juridico?     @relation(fields: [fk_cliente_juridico], references: [c_id], onDelete: Cascade, onUpdate: NoAction, map: "c_transaccion_compra_fk_cliente_juridico")
+  cliente_natural     cliente_natural?      @relation(fields: [fk_cliente_natural], references: [c_id], onDelete: Cascade, onUpdate: NoAction, map: "c_transaccion_compra_fk_cliente_natural")
   tienda              tienda                @relation(fields: [fk_tienda], references: [t_id], onDelete: Cascade, onUpdate: NoAction, map: "c_transaccion_compra_fk_tienda")
   compra              compra[]
   estatus_transaccion estatus_transaccion[]
@@ -655,8 +658,8 @@ model usuario {
   fk_cliente_juridico Int?
   fk_cliente_natural  Int?
   fk_empleado         Int?
-  cliente_juridico    cliente_juridico? @relation(fields: [fk_cliente_juridico], references: [c_id], onDelete: NoAction, onUpdate: NoAction, map: "c_usuario_fk_cliente_juridico")
-  cliente_natural     cliente_natural?  @relation(fields: [fk_cliente_natural], references: [c_id], onDelete: NoAction, onUpdate: NoAction, map: "c_usuario_fk_cliente_natural")
-  empleado            empleado?         @relation(fields: [fk_empleado], references: [e_id], onDelete: NoAction, onUpdate: NoAction, map: "c_usuario_fk_empleado")
+  cliente_juridico    cliente_juridico? @relation(fields: [fk_cliente_juridico], references: [c_id], onDelete: Cascade, onUpdate: NoAction, map: "c_usuario_fk_cliente_juridico")
+  cliente_natural     cliente_natural?  @relation(fields: [fk_cliente_natural], references: [c_id], onDelete: Cascade, onUpdate: NoAction, map: "c_usuario_fk_cliente_natural")
+  empleado            empleado?         @relation(fields: [fk_empleado], references: [e_id], onDelete: Cascade, onUpdate: NoAction, map: "c_usuario_fk_empleado")
   rol                 rol               @relation(fields: [fk_rol], references: [r_id], onDelete: Cascade, onUpdate: NoAction, map: "c_usuario_fk_rol")
 }

@@ -6,7 +6,7 @@ import Page from "../components/Page"
 import Router from "next/router"
 import { Formik, FormikProvider, useFormik } from "formik";
 import * as Yup from 'yup';
-import { lugar, producto } from "@prisma/client";
+import { cliente_juridico, lugar, producto, tienda } from "@prisma/client";
 import ErrorMessage from "../components/ErrorMessage";
 import Button from "@mui/material/Button";
 import { FileUploadButton } from "../components/FileUploadButton";
@@ -15,21 +15,22 @@ import superjson from "superjson";
 
 export const getServerSideProps: GetServerSideProps = async () => {
     const feed = await prisma.tienda.findMany();
+    const c_juridicos = await prisma.cliente_juridico.findMany();
     return {
-      props: {feed},
+      props: {feed, c_juridicos: c_juridicos},
     }
   }
 
-type Props<ArbType extends Object> = {
-    feed: ArbType[]
+type Props = {
+    feed: tienda[]
+    c_juridicos: cliente_juridico[]
 }
 
-const Component: React.FC<Props<producto>> = (props)=>
+const Component: React.FC<Props> = (props)=>
 {
     const formik = useFormik({
         initialValues:{
           rif: '',
-          codigo_registro: '',
           razon_social: '',
           denom_comercial: '',
           capital_disponible: 0,
@@ -40,14 +41,30 @@ const Component: React.FC<Props<producto>> = (props)=>
         },
         validationSchema: Yup.object(
           {
-            rif: Yup.string().required("Obligatorio").matches(/^[VJEPG]{1}-[0-9]{8}$/, "RIF no válido"),
-            codigo_registro: Yup.string().required("Obligatorio").max(11, "Máximo 11 caracteres").matches(/\d\d-\d{8}/, "CODIGO NO VÁLIDO"),
+            rif: Yup.string().required("Obligatorio").matches(/^[VJEPG]{1}-[0-9]{8}$/, "RIF no válido")
+            .test("uniqueValidation", "No es unico", 
+            function(value){
+                for(let p of props.c_juridicos){
+                    if(p.c_rif === value)
+                        return false;
+                }
+                return true;
+               }),
             razon_social: Yup.string().required("Obligatorio").max(30, "Máximo 30 caracteres"),
             denom_comercial: Yup.string().required("Obligatorio").max(30, "Máximo 30 caracteres"),
             capital_disponible: Yup.number().required("Obligatorio").min(0, "Debe ser un número positivo"),
             direccion: Yup.string().required("Obligatorio").max(50, "Máximo 50 caraceres"),
             direccion_fiscal_ppal: Yup.string().required("Obligatorio").max(50, "Máximo 50 caracteres"),
-            pagina_web: Yup.string().required("Obligatorio").max(60, "Máximo 60 caracteres"),
+            pagina_web: Yup.string().required("Obligatorio").max(60, "Máximo 60 caracteres")
+            .test("uniqueValidation", "No es unico", 
+            function(value){
+                for(let p of props.c_juridicos){
+                    if(p.c_pagina_web === value)
+                        return false;
+                }
+                return true;
+               })
+            ,
             tienda: Yup.string().required("Obligatorio")
          }
         ),
@@ -58,7 +75,6 @@ const Component: React.FC<Props<producto>> = (props)=>
         e.preventDefault();
         console.log(JSON.stringify({
             rif: formik.values.rif,
-            codigo_registro: formik.values.codigo_registro,
             razon_social: formik.values.razon_social,
             denom_comercial: formik.values.denom_comercial,
             capital_disponible: formik.values.capital_disponible,
@@ -71,7 +87,6 @@ const Component: React.FC<Props<producto>> = (props)=>
             
         const response = await fetch(`/api/cliente_juridico`,{method: 'POST',         
         body:   JSON.stringify({rif: formik.values.rif,
-                codigo_registro: formik.values.codigo_registro,
                 razon_social: formik.values.razon_social,
                 denom_comercial: formik.values.denom_comercial,
                 capital_disponible: formik.values.capital_disponible,
@@ -98,12 +113,6 @@ const Component: React.FC<Props<producto>> = (props)=>
                       <input type="text" id="rif"
                       {...formik.getFieldProps('rif')}/>
                       <ErrorMessage touched={formik.touched.rif} errors={formik.errors.rif}/>
-                  </li>
-                  <li>
-                      <label htmlFor="codigo_registro">Codigo Registro:</label>
-                      <input type="text" id="codigo_registro"
-                      {...formik.getFieldProps('codigo_registro')}/>
-                      <ErrorMessage touched={formik.touched.codigo_registro} errors={formik.errors.codigo_registro}/>
                   </li>
                   <li>
                       <label htmlFor="razon_social">Razon social:</label>

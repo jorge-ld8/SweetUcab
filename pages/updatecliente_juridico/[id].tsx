@@ -19,10 +19,10 @@ export const getServerSideProps: GetServerSideProps = async ({params}) => {
             c_id: Number(params?.id),
         }
     });
-
+    const c_juridicos = await prisma.cliente_juridico.findMany();
     const tiendas = await prisma.tienda.findMany();
     return {
-      props: {feed: feed, tiendas: tiendas},
+      props: {feed: feed, tiendas: tiendas, c_juridicos: c_juridicos},
     }
   }
 
@@ -36,7 +36,6 @@ const Component: React.FC<any> = (props)=>
     const formik = useFormik({
         initialValues:{
           rif: String(props.feed.c_rif),
-          codigo_registro: String(props.feed.c_codigo_registro),
           razon_social: String(props.feed.c_razon_social),
           denom_comercial: String(props.feed.c_denom_comercial),
           capital_disponible: Number(props.feed.c_capital_disponible),
@@ -48,7 +47,6 @@ const Component: React.FC<any> = (props)=>
         validationSchema: Yup.object(
           {
             rif: Yup.string().required("Obligatorio").matches(/^[VJEPG]{1}-[0-9]{8}$/, "RIF no válido"),
-            codigo_registro: Yup.string().required("Obligatorio").max(11, "Máximo 11 caracteres").matches(/\d\d-\d{8}/, "CODIGO NO VÁLIDO"),
             razon_social: Yup.string().required("Obligatorio").max(30, "Máximo 30 caracteres"),
             denom_comercial: Yup.string().required("Obligatorio").max(30, "Máximo 30 caracteres"),
             capital_disponible: Yup.number().required("Obligatorio").min(0, "Debe ser un número positivo"),
@@ -65,7 +63,6 @@ const Component: React.FC<any> = (props)=>
         e.preventDefault();
         console.log(JSON.stringify({
             rif: formik.values.rif,
-            codigo_registro: formik.values.codigo_registro,
             razon_social: formik.values.razon_social,
             denom_comercial: formik.values.denom_comercial,
             capital_disponible: formik.values.capital_disponible,
@@ -77,15 +74,32 @@ const Component: React.FC<any> = (props)=>
 
             
         const response = await fetch(`/api/cliente_juridico`,{method: 'POST',         
-        body:   JSON.stringify({        rif: formik.values.rif,
-                codigo_registro: formik.values.codigo_registro,
-                razon_social: formik.values.razon_social,
-                denom_comercial: formik.values.denom_comercial,
-                capital_disponible: formik.values.capital_disponible,
-                direccion: formik.values.direccion,
-                direccion_fiscal_ppal: formik.values.direccion_fiscal_ppal,
-                pagina_web: formik.values.pagina_web,
-                tienda: formik.values.tienda})
+        body:   JSON.stringify({ 
+          rif: Yup.string().required("Obligatorio").matches(/^[VJEPG]{1}-[0-9]{8}$/, "RIF no válido")
+          .test("uniqueValidation", "No es unico", 
+          function(value){
+              for(let p of props.c_juridicos){
+                  if(p.c_rif === value)
+                      return false;
+              }
+              return true;
+             }),
+          razon_social: Yup.string().required("Obligatorio").max(30, "Máximo 30 caracteres"),
+          denom_comercial: Yup.string().required("Obligatorio").max(30, "Máximo 30 caracteres"),
+          capital_disponible: Yup.number().required("Obligatorio").min(0, "Debe ser un número positivo"),
+          direccion: Yup.string().required("Obligatorio").max(50, "Máximo 50 caraceres"),
+          direccion_fiscal_ppal: Yup.string().required("Obligatorio").max(50, "Máximo 50 caracteres"),
+          pagina_web: Yup.string().required("Obligatorio").max(60, "Máximo 60 caracteres")
+          .test("uniqueValidation", "No es unico", 
+          function(value){
+              for(let p of props.c_juridicos){
+                  if(p.c_pagina_web === value)
+                      return false;
+              }
+              return true;
+             })
+          ,
+          tienda: Yup.string().required("Obligatorio")})
         }).then(response =>{ 
           if(response.ok)
             return response.json()
@@ -105,12 +119,6 @@ const Component: React.FC<any> = (props)=>
                       <input type="text" id="rif"
                       {...formik.getFieldProps('rif')}/>
                       <ErrorMessage touched={formik.touched.rif} errors={formik.errors.rif}/>
-                  </li>
-                  <li>
-                      <label htmlFor="codigo_registro">Codigo Registro:</label>
-                      <input type="text" id="codigo_registro"
-                      {...formik.getFieldProps('codigo_registro')}/>
-                      <ErrorMessage touched={formik.touched.codigo_registro} errors={formik.errors.codigo_registro}/>
                   </li>
                   <li>
                       <label htmlFor="razon_social">Razon social:</label>
