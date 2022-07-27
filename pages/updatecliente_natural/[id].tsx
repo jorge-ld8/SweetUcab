@@ -9,7 +9,7 @@ import * as Yup from 'yup';
 import { cliente_natural, lugar, producto, tienda } from "@prisma/client";
 import ErrorMessage from "../../components/ErrorMessage";
 import Button from "@mui/material/Button";
-import { FileUploadButton } from "../components/FileUploadButton";
+import { FileUploadButton } from "../../components/FileUploadButton";
 import DropDownList from "../../components/Dropdownlist";
 import superjson from "superjson";
 
@@ -44,7 +44,7 @@ const Component: React.FC<Props> = (props)=>
           apellido2: String(props.cliente.c_apellido2),
           cedula: String(props.cliente.c_cedula),
           direccion: String(props.cliente.c_direccion),
-          tienda: {} //colocar tiend
+          tienda: '' //colocar tiend
         },
         validationSchema: Yup.object(
           {

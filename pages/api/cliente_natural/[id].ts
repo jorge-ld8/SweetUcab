@@ -28,11 +28,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
         });
 
-        let cliente_natural = await prisma.cliente_natural.create({
+        let cliente_natural = await prisma.cliente_natural.update({
             data: {
                 c_rif: superjson.parse(req.body)['rif'],
                 c_cantidad_puntos: Number(JSON.parse(req.body)['cantidad_puntos']),
-                c_codigo_registro: superjson.parse(req.body)['codigo_registro'],
                 c_nombre1: JSON.parse(req.body)['nombre1'],
                 c_nombre2:  JSON.parse(req.body)['nombre2'],
                 c_apellido1:  JSON.parse(req.body)['apellido1'],
@@ -40,6 +39,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 c_cedula: JSON.parse(req.body)['cedula'],
                 c_direccion: JSON.parse(req.body)['direccion'],
                 fk_tienda: tienda.t_id
+            },
+            where:{
+                c_id: Number(id)
             }
         });
         res.json(cliente_natural);
