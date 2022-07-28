@@ -113,7 +113,6 @@ const Layout: React.FC<Props> = (props) => (
         
         /* Main styling */
         main{
-          text-align: center;
           position: relative;
           margin-top: 1em;
           min-height: 100vh;

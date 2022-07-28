@@ -42,14 +42,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 },
             },
         })
-
-        let nroCliente = cuenta._count.cliente_juridico + cuenta._count.cliente_natural + 1;
-        let codRegistro = String(tienda.t_id).padStart(2, "0")+"-"+String(nroCliente).padStart(8,"0");
-        let cliente_juridico = await prisma.cliente_juridico.create({
+        
+        let cliente_juridico = await prisma.cliente_juridico.update({
             data: {
                 c_rif: JSON.parse(req.body)['rif'],
-                c_cantidad_puntos: 0,
-                c_codigo_registro: codRegistro,
+                c_cantidad_puntos: JSON.parse(req.body)['cantidad_puntos'],
                 c_razon_social: JSON.parse(req.body)['razon_social'],
                 c_denom_comercial: JSON.parse(req.body)['denom_comercial'],
                 c_capital_disponible: Number(superjson.parse(req.body)['capital_disponible']),
@@ -57,6 +54,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 c_direccion_fiscal_ppal: JSON.parse(req.body)['direccion_fiscal_ppal'],
                 c_pagina_web: JSON.parse(req.body)['pagina_web'],
                 fk_tienda: tienda.t_id
+            },
+            where:{
+                c_id: Number(id)
             }
         });
         res.json(cliente_juridico);

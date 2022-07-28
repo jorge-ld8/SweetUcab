@@ -6,7 +6,7 @@ import Page from "../../components/Page"
 import Router from "next/router"
 import { Formik, FormikProvider, useFormik } from "formik";
 import * as Yup from 'yup';
-import { cliente_juridico, lugar, producto } from "@prisma/client";
+import { cliente_juridico, lugar, producto, tienda } from "@prisma/client";
 import ErrorMessage from "../../components/ErrorMessage";
 import Button from "@mui/material/Button";
 import { FileUploadButton } from "../../components/FileUploadButton";
@@ -26,11 +26,13 @@ export const getServerSideProps: GetServerSideProps = async ({params}) => {
     }
   }
 
-type Props<ArbType extends Object> = {
-    feed: ArbType[]
+type Props = {
+    feed: cliente_juridico
+    c_juridicos: cliente_juridico[]
+    tiendas: tienda[]
 }
 
-const Component: React.FC<any> = (props)=>
+const Component: React.FC<Props> = (props)=>
 {
     
     const formik = useFormik({
@@ -73,34 +75,17 @@ const Component: React.FC<any> = (props)=>
         }));
 
             
-        const response = await fetch(`/api/cliente_juridico`,{method: 'POST',         
+        const response = await fetch(`/api/cliente_juridico/${props.feed.c_id}`,{method: 'POST',         
         body:   JSON.stringify({ 
-          rif: Yup.string().required("Obligatorio").matches(/^[VJEPG]{1}-[0-9]{8}$/, "RIF no válido")
-          .test("uniqueValidation", "No es unico", 
-          function(value){
-              for(let p of props.c_juridicos){
-                  if(p.c_rif === value)
-                      return false;
-              }
-              return true;
-             }),
-          razon_social: Yup.string().required("Obligatorio").max(30, "Máximo 30 caracteres"),
-          denom_comercial: Yup.string().required("Obligatorio").max(30, "Máximo 30 caracteres"),
-          capital_disponible: Yup.number().required("Obligatorio").min(0, "Debe ser un número positivo"),
-          direccion: Yup.string().required("Obligatorio").max(50, "Máximo 50 caraceres"),
-          direccion_fiscal_ppal: Yup.string().required("Obligatorio").max(50, "Máximo 50 caracteres"),
-          pagina_web: Yup.string().required("Obligatorio").max(60, "Máximo 60 caracteres")
-          .test("uniqueValidation", "No es unico", 
-          function(value){
-              for(let p of props.c_juridicos){
-                  if(p.c_pagina_web === value)
-                      return false;
-              }
-              return true;
-             })
-          ,
-          tienda: Yup.string().required("Obligatorio")})
-        }).then(response =>{ 
+          rif: formik.values.rif,
+          razon_social: formik.values.razon_social,
+          denom_comercial: formik.values.denom_comercial,
+          capital_disponible: formik.values.capital_disponible,
+          direccion: formik.values.direccion,
+          direccion_fiscal_ppal: formik.values.direccion_fiscal_ppal,
+          pagina_web: formik.values.pagina_web,
+          tienda: formik.values.tienda
+        })}).then(response =>{ 
           if(response.ok)
             return response.json()
           }

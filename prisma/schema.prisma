@@ -641,6 +641,7 @@ model transaccion_compra {
   fk_cliente_natural  Int?
   fk_tienda           Int
   t_fecha_creacion    DateTime?             @db.Date
+  t_en_linea          Boolean               @default(false)
   cliente_juridico    cliente_juridico?     @relation(fields: [fk_cliente_juridico], references: [c_id], onDelete: Cascade, onUpdate: NoAction, map: "c_transaccion_compra_fk_cliente_juridico")
   cliente_natural     cliente_natural?      @relation(fields: [fk_cliente_natural], references: [c_id], onDelete: Cascade, onUpdate: NoAction, map: "c_transaccion_compra_fk_cliente_natural")
   tienda              tienda                @relation(fields: [fk_tienda], references: [t_id], onDelete: Cascade, onUpdate: NoAction, map: "c_transaccion_compra_fk_tienda")

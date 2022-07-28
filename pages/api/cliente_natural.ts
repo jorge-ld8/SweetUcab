@@ -30,21 +30,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         let nroCliente = cuenta._count.cliente_juridico + cuenta._count.cliente_natural + 1;
         let codRegistro = String(tienda.t_id).padStart(2, "0")+"-"+String(nroCliente).padStart(8,"0");
 
-        cliente_juridico = await prisma.cliente_juridico.create({
+        let cliente_natural = await prisma.cliente_natural.create({
             data: {
                 c_rif: JSON.parse(req.body)['rif'],
                 c_cantidad_puntos: 0,
                 c_codigo_registro: codRegistro,
-                c_razon_social: JSON.parse(req.body)['razon_social'],
-                c_denom_comercial: JSON.parse(req.body)['denom_comercial'],
-                c_capital_disponible: JSON.parse(req.body)['capital_disponible'],
+                c_nombre1: JSON.parse(req.body)['nombre1'],
+                c_nombre2:  JSON.parse(req.body)['nombre2'],
+                c_apellido1:  JSON.parse(req.body)['apellido1'],
+                c_apellido2: JSON.parse(req.body)['apellido2'],
+                c_cedula: JSON.parse(req.body)['cedula'],
                 c_direccion: JSON.parse(req.body)['direccion'],
-                c_direccion_fiscal_ppal: JSON.parse(req.body)['direccion_fiscal_ppal'],
-                c_pagina_web: JSON.parse(req.body)['pagina_web'],
                 fk_tienda: tienda.t_id
-            },
+            }
         });
-    res.json(cliente_juridico);
+        res.json(cliente_natural);
     }
     if(req.method === "GET"){
         response = await prisma.rol.findMany();

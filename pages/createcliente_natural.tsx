@@ -17,7 +17,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     const feed = await prisma.tienda.findMany();
     const c_naturales = await prisma.cliente_natural.findMany();
     return {
-      props: {feed},
+      props: {feed: feed, c_naturales: c_naturales},
     }
   }
 
@@ -86,7 +86,7 @@ const Component: React.FC<Props> = (props)=>
         }));
 
             
-        const response = await fetch(`/api/cliente_juridico`,{method: 'POST',         
+        const response = await fetch(`/api/cliente_natural`,{method: 'POST',         
         body:   JSON.stringify({
                     rif: formik.values.rif,
                     nombre1: formik.values.nombre1,
