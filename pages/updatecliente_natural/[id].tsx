@@ -93,7 +93,7 @@ const Component: React.FC<Props> = (props)=>
         }));
 
             
-        const response = await fetch(`/api/cliente_juridico`,{method: 'POST',         
+        const response = await fetch(`/api/cliente_natural/${props.cliente.c_id}`,{method: 'POST',         
         body:   JSON.stringify({
                     rif: formik.values.rif,
                     nombre1: formik.values.nombre1,
