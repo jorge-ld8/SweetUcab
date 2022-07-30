@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from "react"
 import { GetStaticProps } from "next"
 import prisma from '../lib/prisma';
-import Page from "../components/Page";
 import Crud from "../components/Crud";
 import { historico_punto, producto } from "@prisma/client";
 import { json } from "stream/consumers";
@@ -50,9 +49,9 @@ const Blog: React.FC<Props<historico_punto>> = (props) => {
   }
 
   return (
-    <Page>
+    <main>
       <Crud headers={["ID", "Valor", "Fecha_Emision", "Fecha_Final"]}content={props.feed} name={'historico_punto'} stateChanger={handleStateChange}/>
-    </Page>
+    </main>
   )
 }
 

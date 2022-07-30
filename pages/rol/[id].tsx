@@ -39,7 +39,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   
   const RolPost: React.FC<RolPostProps> = (props) => {
     return (
-      <Layout>
+      <main>
         <div className="stylish">
           <h2>{props.rol.r_tipo}</h2>
           <p>{props.rol.r_id}</p>
@@ -77,7 +77,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
             margin-left: 1rem;
           }
         `}</style>
-      </Layout>
+      </main>
     )
   }
   

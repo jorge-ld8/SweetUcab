@@ -26,7 +26,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   
   const RolPost: React.FC<historico_punto> = (props) => {
     return (
-      <Layout>
+      <main>
         <div className="stylish">
           <h2>Punto #{props.h_id}</h2>
           <p>Valor: {props.h_valor}$</p>
@@ -58,7 +58,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
             margin-left: 1rem;
           }
         `}</style>
-      </Layout>
+      </main>
     )
   }
   

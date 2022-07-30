@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from "react"
 import { GetStaticProps } from "next"
 import prisma from '../lib/prisma';
-import Page from "../components/Page";
 import Crud from "../components/Crud";
 import { producto } from "@prisma/client";
 import superjson from "superjson";
@@ -53,9 +52,9 @@ const Blog: React.FC<Props<any>> = (props) => {
   UserProfile.initializeProductoPresupuesto();
 
   return (
-    <Page>
+    <main>
       <Crud headers={["ID", "Fecha", "Monto"]} content={props.feed} name={'presupuesto'} stateChanger={handleStateChange}/>
-    </Page>
+    </main>
   )
 }
 

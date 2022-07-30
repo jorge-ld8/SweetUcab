@@ -1,5 +1,6 @@
 import { ReactElement} from "react";
 import UserProfile from "../pages/userSession";
+import { ReactSession} from 'react-client-session';
 
 type AccessProps = {
     userPermissions: string[],
@@ -38,8 +39,11 @@ const AccessControl:React.FC<AccessProps> =  ({userPermissions,
         }
         return false
     }
-
-    if(!UserProfile.loggedIn() || (mode==="all" && 
+    console.log(`Allowed Permissions: ${allowedPermissions}`);
+    console.log(`User Permissions: ${userPermissions}`);
+    
+    
+    if((mode==="all" && 
     calcAllowedPermissionsALL(allowedPermissions, userPermissions)) ||
        (mode==="one" && calcAllowedPermissionsONE(allowedPermissions, userPermissions))) 
         return children 

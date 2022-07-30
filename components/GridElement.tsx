@@ -16,6 +16,8 @@ const Img = styled('img')({
 type Props = {
     imageUrl: string 
     id: number
+    prodName: string
+    prodPrecio: number
 }
 
 const ElementoCompra: React.FC<Props> = (props) => {
@@ -40,25 +42,12 @@ const ElementoCompra: React.FC<Props> = (props) => {
           <Grid item xs container direction="column" spacing={2}>
             <Grid item xs>
               <Typography gutterBottom variant="subtitle1" component="div">
-                Standard license
-              </Typography>
-              <Typography variant="body2" gutterBottom>
-                Full resolution 1920x1080 • JPEG
+                <h3>{props.prodName}</h3>
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                ID: 1030114
+                {props.prodPrecio}$
               </Typography>
             </Grid>
-            <Grid item>
-              <Typography sx={{ cursor: 'pointer' }} variant="body2">
-                Remove
-              </Typography>
-            </Grid>
-          </Grid>
-          <Grid item>
-            <Typography variant="subtitle1" component="div">
-              $19.00
-            </Typography>
           </Grid>
         </Grid>
       </Grid>

@@ -1,5 +1,4 @@
-import React, { ReactNode } from 'react';
-import Page from "../components/Page";
+import React, { ReactNode, useEffect, useState } from 'react';
 import { GetStaticProps } from "next";
 import { permiso, permiso_rol, rol, usuario } from "@prisma/client";
 import prisma from '../lib/prisma';
@@ -10,6 +9,7 @@ import UserProfile from "./userSession";
 import Router from "next/router";
 import Layout from "../components/Layout";
 import {Button} from '@mui/material';
+import { ReactSession} from 'react-client-session';
 
 export const getStaticProps: GetStaticProps = async () => {
     const roles = await prisma.rol.findMany();
@@ -40,6 +40,16 @@ type inicio_de_sesionProps = {
 //Template para crear componentes 
 const Component: React.FC<inicio_de_sesionProps> = (props)=>
 {
+    const [username, setUsername] = useState("");
+
+    useEffect(() => {
+      setUsername(JSON.parse(window.localStorage.getItem("username")));
+    }, []);
+
+    useEffect(() => {
+      window.localStorage.setItem("username", JSON.stringify(username));
+    }, [username]);
+    
     const formik = useFormik({
         initialValues:{
           username: '',
@@ -89,14 +99,26 @@ const Component: React.FC<inicio_de_sesionProps> = (props)=>
                 }
             }
         }
+        window.localStorage.setItem("username", JSON.stringify(formik.values.username));
+        window.localStorage.setItem("roles", JSON.stringify(rolUsuarioPermisos));
+        window.localStorage.setItem("carrito", JSON.stringify([]));
+        let cantPuntos = await fetch(`/api/puntos`,{method: 'POST', 
+        body: JSON.stringify({username: formik.values.username})
+        }).then(response =>{ 
+          if(response.ok)
+            return response.json()
+          }
+        ).catch(e => console.error(e));
+        console.log(cantPuntos);
+        window.localStorage.setItem("puntos", JSON.stringify(cantPuntos.c_cantidad_puntos));
         UserProfile.setRol(rolUsuarioPermisos);
         UserProfile.setName(formik.values.username);
+        UserProfile.initializeProductosCarrito();
         Router.back();
       }
       
     return(
-            <Layout>
-                <Page>
+      <main>
                         <h3>INICIO DE SESION</h3>
                         <form onSubmit={handleSubmit}>
                             <ul>
@@ -140,8 +162,7 @@ const Component: React.FC<inicio_de_sesionProps> = (props)=>
                     }
                   `}
                 </style>
-                </Page>
-            </Layout>);
+          </main>);
 };
 
 export default Component;

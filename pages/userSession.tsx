@@ -3,6 +3,7 @@ var UserProfile = (function() {
   let user_id = "";
   let user_rol:string[] = [];
   let productosPresupuesto = [];
+  let productosCarrito = [];
 
   let getName : () => string;
   getName = function() {
@@ -12,14 +13,27 @@ var UserProfile = (function() {
   function initializeProductoPresupuesto(){
     productosPresupuesto = []; 
   }
+  
+  function initializeProductosCarrito(){
+    productosCarrito = [];
+  }
 
   function addProductoCantidad(prod, cantidad){
     productosPresupuesto.push([prod, cantidad]);
   }
 
+  function addProductoCarrito(prod, cantidad){
+    productosCarrito.push([prod, cantidad]);
+  }
+
   function getProductosPresupuesto(){
     return productosPresupuesto;
   }
+
+  function getProductoCarrito(){
+    return productosCarrito;
+  }
+
   let setName: (name: string) => void;
   setName = function(name) {
     full_name = name;     
@@ -62,6 +76,9 @@ var UserProfile = (function() {
     initializeProductoPresupuesto: initializeProductoPresupuesto,
     addProductoCantidad: addProductoCantidad,
     getProductosPresupuesto: getProductosPresupuesto,
+    initializeProductosCarrito: initializeProductosCarrito,
+    addProductoCarrito: addProductoCarrito,
+    getProductoCarrito: getProductoCarrito,
   }
 
 })();

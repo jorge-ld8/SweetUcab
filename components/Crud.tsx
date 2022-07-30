@@ -4,6 +4,7 @@ import styles from './crud.module.css';
 import Router, { useRouter } from "next/router";
 import {AddCircle} from "@mui/icons-material";
 import { IconButton } from "@mui/material";
+import AccessControl from "./AcesssControl";
 
 
 interface Props<ArbType extends Object>{
@@ -15,24 +16,20 @@ interface Props<ArbType extends Object>{
 
 
 const Crud: React.FC<Props<any>> = (props)=>{
-    const [state, setState] = useState("active");
-    useEffect(() => {
-        console.log(`Crud state: ${state}`);
-        return ()=>{ 
-            props.stateChanger(props.content);
-        };}
-    , [state]);
+    const [appState, setappState] = useState([]);
 
-    function handleStateChange(newState){
-        setState(newState);
+    function handleStateChange(appState){
+      setappState(appState);
     }
 
     return (
     <div >
         <h2>{props.name.toUpperCase()}</h2>
-        <div className={styles.addButton}>
-            <IconButton onClick={()=>{Router.push(`create${props.name}`)}} sx={{color: 'green'}} size="large"><AddCircle/></IconButton>
-        </div>
+        <AccessControl userPermissions={appState} allowedPermissions={[`${props.name}:create`]} mode={"all"}>
+            <div className={styles.addButton}>
+                <IconButton onClick={()=>{Router.push(`create${props.name}`)}} sx={{color: 'green'}} size="large"><AddCircle/></IconButton>
+            </div>
+        </AccessControl>
         <table>
             <thead>
                 <tr>
@@ -46,7 +43,7 @@ const Crud: React.FC<Props<any>> = (props)=>{
                 let copiedEl = JSON.parse(JSON.stringify(element));
                 const elId = Object.keys(copiedEl).find((el)=>(el.includes("id")));
                 return(
-                    <CrudElement copiedObj={copiedEl} mainObj={element} objType={props.name} key={element[elId]} id={element[elId]} stateChanger={handleStateChange}/>
+                    <CrudElement copiedObj={copiedEl} mainObj={element} objType={props.name} key={element[elId]} id={element[elId]} stateChanger={handleStateChange} roles={appState}/>
                 )
             })}
             </tbody>

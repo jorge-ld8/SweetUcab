@@ -5,8 +5,7 @@ import ReactMarkdown from "react-markdown"
 import Layout from "../components/Layout"
 import { PostProps } from "../components/Post"
 import prisma from '../lib/prisma';
-import Page from "../components/Page"
-import Router from "next/router"
+import Router from "next/router";
 import { Formik, FormikProvider, useFormik } from "formik";
 import * as Yup from 'yup';
 import Button from "@mui/material/Button";
@@ -130,8 +129,7 @@ const Component: React.FC<Props<rol>> = (props)=>
       }
 
     return (
-        <Layout>
-          <Page>
+          <main>
           <form  onSubmit={handleSubmit} >
               <ul>
               <li>
@@ -255,8 +253,7 @@ const Component: React.FC<Props<rol>> = (props)=>
                 color: #999;
               }
           `}</style>
-          </Page>
-        </Layout>
+          </main>
       )
 };
 

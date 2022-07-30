@@ -18,7 +18,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   
   const LugarPost: React.FC<lugar> = (props) => {
     return (
-      <Layout>
+      <main>
         <div>
           <h2>{props.l_descripcion}</h2>
           <p>{props.l_id}</p>
@@ -46,7 +46,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
             margin-left: 1rem;
           }
         `}</style>
-      </Layout>
+      </main>
     )
   }
   

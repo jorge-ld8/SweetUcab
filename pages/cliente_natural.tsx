@@ -6,7 +6,6 @@ import prisma from '../lib/prisma';
 import Image from "next/image";
 import Head from "next/head"
 import Link from "next/link";
-import Page from "../components/Page";
 import Crud from "../components/Crud";
 import { usuario } from "@prisma/client";
 
@@ -54,11 +53,11 @@ const Blog: React.FC<Props<usuario>> = (props) => {
     setState(newState);
   }
   return (
-    <Page>
+    <main>
       <Crud headers={["ID", "RIF", "Primer Nombre","Segundo Nombre", "Primer Apellido","Segundo Apellido",
       "Dirección", "Cédula", "Cantidad de puntos", "Código de registro",
       "Código de tienda registro"]} content={props.feed} name={'cliente_natural'} stateChanger={handleStateChange}/>
-    </Page>
+    </main>
   )
 }
 

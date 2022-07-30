@@ -29,7 +29,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   
   const ProductoPost: React.FC<ProductoProps>= (props) => {
     return (
-      <Layout>
+      <main>
         <div className="stylish">
           <h2>{props.producto.p_nombre}</h2>
           <p>ID: {props.producto.p_id}</p> 
@@ -70,7 +70,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
             margin-left: 1rem;
           }
         `}</style>
-      </Layout>
+      </main>
     )
   }
   

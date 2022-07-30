@@ -5,13 +5,13 @@ import ReactMarkdown from "react-markdown"
 import Layout from "../components/Layout"
 import { PostProps } from "../components/Post"
 import prisma from '../lib/prisma';
-import Page from "../components/Page"
-import Router from "next/router"
+import Router from "next/router";
 import { Formik, FormikProvider, useFormik } from "formik";
 import * as Yup from 'yup';
 import { lugar, producto } from "@prisma/client";
 import GridElement from "../components/GridElement";
 import Grid from "@mui/material/Grid";
+import UserProfile from "./userSession";
 
 export const getServerSideProps: GetServerSideProps = async () => {
     const productos = await prisma.producto.findMany({
@@ -31,12 +31,13 @@ type Props = {
 
 const Component: React.FC<any> = (props)=>
 {
+    console.log(UserProfile.getProductoCarrito());
     return (
-        <Layout>
-          <Page>
+      <main>
             <Grid container >
               {props.productos.map((producto)=>{
-                return (<GridElement imageUrl={producto.imagen_producto[0].i_imagen} id={producto.p_id}></GridElement>)
+                return (<GridElement prodName={producto.p_nombre} prodPrecio={producto.p_precio_actual} 
+                  imageUrl={producto.imagen_producto[0].i_imagen} id={producto.p_id}></GridElement>)
               })}
             </Grid>
           <style jsx>{`
@@ -64,8 +65,7 @@ const Component: React.FC<any> = (props)=>
               margin: .5em;
             }
           `}</style>
-          </Page>
-        </Layout>
+          </main>
       )
 };
 

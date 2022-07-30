@@ -7,26 +7,26 @@ import { IconButton } from "@mui/material";
 import {Delete, Edit} from "@mui/icons-material";
 import AccessControl from "./AcesssControl";
 import UserProfile from "../pages/userSession";
+import { rol } from "@prisma/client";
 
 type CrudProps<ArbType extends Object> = {
     copiedObj: ArbType; 
     mainObj: ArbType;
     objType: string;
     id: any;
+    roles: string[];
     stateChanger: Function;
 }
 
 
 const CrudElement: React.FC<CrudProps<any>> = (props)=>{
-    const[state, setState] = useState("active"); //state hook
 
     useEffect(() => {
-      //componente mounts
-      return () => {
-          console.log("CrudElement unmounted");
-          props.stateChanger(state);
-      }
-    }, [state]) //effect hook
+      let roles2 = JSON.parse(window.localStorage.getItem("roles")) ?? [];;
+      if ((props.roles).length !== roles2.length)
+        props.stateChanger(roles2);
+      return () => {}
+    },)
     
     async function handleDelete(e){
       console.log(props.id);
@@ -36,7 +36,7 @@ const CrudElement: React.FC<CrudProps<any>> = (props)=>{
             return response.json()
         }
       ).catch(e => console.error(e));
-     Router.push("/");
+     Router.reload();
     }
 
     function handleUpdate(e){
@@ -51,10 +51,10 @@ const CrudElement: React.FC<CrudProps<any>> = (props)=>{
             :
             <td key={index}>{props.mainObj[key]}</td>);
         })}
-        <AccessControl userPermissions={UserProfile.getRol()} allowedPermissions={[`${props.objType}:delete`]} mode={"all"} >
+        <AccessControl userPermissions={props.roles} allowedPermissions={[`${props.objType}:delete`]} mode={"all"} >
           <td className={styles.crudIcon}><IconButton aria-label="delete" size="medium" onClick={handleDelete}><Delete sx={{color:'black'}}/></IconButton></td>
         </AccessControl> 
-        <AccessControl userPermissions={UserProfile.getRol()} allowedPermissions={[`${props.objType}:update`]} mode={"all"}>
+        <AccessControl userPermissions={props.roles} allowedPermissions={[`${props.objType}:update`]} mode={"all"}>
           <td className={styles.crudIcon}><IconButton aria-label="update" size="medium" onClick={handleUpdate}><Edit sx={{color:'black'}}/></IconButton></td>
         </AccessControl>
     </tr>);

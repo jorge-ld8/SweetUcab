@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from "react"
 import { GetStaticProps } from "next"
 import prisma from '../lib/prisma';
-import Page from "../components/Page";
 import Crud from "../components/Crud";
 import { rol } from "@prisma/client";
 
@@ -44,9 +43,9 @@ const Blog: React.FC<Props<rol>> = (props) => {
     setState(newState);
   }
   return (
-    <Page>
+    <main>
       <Crud headers={["ID", "Tipo", "Descripcion"]}content={props.feed} name={'rol'} stateChanger={handleStateChange}/>
-    </Page>
+    </main>
   )
 }
 

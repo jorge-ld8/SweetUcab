@@ -2,8 +2,7 @@ import React, { ReactNode, useCallback, useState } from "react";
 import { GetServerSideProps } from "next"
 import Layout from "../components/Layout"
 import prisma from '../lib/prisma';
-import Page from "../components/Page"
-import Router from "next/router"
+import Router from "next/router";
 import { Formik, FormikProvider, useFormik } from "formik";
 import * as Yup from 'yup';
 import styles from '../components/crud.module.css';
@@ -13,6 +12,7 @@ import DropDownList from "../components/Dropdownlist";
 import Button from "@mui/material/Button";
 import superjson from "superjson";
 import UserProfile from "./userSession";
+
 
 export const getServerSideProps: GetServerSideProps = async () => {
     const productos = await prisma.producto.findMany();
@@ -26,7 +26,7 @@ type Props = {
     productos: producto[]
 }
 
-const listaProds = [];
+export const listaProds = [];
 let FechaServidor;
 
 const NewPresupuesto: React.FC<Props> = (props)=>
@@ -87,8 +87,7 @@ const NewPresupuesto: React.FC<Props> = (props)=>
         }
         
     return (
-        <Layout>
-          <Page>
+        <main>
           <form  onSubmit={handleSubmit} >
               <ul>
               <li>
@@ -140,8 +139,7 @@ const NewPresupuesto: React.FC<Props> = (props)=>
               margin: .5em;
             }
           `}</style>
-          </Page>
-        </Layout>
+          </main>
       )
 };
 

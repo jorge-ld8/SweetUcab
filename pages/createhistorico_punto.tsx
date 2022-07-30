@@ -2,8 +2,7 @@ import React, { ReactNode } from "react";
 import { GetServerSideProps } from "next"
 import Layout from "../components/Layout"
 import prisma from '../lib/prisma';
-import Page from "../components/Page"
-import Router from "next/router"
+import Router from "next/router";
 import { Formik, FormikProvider, useFormik } from "formik";
 import * as Yup from 'yup';
 import styles from '../components/crud.module.css';
@@ -57,8 +56,7 @@ const NewRole: React.FC<Props> = (props)=>
   
 
     return (
-        <Layout>
-          <Page>
+      <main>
           <form  onSubmit={handleSubmit} >
               <ul>
                   <li>
@@ -97,8 +95,7 @@ const NewRole: React.FC<Props> = (props)=>
               margin: .5em;
             }
           `}</style>
-          </Page>
-        </Layout>
+        </main>
       )
 };
 

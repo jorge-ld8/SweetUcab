@@ -2,8 +2,7 @@ import React from "react"
 import { GetServerSideProps } from "next"
 import Layout from "../../components/Layout"
 import prisma from '../../lib/prisma';
-import Page from "../../components/Page"
-import Router from "next/router"
+import Router from "next/router";
 import { Formik, useFormik } from "formik";
 import * as Yup from 'yup';
 import styles from '../../components/crud.module.css';
@@ -80,8 +79,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     }
 
     return (
-      <Layout>
-        <Page>
+      <main>
         <form  onSubmit={handleSubmit} >
             <ul>
                 <li>
@@ -128,8 +126,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
             margin: .5em;
           }
         `}</style>
-        </Page>
-      </Layout>
+      </main>
     )
   }
   

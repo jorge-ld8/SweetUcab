@@ -13,7 +13,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         res.json(response);
     }
     else if(req.method === "DELETE"){
-        const response = await prisma.producto .delete({
+        const response = await prisma.producto.delete({
             where:{
                 p_id: Number(id)
             }

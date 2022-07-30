@@ -25,7 +25,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     * Email: ${props.u_email}
     * Rol: ${props.fk_rol}`;
     return (
-      <Layout>
+        <main>
         <div>
             <h2>{props.u_username}</h2>
             <p><b>ID {props.u_id}</b></p>
@@ -53,7 +53,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
             margin-left: 1rem;
           }
         `}</style>
-      </Layout>
+      </main>
     )
   }
   

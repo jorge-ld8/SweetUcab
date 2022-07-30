@@ -35,7 +35,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
               * Código de lugar (fiscal): ${props.fk_lugar2}
               * Código de tienda de registro: ${props.fk_tienda}`;
     return (
-      <Layout>
+      <main>
         <div>
             <h2>{props.c_razon_social}</h2>
             <p><b>ID {props.c_id}</b></p>
@@ -72,7 +72,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
             margin-left: 1rem;
           }
         `}</style>
-      </Layout>
+      </main>
     )
   }
 

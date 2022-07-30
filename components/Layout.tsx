@@ -8,7 +8,6 @@ type Props = {
 
 const Layout: React.FC<Props> = (props) => (
   <div>
-    <Header />
     <div className="layout">{props.children}</div>
     <style jsx global>{`
       html {
@@ -51,7 +50,6 @@ const Layout: React.FC<Props> = (props) => (
           display: flex;
           justify-content: space-between;
           align-items: center;
-          t
       }
       
       header ul,
@@ -64,10 +62,6 @@ const Layout: React.FC<Props> = (props) => (
       header{
           background-color: #FEE2E6;
           position: sticky;
-      }
-
-      .header{
-        position: sticky;
       }
         
         .imagenLogo{
@@ -115,6 +109,7 @@ const Layout: React.FC<Props> = (props) => (
         main{
           position: relative;
           margin-top: 1em;
+          margin-right: .75em;
           min-height: 100vh;
         }
         

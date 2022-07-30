@@ -1,12 +1,6 @@
 import React, {useEffect, useState} from "react"
 import { GetStaticProps } from "next"
-import Layout from "../components/Layout"
-import Post, { PostProps } from "../components/Post"
 import prisma from '../lib/prisma';
-import Image from "next/image";
-import Head from "next/head"
-import Link from "next/link";
-import Page from "../components/Page";
 import Crud from "../components/Crud";
 import { usuario } from "@prisma/client";
 
@@ -52,9 +46,9 @@ const Blog: React.FC<Props<usuario>> = (props) => {
   }
 
   return (
-    <Page>
+    <main>
       <Crud headers={["ID", "Username","Email", "Rol"]} content={props.feed} name={'usuario'} stateChanger={handleStateChange}/>
-    </Page>
+    </main>
   )
 }
 

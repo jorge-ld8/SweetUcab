@@ -41,7 +41,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   
   const OfertaPost: React.FC<OfertaPostProps> = (props) => {
     return (
-      <Layout>
+      <main>
         <div className="stylish">
           <h2>{props.oferta.o_descripcion}</h2>
           <h4>{props.oferta.o_porcentaje_descuento}</h4>
@@ -74,7 +74,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
             margin-left: 1rem;
           }
         `}</style>
-      </Layout>
+      </main>
     )
   }
   
