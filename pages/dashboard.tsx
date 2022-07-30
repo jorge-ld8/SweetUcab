@@ -96,6 +96,7 @@ const Component: React.FC<Props<lugar>> = (props)=>
 
     return (
         <Layout>
+        <h3>DASHBOARD</h3>
           <form  onSubmit={handleSubmit} >
               <ul>
                   <li>

@@ -60,7 +60,7 @@ const Component: React.FC<Props<lugar>> = (props)=>
         },
         validationSchema: Yup.object(
           {
-            flyerid: Yup.array().required()}
+            flyerid: Yup.array().required("Obligatorio")}
         ),
         onSubmit: values => {console.log(values);},
       });
@@ -104,7 +104,7 @@ const Component: React.FC<Props<lugar>> = (props)=>
 
     return (
         <Layout>
-
+<h3>REVISTA SWEET FLYER</h3>
           <form  onSubmit={handleSubmit} >
               <ul>
                   <li>

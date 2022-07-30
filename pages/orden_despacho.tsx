@@ -5,6 +5,7 @@ import ReactMarkdown from "react-markdown"
 import Layout from "../components/Layout"
 import { PostProps } from "../components/Post"
 import prisma from '../lib/prisma';
+//import Page from "../components/Page"
 import Router from "next/router"
 import { Formik, FormikProvider, useFormik } from "formik";
 import * as Yup from 'yup';
@@ -29,23 +30,19 @@ type Props<ArbType extends Object> = {
     feed: ArbType[]
 }
 
-const html= '';
-const htmlnuevo = (htmll)=>{
-    html=htmll.data;
-  };
 
 const Component: React.FC<Props<lugar>> = (props)=>
 {
     console.log(UserProfile.getName());
     const formik = useFormik({
         initialValues:{
-          fechainicial: '',
-          fechafinal: '',
+          naturalIDfact: '',
+          juridicoIDfact: '',
         },
         validationSchema: Yup.object(
           {
-                        fechainicial: Yup.date().required("Obligatorio"),
-                        fechafinal: Yup.date().required("Obligatorio"),
+            naturalIDfact: Yup.string().max(30, 'Máximo 30 caracteres de longitud').nullable(),
+            juridicoIDfact: Yup.string().max(20, 'Maximo 20 caracteres de longitud').nullable(), //.required("Obligatorio"),
           }
         ),
         onSubmit: values => {console.log(values);},
@@ -54,19 +51,21 @@ const Component: React.FC<Props<lugar>> = (props)=>
 //esto se encarga de convertir y descargar a pdf
       async function handleSubmit(e){
         e.preventDefault();
-        if(formik.values.fechainicial === '')
-            formik.values.fechainicial = '07/20/2020';
-            if(formik.values.fechafinal === '')
-            formik.values.fechafinal = '07/30/2030';
-                                console.log(`fechainicial: ${formik.values.fechainicial}`);
-                                console.log(`fechafinal: ${formik.values.fechafinal}`);
+        if(formik.values.juridicoIDfact === '')
+            formik.values.juridicoIDfact = null;
+            if(formik.values.naturalIDfact === '')
+                        formik.values.naturalIDfact = null;
+                                console.log(`juridicoID: ${formik.values.juridicoIDfact}`);
+                                console.log(`naturalID: ${formik.values.naturalIDfact}`);
+
      Axios.post("http://localhost:5488/api/report",
             {'template':
-                {'name':'/Reportes Sweet UCAB/Lista de empleados por periodo de tiempo/empleados','recipe':'chrome-pdf'}  ,
-                            'data':
-                  {"fechainicio": formik.values.fechainicial,
-                  "fechafin": formik.values.fechafinal //DIOS MIO SE LOGRÓ }
-            }},
+                {'name':'/Reportes Sweet UCAB/Orden Despacho/ordendespacho','recipe':'chrome-pdf'}  ,
+            'data':
+                  {"juridicoid": formik.values.juridicoIDfact,
+                  "naturalid": formik.values.naturalIDfact //DIOS MIO SE LOGRÓ
+                    }
+            },
             {
                 responseType: 'arraybuffer',
                 headers: {
@@ -74,19 +73,17 @@ const Component: React.FC<Props<lugar>> = (props)=>
                     'Accept': 'application/pdf'
                 }
             })
-                .then((res) => {
-                                const contentType = res.headers["content-type"];
-                                const blob = new Blob([res.data], {contentType} );
-                                const url = window.URL.createObjectURL(new Blob([blob]));
-                                const link = document.createElement('a');
-                                link.href = url;
-
-                                link.setAttribute('download', 'reporte-empleados.pdf'); //or any other extension
-                                document.body.appendChild(link);
-                                console.log("link: " +link);
-                                link.click();
-                                link.parentNode.removeChild(link);
-                            }).catch((error) => console.log("se dio este error:"+error));
+            .then((res) => {
+                const contentType = res.headers["content-type"];
+                const blob = new Blob([res.data], {contentType} );
+                const url = window.URL.createObjectURL(new Blob([blob]));
+                const link = document.createElement('a');
+                link.href = url;
+                link.setAttribute('download', 'orden-despacho.pdf'); //or any other extension
+                document.body.appendChild(link);
+                link.click();
+                link.parentNode.removeChild(link);
+            }).catch((error) => console.log("se dio este error:"+error));
             console.log("Pasó YAY");
         //Router.back();*/
       }
@@ -94,23 +91,23 @@ const Component: React.FC<Props<lugar>> = (props)=>
 
     return (
         <Layout>
-        <h3>REPORTE DE EMPLEADOS POR PERIODO</h3>
+        <h3>ORDEN DE DESPACHO</h3>
           <form  onSubmit={handleSubmit} >
               <ul>
                   <li>
-                      <label htmlFor="fechainicial">Fecha de inicio del reporte:</label>
-                      <input type="date" id="fechainicial"
-                      {...formik.getFieldProps('fechainicial')}/>
-                      <ErrorMessage touched={formik.values.fechainicial} errors={formik.values.fechainicial}/>
+                      <label htmlFor="naturalIDfact">ID del pedido (Cliente Natural):</label>
+                      <input type="text" id="naturalIDfact"
+                      {...formik.getFieldProps('naturalIDfact')}/>
+                      <ErrorMessage touched={formik.touched.naturalIDfact} errors={formik.errors.naturalIDfact}/>
                   </li>
                   <li>
-                      <label htmlFor="fechafinal">Fecha de fin del reporte:</label>
-                      <input type="date" id="fechafinal"
-                      {...formik.getFieldProps('fechafinal')}/>
-                      <ErrorMessage touched={formik.touched.fechafinal} errors={formik.errors.fechafinal}/>
+                      <label htmlFor="juridicoIDfact">ID del pedido (Cliente Juridico):</label>
+                      <input type="text" id="juridicoIDfact"
+                      {...formik.getFieldProps('juridicoIDfact')}/>
+                      <ErrorMessage touched={formik.touched.juridicoIDfact} errors={formik.errors.juridicoIDfact}/>
                   </li>
                   <li className="Button">
-                      <Button type={"submit"} variant="contained" color={"success"} disabled={!(formik.isValid && formik.dirty)}>Enviar</Button>
+                      <Button type={"submit"} variant="contained" color={"success"} disabled={!(formik.isValid && formik.dirty)}>Descargar orden de despacho</Button>
                   </li>
               </ul>
           </form>
