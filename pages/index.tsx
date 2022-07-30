@@ -29,8 +29,6 @@ type Props<ArbType extends Object> = {
 
 const Component: React.FC<Props<lugar>> = (props) => {
   const [roles, setappState] = useState([]);
-
-<<<<<<< HEAD
   function handleStateChange(appState){
     setappState(appState);
   }
@@ -52,70 +50,6 @@ const Component: React.FC<Props<lugar>> = (props) => {
           }
         `}</style>
         </main>
-=======
-  console.log(UserProfile.getRol());
-  console.log(`Is logged in?: ${UserProfile.loggedIn()}`);
-  return (
-    <Page>
-      <AccessControl userPermissions={UserProfile.getRol()} allowedPermissions={["lugar:read"]} mode={"all"}>
-        <div>
-          <Link href="/lugar">LUGAR</Link>
-        </div>
-      </AccessControl>
-      <AccessControl userPermissions={UserProfile.getRol()} allowedPermissions={["usuario:read"]} mode={"all"}>
-        <div>
-            <Link href="/usuario">USUARIO</Link>
-        </div>
-      </AccessControl>
-      <AccessControl userPermissions={UserProfile.getRol()} allowedPermissions={["rol:read"]} mode={"all"}>
-        <div>
-            <Link href="/rol">ROL</Link>
-        </div>
-      </AccessControl>
-      <AccessControl userPermissions={UserProfile.getRol()} allowedPermissions={["producto:read"]} mode={"all"}>
-        <div>
-            <Link href="/producto">PRODUCTO</Link>
-        </div>
-      </AccessControl>
-      <AccessControl userPermissions={UserProfile.getRol()} allowedPermissions={["historico_punto:read"]} mode={"all"}>
-        <div>
-            <Link href="/historico_punto">HISTORICO_PUNTO</Link>
-        </div>
-      </AccessControl>
-      <AccessControl userPermissions={UserProfile.getRol()} allowedPermissions={["oferta:read"]} mode={"all"}>
-        <div>
-            <Link href="/oferta">OFERTA</Link>
-        </div>
-      </AccessControl>
-      <AccessControl userPermissions={UserProfile.getRol()} allowedPermissions={["presupuesto:read"]} mode={"all"}>
-        <div>
-          <Link href="/presupuesto">PRESUPUESTO</Link>
-        </div>
-      </AccessControl>
-      <AccessControl userPermissions={UserProfile.getRol()} allowedPermissions={["cliente_juridico:read"]} mode={"all"}>
-        <div>
-              <Link href="/cliente_juridico">CLIENTE JURIDICO</Link>
-        </div>
-      </AccessControl >
-            <AccessControl userPermissions={UserProfile.getRol()} allowedPermissions={["cliente_natural:read"]} mode={"all"}>
-              <div>
-                <Link href="/cliente_natural">CLIENTE NATURAL</Link>
-              </div>
-      </AccessControl>
-
-                  <AccessControl userPermissions={UserProfile.getRol()} allowedPermissions={["cliente_natural:read"]} mode={"all"}>
-                    <div>
-                      <Link href="/factura">FACTURA</Link>
-                    </div>
-            </AccessControl>
-      <style jsx>{`
-        div{
-          margin: 0.6em;
-          font-size: 1.2rem;
-        }
-      `}</style>
-    </Page>
->>>>>>> 7cc276c44403c9d7e58568bd800811108250b1cc
   )
 }
 export default Component;
