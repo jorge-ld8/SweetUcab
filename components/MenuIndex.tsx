@@ -23,7 +23,8 @@ const MenuIndex: React.FC<props> = (props) => {
   },);
 
   let cruds = ["lugar", "usuario", "rol", "producto", "historico_punto", "oferta", 
-               "presupuesto", "cliente_juridico", "cliente_natural"];
+               "presupuesto", "cliente_juridico", "cliente_natural", "factura", "dashboard",
+               "flyer", "lista_empleados", "orden_interna","orden_fabrica","orden_despacho"];
   
   return(<>
     {cruds.map((value)=>{

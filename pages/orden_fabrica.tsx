@@ -21,8 +21,16 @@ const soapRequest=require('easy-soap-request');
 
 export const getServerSideProps: GetServerSideProps = async () => {
     const feed = await prisma.lugar.findMany();
+    const ordenes = await prisma.pedido_fabrica.findMany(
+              {
+              select:{p_id:true,},
+                orderBy:{
+                  p_id: 'asc'
+                }
+              }
+            );
     return {
-      props: {feed},
+      props: {feed, ordenes},
     }
   }
 
@@ -30,19 +38,26 @@ type Props<ArbType extends Object> = {
     feed: ArbType[]
 }
 
+Object.size = function(obj) {
+  var size = 0,
+    key;
+  for (key in obj) {
+    if (obj.hasOwnProperty(key)) size++;
+  }
+  return size;
+};
+
 
 const Component: React.FC<Props<lugar>> = (props)=>
 {
     console.log(UserProfile.getName());
     const formik = useFormik({
         initialValues:{
-          naturalIDfact: '',
-          juridicoIDfact: '',
+          ordenid: '',
         },
         validationSchema: Yup.object(
           {
-            naturalIDfact: Yup.string().max(30, 'Máximo 30 caracteres de longitud').nullable(),
-            juridicoIDfact: Yup.string().max(20, 'Maximo 20 caracteres de longitud').nullable(), //.required("Obligatorio"),
+            ordenid: Yup.array().required("Obligatorio"), //.required("Obligatorio"),
           }
         ),
         onSubmit: values => {console.log(values);},
@@ -51,19 +66,16 @@ const Component: React.FC<Props<lugar>> = (props)=>
 //esto se encarga de convertir y descargar a pdf
       async function handleSubmit(e){
         e.preventDefault();
-        if(formik.values.juridicoIDfact === '')
-            formik.values.juridicoIDfact = null;
-            if(formik.values.naturalIDfact === '')
-                        formik.values.naturalIDfact = null;
-                                console.log(`juridicoID: ${formik.values.juridicoIDfact}`);
-                                console.log(`naturalID: ${formik.values.naturalIDfact}`);
+        if(formik.values.ordenid === 'N/A'){
+         console.log("No puede ser null");
+            return;}
+console.log(`ordenid: ${formik.values.ordenid}`);
 
      Axios.post("http://localhost:5488/api/report",
             {'template':
-                {'name':'/Reportes Sweet UCAB/Factura/factura','recipe':'chrome-pdf'}  ,
+                {'name':'/Reportes Sweet UCAB/Orden a Fabrica/ordenfabrica','recipe':'chrome-pdf'}  ,
             'data':
-                  {"juridicoid": formik.values.juridicoIDfact,
-                  "naturalid": formik.values.naturalIDfact //DIOS MIO SE LOGRÓ
+                  {"ordenid": formik.values.ordenid
                     }
             },
             {
@@ -79,7 +91,7 @@ const Component: React.FC<Props<lugar>> = (props)=>
                 const url = window.URL.createObjectURL(new Blob([blob]));
                 const link = document.createElement('a');
                 link.href = url;
-                link.setAttribute('download', 'factura.pdf'); //or any other extension
+                link.setAttribute('download', 'orden-repo-fabrica.pdf'); //or any other extension
                 document.body.appendChild(link);
                 link.click();
                 link.parentNode.removeChild(link);
@@ -91,24 +103,16 @@ const Component: React.FC<Props<lugar>> = (props)=>
 
     return (
         <Layout>
-<h3>IMPRESIÓN DE FACTURA</h3>
+<h3>ORDEN DE PEDIDO A FÁBRICA</h3>
           <form  onSubmit={handleSubmit} >
               <ul>
                   <li>
-                      <label htmlFor="naturalIDfact">ID (Cliente Natural):</label>
-                      <input type="text" id="naturalIDfact"
-                      {...formik.getFieldProps('naturalIDfact')}/>
-                      <ErrorMessage touched={formik.touched.naturalIDfact} errors={formik.errors.naturalIDfact}/>
-                  </li>
-                  <li>
-                      <label htmlFor="juridicoIDfact">ID (Cliente Juridico):</label>
-                      <input type="text" id="juridicoIDfact"
-                      {...formik.getFieldProps('juridicoIDfact')}/>
-                      <ErrorMessage touched={formik.touched.juridicoIDfact} errors={formik.errors.juridicoIDfact}/>
+                     <label htmlFor="ordenid">Seleccione la orden a descargar (NO N/A): </label>
+                     <DropDownList content={props.ordenes} attValueName={"p_id"} objType={"orden"} name={"ordenid"} onChange={formik.handleChange} value={formik.values.ordenid} multiple={false}/>
                   </li>
                   <li className="Button">
-                      <Button type={"submit"} variant="contained" color={"success"} disabled={!(formik.isValid && formik.dirty)}>Crear</Button>
-                  </li>
+                      <Button type={"submit"} variant="contained" color={"success"} disabled={!(formik.dirty)}>Generar orden de reposición a fábrica</Button>
+                                    </li>
               </ul>
           </form>
           <style jsx>{`

@@ -60,7 +60,7 @@ const Component: React.FC<Props<lugar>> = (props)=>
 
      Axios.post("http://localhost:5488/api/report",
             {'template':
-                {'name':'/Reportes Sweet UCAB/Factura/factura','recipe':'chrome-pdf'}  ,
+                {'name':'/Reportes Sweet UCAB/Orden Despacho/ordendespacho','recipe':'chrome-pdf'}  ,
             'data':
                   {"juridicoid": formik.values.juridicoIDfact,
                   "naturalid": formik.values.naturalIDfact //DIOS MIO SE LOGRÓ
@@ -79,7 +79,7 @@ const Component: React.FC<Props<lugar>> = (props)=>
                 const url = window.URL.createObjectURL(new Blob([blob]));
                 const link = document.createElement('a');
                 link.href = url;
-                link.setAttribute('download', 'factura.pdf'); //or any other extension
+                link.setAttribute('download', 'orden-despacho.pdf'); //or any other extension
                 document.body.appendChild(link);
                 link.click();
                 link.parentNode.removeChild(link);
@@ -91,23 +91,23 @@ const Component: React.FC<Props<lugar>> = (props)=>
 
     return (
         <Layout>
-<h3>IMPRESIÓN DE FACTURA</h3>
+        <h3>ORDEN DE DESPACHO</h3>
           <form  onSubmit={handleSubmit} >
               <ul>
                   <li>
-                      <label htmlFor="naturalIDfact">ID (Cliente Natural):</label>
+                      <label htmlFor="naturalIDfact">ID del pedido (Cliente Natural):</label>
                       <input type="text" id="naturalIDfact"
                       {...formik.getFieldProps('naturalIDfact')}/>
                       <ErrorMessage touched={formik.touched.naturalIDfact} errors={formik.errors.naturalIDfact}/>
                   </li>
                   <li>
-                      <label htmlFor="juridicoIDfact">ID (Cliente Juridico):</label>
+                      <label htmlFor="juridicoIDfact">ID del pedido (Cliente Juridico):</label>
                       <input type="text" id="juridicoIDfact"
                       {...formik.getFieldProps('juridicoIDfact')}/>
                       <ErrorMessage touched={formik.touched.juridicoIDfact} errors={formik.errors.juridicoIDfact}/>
                   </li>
                   <li className="Button">
-                      <Button type={"submit"} variant="contained" color={"success"} disabled={!(formik.isValid && formik.dirty)}>Crear</Button>
+                      <Button type={"submit"} variant="contained" color={"success"} disabled={!(formik.isValid && formik.dirty)}>Descargar orden de despacho</Button>
                   </li>
               </ul>
           </form>
