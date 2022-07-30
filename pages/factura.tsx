@@ -17,6 +17,7 @@ import Button from "@mui/material/Button";
 import UserProfile from "./userSession";
 import Axios from "axios";
 
+const soapRequest=require('easy-soap-request');
 
 export const getServerSideProps: GetServerSideProps = async () => {
     const feed = await prisma.lugar.findMany();
@@ -47,7 +48,7 @@ const Component: React.FC<Props<lugar>> = (props)=>
         onSubmit: values => {console.log(values);},
       });
 
-
+//esto se encarga de convertir y descargar a pdf
       async function handleSubmit(e){
         e.preventDefault();
         if(formik.values.juridicoIDfact === '')
@@ -56,17 +57,19 @@ const Component: React.FC<Props<lugar>> = (props)=>
                         formik.values.naturalIDfact = null;
                                 console.log(`juridicoID: ${formik.values.juridicoIDfact}`);
                                 console.log(`naturalID: ${formik.values.naturalIDfact}`);
-        Axios.post("http://localhost:5488/api/report",
-            {'template':{'name':'/Reportes Sweet UCAB/Factura/factura','recipe':'chrome-pdf'}  ,
-          'data':
-          {"juridicoid": juridicoIDfact,
-          "naturalid": naturalIDfact
-            }},
+
+     Axios.post("http://localhost:5488/api/report",
+            {'template':
+                {'name':'/Reportes Sweet UCAB/Factura/factura','recipe':'chrome-pdf'}  ,
+            'data':
+                  {"juridicoid": formik.values.juridicoIDfact,
+                  "naturalid": formik.values.naturalIDfact //DIOS MIO SE LOGRÓ
+                    }
+            },
             {
                 responseType: 'arraybuffer',
                 headers: {
                     'Content-Type': 'application/json',
-
                     'Accept': 'application/pdf'
                 }
             })
@@ -80,9 +83,9 @@ const Component: React.FC<Props<lugar>> = (props)=>
                 document.body.appendChild(link);
                 link.click();
                 link.parentNode.removeChild(link);
-            }).catch((error) => console.log(error));
-            console.log("Pasó toda verga");
-        //Router.back();
+            }).catch((error) => console.log("se dio este error:"+error));
+            console.log("Pasó YAY");
+        //Router.back();*/
       }
 
 
