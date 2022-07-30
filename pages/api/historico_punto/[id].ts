@@ -20,7 +20,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 h_id: Number(id)
             }
         });
-        res.json(response);
+
+        const ultimoPunto = await prisma.historico_punto.aggregate({
+            _max:{
+                h_id: true
+            }
+        })
+
+        const updateUltimoPunto = await prisma.historico_punto.update({
+            where:{
+                h_id: ultimoPunto._max.h_id
+            },
+            data:{
+                h_fecha_final: null,
+            }
+        })
+        res.json(updateUltimoPunto);
     }
     else if(req.method === "POST"){
         const response = await prisma.historico_punto.update({
