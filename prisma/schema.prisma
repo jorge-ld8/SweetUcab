@@ -600,6 +600,7 @@ model pago {
   fk_cheque             Int?
   fk_punto              Int?
   fk_transaccion_compra Int
+  p_fecha               DateTime?          @db.Date
   cheque                cheque?            @relation(fields: [fk_cheque], references: [c_id], onDelete: NoAction, onUpdate: NoAction, map: "c_pago_fk_cheque")
   efectivo              efectivo?          @relation(fields: [fk_efectivo], references: [e_id], onDelete: NoAction, onUpdate: NoAction, map: "c_pago_fk_efectivo")
   pagomovil             pagomovil?         @relation(fields: [fk_pagomovil], references: [p_id], onDelete: NoAction, onUpdate: NoAction, map: "c_pago_fk_pagomovil")
