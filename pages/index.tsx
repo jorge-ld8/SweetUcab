@@ -76,6 +76,12 @@ const Component: React.FC<Props<lugar>> = (props) => {
                 <Link href="/cliente_natural">CLIENTE NATURAL</Link>
               </div>
       </AccessControl>
+
+                  <AccessControl userPermissions={UserProfile.getRol()} allowedPermissions={["cliente_natural:read"]} mode={"all"}>
+                    <div>
+                      <Link href="/factura">FACTURA</Link>
+                    </div>
+            </AccessControl>
       <style jsx>{`
         div{
           margin: 0.6em;
