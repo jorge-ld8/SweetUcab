@@ -54,7 +54,17 @@ const Component: React.FC<Props<lugar>> = (props)=>
         onSubmit: values => {console.log(values);},
       });
 
+      //retorna la n ocurrencia de algo en un string
+      function nthIndex(str, pat, n){
+          var L= str.length, i= -1;
+          while(n-- && i++<L){
+              i= str.indexOf(pat, i);
+              if (i < 0) break;
+          }
+          return i;
+      };
 
+//TODO ESTO permite convertir el excel a un string con formato json
       function cambioFile(){
                             const input = document.getElementById('inputFileServer');
                             if(input.files && input.files[0]){
@@ -98,34 +108,38 @@ const Component: React.FC<Props<lugar>> = (props)=>
                                   console.log("catch :(")
                              }};
 
-
-function jsonToCsv(){const items = json3.items
-                     const replacer = (key, value) => value === null ? '' : value // specify how you want to handle null values here
-                     const header = Object.keys(items[0])
-                     const csv = [
-                       header.join(','), // header row first
-                       ...items.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','))
-                     ].join('\r\n')
-
-                     console.log(csv);};
-
-//esto se encarga de convertir y descargar a pdf
+//esto se encarga de subir los datos jejeje
       async function handleSubmit(e){
 
             const archivo=cambioFile();
             excelFileToJSON(archivo);
             var texto=document.getElementById("json-result").value; //this is what we call "cheesing it"
-                                                                    //o como decimos la gente cool: queseandolo
+            //texto es string                                       //o como decimos la gente cool: queseandolo
 
 
             console.log("excel:", archivo); //esto es lit el archivo.xmlx
-            console.log(texto);//esto es un JSON stringificado con los contenidos del .xmlx
+            console.log("jsontexto", texto); //esto es el string con el json
 
+            //SI ES MAS DE UNO, PROCESA SOLO EL PRIMERO :)
             if(counter>0){
-            console.log("jsontexto", JSON.parse(texto)); //esto es un objeto json con los contenidos del .xmlx
+            //i am so mad this works
+            //esto extrae los datos del string json :)
+            var empleado = texto.substring(texto.indexOf('"fk_empleado": ') + 15, texto.indexOf(","));
+            console.log("fk_empleado:"+empleado);
+            var fecha = texto.substring(texto.indexOf('"a_fecha": ') + 11, nthIndex(texto, ',', 2));
+                        console.log("fecha:"+fecha);
+            var horae = texto.substring(texto.indexOf('"a_hora_entrada": ') + 18, nthIndex(texto, ',', 3));
+                        console.log("h entrada:"+horae);
+            var horas = texto.substring(texto.indexOf('"a_hora_salida": ') + 17, texto.indexOf("}"));
+                                    console.log("h entrada:"+horas);
+
              const response = await fetch(`/api/excelemp`,{method: 'POST',
-                    body: superjson.stringify(JSON.parse(texto))
-                                        });
+                    body: superjson.stringify({fk_empleado: empleado,
+                                                a_fecha: fecha,
+                                                a_hora_salida: horas,
+                                                a_hora_entrada: horae
+                                                        })
+                                                      });
                      const data = await response.json();
                      console.log(data);
                      console.log(`${data}`);
