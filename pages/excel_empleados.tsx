@@ -108,23 +108,8 @@ const Component: React.FC<Props<lugar>> = (props)=>
                                   console.log("catch :(")
                              }};
 
-//esto se encarga de subir los datos jejeje
-      async function handleSubmit(e){
-
-            const archivo=cambioFile();
-            excelFileToJSON(archivo);
-            var texto=document.getElementById("json-result").value; //this is what we call "cheesing it"
-            //texto es string                                       //o como decimos la gente cool: queseandolo
-
-
-            console.log("excel:", archivo); //esto es lit el archivo.xmlx
-            console.log("jsontexto", texto); //esto es el string con el json
-
-            //SI ES MAS DE UNO, PROCESA SOLO EL PRIMERO :)
-            if(counter>0){
-            //i am so mad this works
-            //esto extrae los datos del string json :)
-            var empleado = texto.substring(texto.indexOf('"fk_empleado": ') + 15, texto.indexOf(","));
+async function subirABBDD(texto){
+var empleado = texto.substring(texto.indexOf('"fk_empleado": ') + 15, texto.indexOf(","));
             console.log("fk_empleado:"+empleado);
             var fecha = texto.substring(texto.indexOf('"a_fecha": ') + 11, nthIndex(texto, ',', 2));
                         console.log("fecha:"+fecha);
@@ -143,9 +128,41 @@ const Component: React.FC<Props<lugar>> = (props)=>
                      const data = await response.json();
                      console.log(data);
                      console.log(`${data}`);
+};
+
+//esto se encarga de subir los datos jejeje
+      async function handleSubmit(e){
+
+            const archivo=cambioFile();
+            excelFileToJSON(archivo);
+            var texto=document.getElementById("json-result").value; //this is what we call "cheesing it"
+            //texto es string                                       //o como decimos la gente cool: queseandolo
+
+
+            console.log("excel:", archivo); //esto es lit el archivo.xmlx
+            console.log("jsontexto", texto); //esto es el string con el json
+
+            //SI ES MAS DE UNO, PROCESA SOLO EL PRIMERO :)
+            if(counter>0){
+            //i am so mad this works
+            //esto extrae los datos del string json :)
+
+            if (texto.includes("},")){
+            console.log("entra a if");
+                while (texto.includes("},")){
+                subirABBDD(texto);
+                texto=texto.substring(texto.indexOf("},")+2);
+                console.log("texto acortado:",texto);
+                }
+            }
+
+
+            console.log("entra a else");
+            subirABBDD(texto);
             }
 
             counter++;
+            document.getElementById("descripcion").textContent="Documento cargado. Por favor confirme.";
             document.getElementById("boton").textContent="Confirmar";
 
         e.preventDefault();
@@ -187,7 +204,7 @@ const Component: React.FC<Props<lugar>> = (props)=>
     return (
         <Layout>
         <h3>CARGA DE ASISTENCIAS EMPLEADOS - EXCEL</h3>
-        <h4>Por favor, introduzca únicamente archivos .xlsx que sigan el formato correspondiente.</h4>
+        <h4 id="descripcion">Por favor, introduzca únicamente archivos .xlsx que sigan el formato correspondiente.</h4>
           <form  onSubmit={handleSubmit} >
               <ul>
               <li><input type="file" id="inputFileServer" accept=".xlsx"/>
