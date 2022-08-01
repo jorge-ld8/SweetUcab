@@ -19,7 +19,14 @@ import Axios from "axios";
 const soapRequest=require('easy-soap-request');
 
 export const getServerSideProps: GetServerSideProps = async () => {
-    const feed = await prisma.lugar.findMany();
+    const feed = await prisma.tienda.findMany(
+    {orderBy:{
+          t_id: 'asc',
+        },
+        select:{
+            t_id: true,
+            t_nombre: true,
+        }});
     return {
       props: {feed},
     }
@@ -47,24 +54,32 @@ const Component: React.FC<Props<lugar>> = (props)=>
           {
                         fechainicial: Yup.date().required("Obligatorio"),
                         fechafinal: Yup.date().required("Obligatorio"),
-                        tienda: Yup.number().min(0, "Numero debe ser positivo"),
           }
         ),
         onSubmit: values => {console.log(values);},
       });
 
-//esto se encarga de convertir y descargar a pdf
+//esto se encarga de convertir y renderizar
       async function handleSubmit(e){
         e.preventDefault();
+        var tienda=null;
         if(formik.values.fechainicial === '')
             formik.values.fechainicial = '07/20/2020';
             if(formik.values.fechafinal === '')
             formik.values.fechafinal = '07/30/2030';
-            if(formik.values.tienda === '')
-            formik.values.tienda = null;
+            if(formik.values.tienda === 'N/A')
+            {tienda = null;}
+            else{for(var a=0; a<=props.feed.length-1; a++){
+                        if (formik.values.tienda==props.feed[a].t_nombre){
+                                    console.log("existe la tienda");
+                                    console.log("prop:", props.feed[a].t_nombre);
+                                    tienda=props.feed[a].t_id;
+                                    }}}
                                 console.log(`fechainicial: ${formik.values.fechainicial}`);
                                 console.log(`fechafinal: ${formik.values.fechafinal}`);
-                                console.log(`tienda: ${formik.values.tienda}`);
+                                console.log(`tienda:`, tienda);
+
+
 
      Axios.post("http://localhost:5488/api/report",
             {'template':
@@ -72,7 +87,7 @@ const Component: React.FC<Props<lugar>> = (props)=>
             'data':
                   {"fechainicio": formik.values.fechainicial,
                   "fechafin": formik.values.fechafinal, //DIOS MIO SE LOGRÓ
-                  "tiendasolicitud": formik.values.tienda //recuerda q tienda puede ser null
+                  "tiendasolicitud": tienda //recuerda q tienda puede ser null
                     }
             },
             {
@@ -113,10 +128,8 @@ const Component: React.FC<Props<lugar>> = (props)=>
                   </li>
                   <li>
                        <label htmlFor="tienda">ID de la tienda (deje en blanco para ver reporte general):</label>
-                       <input type="text" id="tienda"
-                       {...formik.getFieldProps('tienda')}/>
-                       <ErrorMessage touched={formik.touched.tienda} errors={formik.errors.tienda}/>
-                 </li>
+                       <DropDownList content={props.feed} attValueName={"t_nombre"} objType={"tienda"} name={"tienda"} onChange={formik.handleChange} value={formik.values.tienda}/>
+                                       </li>
                   <li className="Button">
                       <Button type={"submit"} variant="contained" color={"success"} disabled={!(formik.isValid && formik.dirty)}>Enviar</Button>
                   </li>

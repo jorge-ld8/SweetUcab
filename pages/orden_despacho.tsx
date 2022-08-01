@@ -20,7 +20,16 @@ import Axios from "axios";
 const soapRequest=require('easy-soap-request');
 
 export const getServerSideProps: GetServerSideProps = async () => {
-    const feed = await prisma.lugar.findMany();
+    const feed = await prisma.transaccion_compra.findMany(
+    {orderBy:{
+              t_id: 'asc',
+            },
+            select:{
+                t_id: true,
+                fk_cliente_natural: true,
+                fk_cliente_juridico: true,
+            }}
+    );
     return {
       props: {feed},
     }
@@ -36,34 +45,43 @@ const Component: React.FC<Props<lugar>> = (props)=>
     console.log(UserProfile.getName());
     const formik = useFormik({
         initialValues:{
-          naturalIDfact: '',
-          juridicoIDfact: '',
+          transaccion: '',
         },
-        validationSchema: Yup.object(
-          {
-            naturalIDfact: Yup.string().max(30, 'Máximo 30 caracteres de longitud').nullable(),
-            juridicoIDfact: Yup.string().max(20, 'Maximo 20 caracteres de longitud').nullable(), //.required("Obligatorio"),
-          }
-        ),
         onSubmit: values => {console.log(values);},
       });
 
 //esto se encarga de convertir y descargar a pdf
       async function handleSubmit(e){
+      var juridicoid=0;
+      var naturalid=0;
         e.preventDefault();
-        if(formik.values.juridicoIDfact === '')
-            formik.values.juridicoIDfact = null;
-            if(formik.values.naturalIDfact === '')
-                        formik.values.naturalIDfact = null;
-                                console.log(`juridicoID: ${formik.values.juridicoIDfact}`);
-                                console.log(`naturalID: ${formik.values.naturalIDfact}`);
+        if (formik.values.transaccion=='N/A'){
+        document.getElementById("descripcion").textContent="Por favor seleccione un ID válido.";
+                 return;
+        }
 
-     Axios.post("http://localhost:5488/api/report",
+        for(var a=0; a<=props.feed.length-1; a++){
+        if (formik.values.transaccion==props.feed[a].t_id){
+        console.log("existe la transaccion");
+        console.log("prop:", props.feed[a].t_id);
+        if (props.feed[a].fk_cliente_juridico==null){
+              var juridicoid=null;
+              var naturalid=props.feed[a].fk_cliente_natural;
+        }
+        if (props.feed[a].fk_cliente_natural==null){
+                              var naturalid=null;
+                              var juridicoid=props.feed[a].fk_cliente_juridico;
+                        }
+         }}
+
+        console.log("natural:"+naturalid+",juridico:"+juridicoid);
+
+    Axios.post("http://localhost:5488/api/report",
             {'template':
                 {'name':'/Reportes Sweet UCAB/Orden Despacho/ordendespacho','recipe':'chrome-pdf'}  ,
             'data':
-                  {"juridicoid": formik.values.juridicoIDfact,
-                  "naturalid": formik.values.naturalIDfact //DIOS MIO SE LOGRÓ
+                  {"juridicoid": juridicoid,
+                  "naturalid": naturalid //DIOS MIO SE LOGRÓ
                     }
             },
             {
@@ -92,20 +110,14 @@ const Component: React.FC<Props<lugar>> = (props)=>
     return (
         <Layout>
         <h3>ORDEN DE DESPACHO</h3>
+        <h4 id="descripcion"></h4>
+
           <form  onSubmit={handleSubmit} >
               <ul>
                   <li>
-                      <label htmlFor="naturalIDfact">ID del pedido (Cliente Natural):</label>
-                      <input type="text" id="naturalIDfact"
-                      {...formik.getFieldProps('naturalIDfact')}/>
-                      <ErrorMessage touched={formik.touched.naturalIDfact} errors={formik.errors.naturalIDfact}/>
-                  </li>
-                  <li>
-                      <label htmlFor="juridicoIDfact">ID del pedido (Cliente Juridico):</label>
-                      <input type="text" id="juridicoIDfact"
-                      {...formik.getFieldProps('juridicoIDfact')}/>
-                      <ErrorMessage touched={formik.touched.juridicoIDfact} errors={formik.errors.juridicoIDfact}/>
-                  </li>
+                      <label htmlFor="tienda">ID de la transacción:</label>
+                      <DropDownList content={props.feed} attValueName={"t_id"} objType={"transaccion_compra"} name={"transaccion"} onChange={formik.handleChange} value={formik.values.transaccion}/>
+                     </li>
                   <li className="Button">
                       <Button type={"submit"} variant="contained" color={"success"} disabled={!(formik.isValid && formik.dirty)}>Descargar orden de despacho</Button>
                   </li>
