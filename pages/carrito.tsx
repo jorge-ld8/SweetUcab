@@ -74,6 +74,24 @@ const ProductoPost: React.FC<ProductoProps> = (props) => {
     });
     async function handleSubmit(e) {
         e.preventDefault();
+        //registrar pago
+        let username = JSON.parse(window.localStorage.getItem("username"));
+        const pago = await fetch(`/api/pago`,{method: 'POST',         
+        body: JSON.stringify({metodos: [formVal1, formVal2, formVal3],
+                              puntoVal: puntoVal,
+                              carrito: carrito,
+                              tienda: 1,
+                              username: username,
+                              en_linea: true })
+        }).then(response =>{ 
+          if(response.ok)
+            return response.json()
+          }
+        ).catch(e => console.error(e));
+        console.log(pago);
+        alert("PAGO EXITOSO");
+        // window.localStorage.setItem("carrito", JSON.stringify([]));
+        //registrar comprar
         Router.back();
     }
 
@@ -152,12 +170,14 @@ const ProductoPost: React.FC<ProductoProps> = (props) => {
 
     function handleMovementPunto(e){
         e.preventDefault();
+        let res
         if(montoRestante < 0){
             let valor = montoTotal - formVal1.monto - formVal2.monto - formVal3.monto;
-            setPuntoVal(Number((valor / props.ultimoPuntoValor).toFixed(2)));
+            setPuntoVal((res = Number((valor / props.ultimoPuntoValor).toFixed(5))) > 0 ?  res : 0);
         }
     }
-
+    console.log(`Monto Restante: ${montoRestante}`);
+    
     return (
         <main>
             <div className="stylish">
@@ -167,7 +187,8 @@ const ProductoPost: React.FC<ProductoProps> = (props) => {
                     <div id="pago">
                         <Button variant="contained" id="pago" sx={{
                             bgcolor: '#E02464',
-                        }} onClick={()=>{Router.push("/pago")}}>
+                        }} onClick={handleSubmit}
+                        disabled={puntoVal>cantPuntos || Math.round(montoRestante) !== 0}>
                             PAGAR
                         </Button>
                     </div>

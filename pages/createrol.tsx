@@ -60,8 +60,7 @@ const NewRole: React.FC<Props> = (props)=>
           if(response.ok)
             return response.json()
           }
-        ).catch(e => console.error(e))
-        console.log(response);
+        ).catch(e => console.error(e));
         Router.back();
       }
   

@@ -94,9 +94,9 @@ model asistencia_empleado {
   a_justificacion_falta String?   @db.VarChar(50)
   a_fecha               DateTime  @db.Date
   a_asistencia          Boolean
-  fk_empleado           Int       @unique
   a_hora_entrada        DateTime? @db.Time(6)
   a_hora_salida         DateTime? @db.Time(6)
+  fk_empleado           Int
   empleado              empleado  @relation(fields: [fk_empleado], references: [e_id], onDelete: Cascade, onUpdate: NoAction, map: "c_asistencia_empleado_fk_empleado")
 
   @@id([a_id, fk_empleado], map: "c_asistencia_empleado_pk")
@@ -134,16 +134,16 @@ model departamento {
 }
 
 model empleado {
-  e_id                Int                  @id(map: "c_empleado_id") @default(autoincrement())
-  e_nombre1           String               @db.VarChar(20)
-  e_nombre2           String?              @db.VarChar(20)
-  e_apellido1         String               @db.VarChar(20)
-  e_apellido2         String?              @db.VarChar(20)
-  e_cedula            String               @unique @db.VarChar(10)
+  e_id                Int                   @id(map: "c_empleado_id") @default(autoincrement())
+  e_nombre1           String                @db.VarChar(20)
+  e_nombre2           String?               @db.VarChar(20)
+  e_apellido1         String                @db.VarChar(20)
+  e_apellido2         String?               @db.VarChar(20)
+  e_cedula            String                @unique @db.VarChar(10)
   e_salario           Int
   fk_departamento     Int?
-  departamento        departamento?        @relation(fields: [fk_departamento], references: [d_id], onDelete: Cascade, onUpdate: NoAction, map: "c_empleado_fk_departamento")
-  asistencia_empleado asistencia_empleado?
+  departamento        departamento?         @relation(fields: [fk_departamento], references: [d_id], onDelete: Cascade, onUpdate: NoAction, map: "c_empleado_fk_departamento")
+  asistencia_empleado asistencia_empleado[]
   beneficio_empleado  beneficio_empleado[]
   horario_empleado    horario_empleado[]
   producto_anaquel    producto_anaquel[]

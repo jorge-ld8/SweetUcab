@@ -60,6 +60,7 @@ const Component: React.FC<Props<lugar>> = (props)=>
             return response.json()
           }
         ).catch(e => console.error(e))
+
         console.log(response);
         Router.back();
       }
