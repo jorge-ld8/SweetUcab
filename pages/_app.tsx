@@ -7,17 +7,22 @@ import Layout from "../components/Layout";
 import NavBar from "../components/NavBar";
 
 const App = ({ Component, pageProps }: AppProps) => {
-  const [appState, setappState] = useState([]);
+  const [appPermisos, setappPermisos] = useState([]);
+  const [username, setusername] = useState("")
 
   function handleStateChange(appState){
-    setappState(appState);
+    setappPermisos(appState);
+  }
+
+  function handleUserChange(user){
+    setusername(user);
   }
   
   return (
     <>
       <Layout>
-        <Header/>
-        <NavBar roles={appState ?? []} handleStateChange={handleStateChange}/>
+        <Header user={username} handleUserChange={handleUserChange}/>
+        <NavBar roles={appPermisos ?? []} handleStateChange={handleStateChange}/>
         <Component {...pageProps}/>
         <Footer/>
       </Layout>
