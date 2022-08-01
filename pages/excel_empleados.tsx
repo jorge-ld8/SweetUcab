@@ -120,11 +120,10 @@ async function subirABBDD(texto){//ojo con ci_empleado -> fk empleado
 var empid=null;
 var empleado = texto.substring(texto.indexOf('"ci_empleado": ') + 15, texto.indexOf(","));
             console.log("ci_empleado:"+empleado);
-
             for(var a=0; a<=props.empleados.length-1; a++){
-            console.log("prop:", props.empleados[a].e_cedula);
             if (Number(empleado)==props.empleados[a].e_cedula){
                         console.log("existe el empleado");
+                        console.log("prop:", props.empleados[a].e_cedula);
                         empid=props.empleados[a].e_id;
                         var fecha = texto.substring(texto.indexOf('"a_fecha": ') + 11, nthIndex(texto, ',', 2));
                         console.log("fecha:"+fecha);
@@ -161,11 +160,11 @@ var empleado = texto.substring(texto.indexOf('"ci_empleado": ') + 15, texto.inde
             console.log("excel:", archivo); //esto es lit el archivo.xmlx
             console.log("jsontexto", texto); //esto es el string con el json
             console.log("props:", props.empleados.length);
-            //SI ES MAS DE UNO, PROCESA SOLO EL PRIMERO :)
+            //este counter es necesario por un bug todo loco del json shrug :)
             if(counter>0){
+
             //i am so mad this works
             //esto extrae los datos del string json :)
-
             if (texto.includes("},")){
             console.log("entra a if");
                 while (texto.includes("},")){
@@ -174,8 +173,6 @@ var empleado = texto.substring(texto.indexOf('"ci_empleado": ') + 15, texto.inde
                 console.log("texto acortado:",texto);
                 }
             }
-
-
             console.log("entra a else");
             subirABBDD(texto);
             Router.back();
