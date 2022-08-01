@@ -83,12 +83,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                                             mode: 'insensitive',
                                         }
                                     }
-                                    // tarjeta:{
-                                    //     t_nombre:{
-                                    //         contains: metodo.tipo,
-                                    //         mode: "insensitive"
-                                    //     }
-                                    // }
                                 },
                             ]   
                         }

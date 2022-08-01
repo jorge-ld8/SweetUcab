@@ -93,12 +93,7 @@ model asistencia_empleado {
   a_comentario          String?   @db.VarChar(50)
   a_justificacion_falta String?   @db.VarChar(50)
   a_fecha               DateTime  @db.Date
-<<<<<<< HEAD
   a_asistencia          Boolean
-=======
-  a_asistencia          Boolean   @default(true)
-  fk_empleado           Int       @unique
->>>>>>> 5e1722b42cc7f2cfe80f5576635be23fb51e4de9
   a_hora_entrada        DateTime? @db.Time(6)
   a_hora_salida         DateTime? @db.Time(6)
   fk_empleado           Int
