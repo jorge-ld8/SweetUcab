@@ -23,14 +23,24 @@ import { read, writeFileXLSX } from "./xlsx.mjs";
 const soapRequest=require('easy-soap-request');
 
 export const getServerSideProps: GetServerSideProps = async () => {
-    const feed = await prisma.lugar.findMany();
-    return {
-      props: {feed},
+    const feed = await prisma.usuario.findMany();
+    const empleados = await prisma.empleado.findMany(
+    {
+                select: {
+                    e_id: true,
+                    e_cedula:true
+                }
+  });
+  return {
+        props: {
+                feed: feed,
+                empleados: empleados},
+      };
     }
-  }
 
 type Props<ArbType extends Object> = {
-    feed: ArbType[]
+    feed: ArbType[],
+    empleados: ArbType[]
 }
 
 const counter=0;
@@ -44,8 +54,6 @@ const Component: React.FC<Props<lugar>> = (props)=>
     console.log(UserProfile.getName());
     const formik = useFormik({
         initialValues:{
-          fechainicial: '',
-          fechafinal: '',
         },
         validationSchema: Yup.object(
           {
@@ -108,10 +116,17 @@ const Component: React.FC<Props<lugar>> = (props)=>
                                   console.log("catch :(")
                              }};
 
-async function subirABBDD(texto){
-var empleado = texto.substring(texto.indexOf('"fk_empleado": ') + 15, texto.indexOf(","));
-            console.log("fk_empleado:"+empleado);
-            var fecha = texto.substring(texto.indexOf('"a_fecha": ') + 11, nthIndex(texto, ',', 2));
+async function subirABBDD(texto){//ojo con ci_empleado -> fk empleado
+var empid=null;
+var empleado = texto.substring(texto.indexOf('"ci_empleado": ') + 15, texto.indexOf(","));
+            console.log("ci_empleado:"+empleado);
+
+            for(var a=0; a<=props.empleados.length-1; a++){
+            console.log("prop:", props.empleados[a].e_cedula);
+            if (Number(empleado)==props.empleados[a].e_cedula){
+                        console.log("existe el empleado");
+                        empid=props.empleados[a].e_id;
+                        var fecha = texto.substring(texto.indexOf('"a_fecha": ') + 11, nthIndex(texto, ',', 2));
                         console.log("fecha:"+fecha);
             var horae = texto.substring(texto.indexOf('"a_hora_entrada": ') + 18, nthIndex(texto, ',', 3));
                         console.log("h entrada:"+horae);
@@ -119,7 +134,7 @@ var empleado = texto.substring(texto.indexOf('"fk_empleado": ') + 15, texto.inde
                                     console.log("h entrada:"+horas);
 
              const response = await fetch(`/api/excelemp`,{method: 'POST',
-                    body: superjson.stringify({fk_empleado: empleado,
+                    body: superjson.stringify({fk_empleado: empid,
                                                 a_fecha: fecha,
                                                 a_hora_salida: horas,
                                                 a_hora_entrada: horae
@@ -128,6 +143,10 @@ var empleado = texto.substring(texto.indexOf('"fk_empleado": ') + 15, texto.inde
                      const data = await response.json();
                      console.log(data);
                      console.log(`${data}`);
+                        break;}
+
+            }
+
 };
 
 //esto se encarga de subir los datos jejeje
@@ -141,7 +160,7 @@ var empleado = texto.substring(texto.indexOf('"fk_empleado": ') + 15, texto.inde
 
             console.log("excel:", archivo); //esto es lit el archivo.xmlx
             console.log("jsontexto", texto); //esto es el string con el json
-
+            console.log("props:", props.empleados.length);
             //SI ES MAS DE UNO, PROCESA SOLO EL PRIMERO :)
             if(counter>0){
             //i am so mad this works
@@ -159,6 +178,7 @@ var empleado = texto.substring(texto.indexOf('"fk_empleado": ') + 15, texto.inde
 
             console.log("entra a else");
             subirABBDD(texto);
+            Router.back();
             }
 
             counter++;
@@ -167,37 +187,6 @@ var empleado = texto.substring(texto.indexOf('"fk_empleado": ') + 15, texto.inde
 
         e.preventDefault();
 
-
-
-     /*Axios.post("http://localhost:5488/api/report",
-            {'template':
-                {'name':'/Reportes Sweet UCAB/Lista de empleados por periodo de tiempo/empleados','recipe':'chrome-pdf'}  ,
-                            'data':
-                  {"fechainicio": formik.values.fechainicial,
-                  "fechafin": formik.values.fechafinal //DIOS MIO SE LOGRÓ }
-            }},
-            {
-                responseType: 'arraybuffer',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/pdf'
-                }
-            })
-                .then((res) => {
-                                const contentType = res.headers["content-type"];
-                                const blob = new Blob([res.data], {contentType} );
-                                const url = window.URL.createObjectURL(new Blob([blob]));
-                                const link = document.createElement('a');
-                                link.href = url;
-
-                                link.setAttribute('download', 'reporte-empleados.pdf'); //or any other extension
-                                document.body.appendChild(link);
-                                console.log("link: " +link);
-                                link.click();
-                                link.parentNode.removeChild(link);
-                            }).catch((error) => console.log("se dio este error:"+error));
-            console.log("Pasó YAY");
-        //Router.back();*/
       }
 
 
