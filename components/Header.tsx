@@ -1,15 +1,17 @@
 import React, { useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/router";
+import Router from "next/router";
 import styles from '../components/crud.module.css';
+import AccessControl from "./AcesssControl";
 
 type headerProps = {
   user: string
   handleUserChange: Function
+  roles: string[]
 }
 
-const Header: React.FC<headerProps> = ({user, handleUserChange}) => {
+const Header: React.FC<headerProps> = ({user, handleUserChange, roles}) => {
   var classNames = require('classnames');
 
   useEffect(() => {
@@ -18,23 +20,22 @@ const Header: React.FC<headerProps> = ({user, handleUserChange}) => {
       handleUserChange(user2);
     return () => {}
   },)
-
+  
   return (
     <header>
       <Link href="/"><Image src="/images/logoSweetUcab.png" alt="SweetUcab logo" className={classNames("imagenLogo", styles.cursor)} width={300} height={130} /></Link>
       <ul className="icons">
           <li>
           <div>
-              <Link href={user ? `../perfilActual/${user}` : "../inicio_de_sesion"}>
-                <Image src="/images/iconoPersona.png" alt="Icono Persona" height={60} width={70} className={styles.cursor}/>
-              </Link>
+                <Image src="/images/iconoPersona.png" alt="Icono Persona" height={60} width={70} className={styles.cursor}
+                onClick={()=>{Router.push(user ? `../perfilActual/${user}` : "../inicio_de_sesion")}}/>
           </div>
           </li>
           <li>
           <div className="shoppingCart">
-          <Link href="../carrito">
-            <Image src="/images/iconoCarrito.png" alt="Icono Carrito" height={60} width={70} className={styles.cursor}/>
-          </Link>
+            <AccessControl userPermissions={roles} allowedPermissions={["comprar"]} mode={"all"} 
+            children={<Image src="/images/iconoCarrito.png" alt="Icono Carrito" height={60} width={70} className={styles.cursor} 
+                      onClick={()=>{Router.push(`../carrito/${user}`)}}/>}/>
           </div>
           </li>
           {false ? <li>

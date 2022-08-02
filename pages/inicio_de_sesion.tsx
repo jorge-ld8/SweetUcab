@@ -109,11 +109,7 @@ const Component: React.FC<inicio_de_sesionProps> = (props)=>
             return response.json()
           }
         ).catch(e => console.error(e));
-        console.log(cantPuntos);
         window.localStorage.setItem("puntos", JSON.stringify(cantPuntos.c_cantidad_puntos));
-        UserProfile.setRol(rolUsuarioPermisos);
-        UserProfile.setName(formik.values.username);
-        UserProfile.initializeProductosCarrito();
         Router.push("/");
       }
       
