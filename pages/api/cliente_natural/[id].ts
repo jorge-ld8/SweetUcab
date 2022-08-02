@@ -30,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         let cliente_natural = await prisma.cliente_natural.update({
             data: {
-                c_rif: superjson.parse(req.body)['rif'],
+                c_rif: JSON.parse(req.body)['rif'],
                 c_cantidad_puntos: Number(JSON.parse(req.body)['cantidad_puntos']),
                 c_nombre1: JSON.parse(req.body)['nombre1'],
                 c_nombre2:  JSON.parse(req.body)['nombre2'],

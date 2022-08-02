@@ -83,6 +83,7 @@ const Component: React.FC<Props> = (props)=>
                     apellido1: formik.values.apellido1,
                     apellido2: formik.values.apellido2,
                     cedula: formik.values.cedula,
+                    cantidad_puntos: formik.values.cantidad_puntos,
                     direccion: formik.values.direccion,
                     tienda: formik.values.tienda})
         }).then(response =>{ 
