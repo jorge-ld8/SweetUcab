@@ -66,11 +66,11 @@ const Component: React.FC<Props<lugar>> = (props)=>
         console.log("prop:", props.feed[a].t_id);
         if (props.feed[a].fk_cliente_juridico==null){
               var juridicoid=null;
-              var naturalid=props.feed[a].fk_cliente_natural;
+              var naturalid=formik.values.transaccion;
         }
         if (props.feed[a].fk_cliente_natural==null){
                               var naturalid=null;
-                              var juridicoid=props.feed[a].fk_cliente_juridico;
+                              var juridicoid=formik.values.transaccion;
                         }
          }}
 
