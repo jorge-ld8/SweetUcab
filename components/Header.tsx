@@ -25,7 +25,7 @@ const Header: React.FC<headerProps> = ({user, handleUserChange}) => {
       <ul className="icons">
           <li>
           <div>
-              <Link href={user ? `perfilActual/${user}` : "../inicio_de_sesion"}>
+              <Link href={user ? `../perfilActual/${user}` : "../inicio_de_sesion"}>
                 <Image src="/images/iconoPersona.png" alt="Icono Persona" height={60} width={70} className={styles.cursor}/>
               </Link>
           </div>

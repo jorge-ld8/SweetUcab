@@ -1,37 +1,30 @@
 import { producto_anaquel } from "@prisma/client";
 import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from '../../lib/prisma';
+import superjson from "superjson"; 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse){
-    let response = null, relPresente = JSON.parse(req.body)['relacion'];
+    let response = null;
     let transaccion_compra = null;
-    let montoTotal = 0;
-    for(let prodCant of JSON.parse(req.body)['prods']){
-        montoTotal += prodCant[1] * prodCant[0].p_precio_actual; //cantidad por precio 
-    }
-
-    let en_linea; //variable que determina si la compra fue en linea o no (fisica)
     if(req.method === "POST"){
-        if(JSON.parse(req.body)['en_linea']){
-            en_linea = true;
+        let montoTotal = 0;
+        for(let prodCant of JSON.parse(req.body)['prods']){
+            montoTotal +=  prodCant[1] * prodCant[0].p_precio_actual; //cantidad por precio
         }
-        else{
-            en_linea = false
-        }
-        
+    
         //crear transaccion compra
         transaccion_compra = await prisma.transaccion_compra.create({
             data:{
-                t_total_compra: montoTotal,
-                t_en_linea: en_linea,
+                t_total_compra:  montoTotal,
+                t_en_linea: Boolean(JSON.parse(req.body)['en_linea']),
                 t_fecha_creacion: new Date(),
-                fk_tienda: Number(JSON.parse(req.body))['tienda'],
-                fk_cliente_juridico: JSON.parse(req.body)['cliente_juridico'],
-                fk_cliente_natural: JSON.parse(req.body)['cliente_natural']
+                fk_tienda: JSON.parse(req.body)['tienda'],
+                fk_cliente_juridico: JSON.parse(req.body)['cliente_juridico'] ?? null,
+                fk_cliente_natural: JSON.parse(req.body)['cliente_natural'] ?? null,
             }
         })
 
-        //agarrar los productos pasados y registrar cada uno de ellos
+        // agarrar los productos pasados y registrar cada uno de ellos
         for(let prodCant of JSON.parse(req.body)['prods']){
             
             //subconsulta en la que se seleccionan todos los productos anaqueles que tengan ese producto y con la cantidad que se quiere
@@ -63,50 +56,50 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 },
             });
 
-            // //buscar todos los almacenes, todas las zona_pasillo y todos los anaqueles en los que este el producto
-            // let almacenList = await prisma.almacen.findMany({
-            // where:{
-            //     fk_tienda: Number(JSON.parse(req.body)['tienda']),
-            // },
-            // select: {
-            //         pasillo:{
-            //             select:{
-            //                 zona_pasillo: {
-            //                     select: {
-            //                         anaquel: {
-            //                             select:{
-            //                                 producto_anaquel: {
-            //                                     where:{
-            //                                         fk_producto: prodCant[0].p_id     
-            //                                     }
-            //                                 }
-            //                             }
-            //                         }
-            //                     }
-            //                 }
-            //             }
-            //         }
-            //     },
-            // });
+        //     // //buscar todos los almacenes, todas las zona_pasillo y todos los anaqueles en los que este el producto
+        //     // let almacenList = await prisma.almacen.findMany({
+        //     // where:{
+        //     //     fk_tienda: Number(JSON.parse(req.body)['tienda']),
+        //     // },
+        //     // select: {
+        //     //         pasillo:{
+        //     //             select:{
+        //     //                 zona_pasillo: {
+        //     //                     select: {
+        //     //                         anaquel: {
+        //     //                             select:{
+        //     //                                 producto_anaquel: {
+        //     //                                     where:{
+        //     //                                         fk_producto: prodCant[0].p_id     
+        //     //                                     }
+        //     //                                 }
+        //     //                             }
+        //     //                         }
+        //     //                     }
+        //     //                 }
+        //     //             }
+        //     //         }
+        //     //     },
+        //     // });
 
 
-            // //Apenas se consiga un producto_anaquel cuya cantidad sea suficiente para registrar la compra se toma
-            // outerLoop: for(let almacen of almacenList){
-            //     for(let pasillo of almacen.pasillo){
-            //         for(let zona_pasillo of pasillo.zona_pasillo){
-            //             for(let anaquel of zona_pasillo.anaquel){
-            //                 for(let p_anaquel of anaquel.producto_anaquel){
-            //                     if(p_anaquel.p_cantidad >= prodCant[1]){
-            //                         productoAnaquelActual = p_anaquel
-            //                         break outerLoop
-            //                     }
-            //                 }
-            //             }
-            //         }
-            //     }
-            // }
+        //     // //Apenas se consiga un producto_anaquel cuya cantidad sea suficiente para registrar la compra se toma
+        //     // outerLoop: for(let almacen of almacenList){
+        //     //     for(let pasillo of almacen.pasillo){
+        //     //         for(let zona_pasillo of pasillo.zona_pasillo){
+        //     //             for(let anaquel of zona_pasillo.anaquel){
+        //     //                 for(let p_anaquel of anaquel.producto_anaquel){
+        //     //                     if(p_anaquel.p_cantidad >= prodCant[1]){
+        //     //                         productoAnaquelActual = p_anaquel
+        //     //                         break outerLoop
+        //     //                     }
+        //     //                 }
+        //     //             }
+        //     //         }
+        //     //     }
+        //     // }
 
-            // registrar cada una de las compras de producto
+           // registrar cada una de las compras de producto
             if(productoAnaquelActual){
                 let newCompra = await prisma.compra.create({
                     data:{

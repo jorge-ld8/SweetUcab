@@ -197,7 +197,7 @@ model ingrediente_producto {
 
 model oferta {
   o_id                   Int       @id(map: "c_oferta_id") @default(autoincrement())
-  o_descripcion          String?   @db.VarChar(30)
+  o_descripcion          String?   @db.VarChar(50)
   o_porcentaje_descuento Int
   o_fecha_inicio         DateTime  @db.Date
   o_fecha_fin            DateTime  @db.Date
@@ -306,7 +306,7 @@ model anaquel {
 model cliente_juridico {
   c_id                                    Int                   @id(map: "c_cliente_juridico_id") @default(autoincrement())
   c_rif                                   String                @unique @db.VarChar(10)
-  c_cantidad_puntos                       Int
+  c_cantidad_puntos                       Decimal               @db.Decimal(10, 2)
   c_codigo_registro                       String                @unique @db.Char(11)
   c_razon_social                          String                @db.VarChar(30)
   c_denom_comercial                       String                @db.VarChar(30)
@@ -331,7 +331,7 @@ model cliente_juridico {
 model cliente_natural {
   c_id                Int                   @id(map: "c_cliente_natural_id") @default(autoincrement())
   c_rif               String                @unique @db.VarChar(10)
-  c_cantidad_puntos   Int
+  c_cantidad_puntos   Decimal               @db.Decimal(10, 2)
   c_codigo_registro   String                @unique @db.Char(11)
   c_nombre1           String                @db.VarChar(20)
   c_nombre2           String?               @db.VarChar(20)

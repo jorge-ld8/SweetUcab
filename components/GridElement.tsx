@@ -5,6 +5,8 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import ButtonBase from '@mui/material/ButtonBase';
 import Router from 'next/router';
+import Image from 'next/image';
+import styles from '../components/crud.module.css';
 
 const Img = styled('img')({
   margin: 'auto',

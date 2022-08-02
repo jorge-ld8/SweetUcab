@@ -8,6 +8,7 @@ import Head from "next/head"
 import Link from "next/link";
 import Crud from "../components/Crud";
 import { usuario } from "@prisma/client";
+import superjson from "superjson";
 
 export const getStaticProps: GetStaticProps = async () => {
   const feed = await prisma.cliente_natural.findMany(
@@ -30,7 +31,7 @@ export const getStaticProps: GetStaticProps = async () => {
    },
   );
   return {
-    props: { feed },
+    props: { feed: superjson.parse(superjson.stringify(feed)) },
     revalidate: 10
   }
 }

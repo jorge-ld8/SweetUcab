@@ -3,7 +3,7 @@ import { GetServerSideProps } from "next"
 import Layout from "../components/Layout"
 import Image from "next/image";
 import prisma from '../lib/prisma';
-import { historico_punto, imagen_producto, producto } from "@prisma/client"
+import { historico_punto, imagen_producto, producto, transaccion_compra, pago } from "@prisma/client"
 import { imageConfigDefault } from "next/dist/server/image-config";
 import Button from "@mui/material/Button";
 import * as Yup from 'yup';
@@ -16,6 +16,7 @@ import { GetStaticProps } from "next";
 import { Delete } from "@mui/icons-material";
 import CarritoIndex from "../components/CarritoIndex";
 import superjson from "superjson";
+import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 
 const Img = styled('img')({
     margin: 'auto',
@@ -44,7 +45,7 @@ type ProductoProps = {
 
 const ProductoPost: React.FC<ProductoProps> = (props) => {
     const [carrito, setCarrito] = useState([]);
-    const [puntos, setPuntos] = useState("0");
+    const [puntos, setPuntos] = useState(0);
     const [formVal1, setformVal1] = useState({tipo:'', monto: 0});
     const [formVal2, setformVal2] = useState({tipo:'', monto: 0});
     const [formVal3, setformVal3] = useState({tipo:'', monto: 0});
@@ -52,14 +53,12 @@ const ProductoPost: React.FC<ProductoProps> = (props) => {
 
     let cantPuntos; 
     useEffect(() => {
-        setPuntos(window.localStorage.getItem("puntos"));
+        setPuntos(Number(JSON.parse(window.localStorage.getItem("puntos"))));
     }, [])
     
     function handleStateChange(newState){
         setCarrito(newState);
     }
-    
-    let monto1;
 
     const formik = useFormik({
         initialValues: {
@@ -76,10 +75,11 @@ const ProductoPost: React.FC<ProductoProps> = (props) => {
         e.preventDefault();
         //registrar pago
         let username = JSON.parse(window.localStorage.getItem("username"));
-        const pago = await fetch(`/api/pago`,{method: 'POST',         
+
+        const pagos:pago[] = await fetch(`/api/pago`,{method: 'POST',         
         body: JSON.stringify({metodos: [formVal1, formVal2, formVal3],
-                              puntoVal: puntoVal,
-                              carrito: carrito,
+                              puntoVal: String(puntoVal),
+                              carrito: JSON.parse(localStorage.getItem("carrito")),
                               tienda: 1,
                               username: username,
                               en_linea: true })
@@ -88,11 +88,33 @@ const ProductoPost: React.FC<ProductoProps> = (props) => {
             return response.json()
           }
         ).catch(e => console.error(e));
-        console.log(pago);
+        
+        for(let pago of pagos){
+            if(pago['fk_punto']){
+                localStorage.setItem("puntos", JSON.stringify(Number(JSON.parse(localStorage.getItem("puntos"))) - Number(pago.p_monto_pago) / props.ultimoPuntoValor));
+                 break
+            }
+        }
+        //iterar sobre el array de pagos y si hay alguno con el nombre fk_punto descontar esa cnatidad de puntos a localStorage
+
+        // const transaccionCompra:transaccion_compra = await fetch(`/api/transaccion_compra`,{method: 'POST',         
+        // body: JSON.stringify({en_linea: true,
+        //                       tienda: 1, 
+        //                     //   prods: JSON.parse(localStorage.getItem("carrito"))
+        //                       prods: JSON.parse(localStorage.getItem("carrito")),
+        //                       cliente_juridico: 1,
+        //                       cliente_natural: null})}).then(response =>{ 
+        //                           if(response.ok)
+        //                             return response.json()
+        //                           }
+        //                         ).catch(e => console.error(e));
+        //                       ;
+        console.log(pagos);
+        // console.log(transaccionCompra);
         alert("PAGO EXITOSO");
         // window.localStorage.setItem("carrito", JSON.stringify([]));
         //registrar comprar
-        Router.back();
+        // Router.back();
     }
 
     const metodosPago: string[] = ["cheque", "efectivo", "pagomovil", "paypal", "punto", "tarjeta", "zelle"];
