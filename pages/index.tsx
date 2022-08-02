@@ -45,6 +45,7 @@ const Component: React.FC<Props<lugar>> = (props) => {
           <MenuIndex handleStateChange={handleStateChange} roles={roles}></MenuIndex>
         <style jsx>{`
           div{
+            color: pink;
             margin: 0.6em;
             font-size: 1.3rem;
           }

@@ -24,7 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     else if(req.method === "POST"){
         let tienda = await prisma.tienda.findFirst({
             where:{
-                t_nombre: JSON.parse(req.body)['tienda'],
+                t_id: JSON.parse(req.body)['tienda'],
             }
         });
 
