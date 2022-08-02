@@ -47,30 +47,12 @@ const Component: React.FC<Props> = (props)=>
         },
         validationSchema: Yup.object(
           {
-            rif: Yup.string().required("Obligatorio").matches(/^[VJEPG]{1}-[0-9]{8}$/, "RIF no válido")
-            .test("uniqueValidation", "No es unico", 
-            function(value){
-                for(let p of props.c_naturales){
-                    if(p.c_rif === value)
-                        return false;
-                }
-                return true;
-               })
-            ,
+            rif: Yup.string().required("Obligatorio").matches(/^[VJEPG]{1}-[0-9]{8}$/, "RIF no válido"),
             nombre1: Yup.string().required("Obligatorio").max(20,"Máximo 20 caracteres"),
             nombre2: Yup.string().max(20,"Máximo 20 caracteres"),
             apellido1: Yup.string().required("Obligatorio").max(20,"Máximo 20 caracteres"),
             apellido2: Yup.string().max(20,"Máximo 20 caracteres"),
-            cedula: Yup.string().max(10,"Maximo 10 caracereres")
-            .test("uniqueValidation", "No es unico", 
-            function(value){
-                for(let p of props.c_naturales){
-                    if(p.c_cedula === value)
-                        return false;
-                }
-                return true;
-               })
-            ,
+            cedula: Yup.string().max(10,"Maximo 10 caracereres"),
             direccion: Yup.string().required("Obligatorio").max(50, "Máximo 50 caraceres"),
             tienda: Yup.string().required("Obligatorio"),
             cantidad_puntos: Yup.number().min(0, "Minimo 0 puntos")

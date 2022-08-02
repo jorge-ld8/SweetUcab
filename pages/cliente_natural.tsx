@@ -56,7 +56,7 @@ const Blog: React.FC<Props<usuario>> = (props) => {
   return (
     <main>
       <Crud headers={["ID", "RIF", "Primer Nombre","Segundo Nombre", "Primer Apellido","Segundo Apellido",
-      "Dirección", "Cédula", "Cantidad de puntos", "Código de registro",
+      "Dirección", "Cédula", "Puntos", "Código de registro",
       "Código de tienda registro"]} content={props.feed} name={'cliente_natural'} stateChanger={handleStateChange}/>
     </main>
   )
