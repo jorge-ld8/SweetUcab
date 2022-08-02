@@ -55,50 +55,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     ],
                 },
             });
-
-        //     // //buscar todos los almacenes, todas las zona_pasillo y todos los anaqueles en los que este el producto
-        //     // let almacenList = await prisma.almacen.findMany({
-        //     // where:{
-        //     //     fk_tienda: Number(JSON.parse(req.body)['tienda']),
-        //     // },
-        //     // select: {
-        //     //         pasillo:{
-        //     //             select:{
-        //     //                 zona_pasillo: {
-        //     //                     select: {
-        //     //                         anaquel: {
-        //     //                             select:{
-        //     //                                 producto_anaquel: {
-        //     //                                     where:{
-        //     //                                         fk_producto: prodCant[0].p_id     
-        //     //                                     }
-        //     //                                 }
-        //     //                             }
-        //     //                         }
-        //     //                     }
-        //     //                 }
-        //     //             }
-        //     //         }
-        //     //     },
-        //     // });
-
-
-        //     // //Apenas se consiga un producto_anaquel cuya cantidad sea suficiente para registrar la compra se toma
-        //     // outerLoop: for(let almacen of almacenList){
-        //     //     for(let pasillo of almacen.pasillo){
-        //     //         for(let zona_pasillo of pasillo.zona_pasillo){
-        //     //             for(let anaquel of zona_pasillo.anaquel){
-        //     //                 for(let p_anaquel of anaquel.producto_anaquel){
-        //     //                     if(p_anaquel.p_cantidad >= prodCant[1]){
-        //     //                         productoAnaquelActual = p_anaquel
-        //     //                         break outerLoop
-        //     //                     }
-        //     //                 }
-        //     //             }
-        //     //         }
-        //     //     }
-        //     // }
-
            // registrar cada una de las compras de producto
             if(productoAnaquelActual){
                 let newCompra = await prisma.compra.create({

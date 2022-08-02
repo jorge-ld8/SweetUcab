@@ -46,10 +46,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         let cliente_juridico = await prisma.cliente_juridico.update({
             data: {
                 c_rif: JSON.parse(req.body)['rif'],
-                c_cantidad_puntos: JSON.parse(req.body)['cantidad_puntos'],
+                c_cantidad_puntos: Number(JSON.parse(req.body)['cantidad_puntos']),
                 c_razon_social: JSON.parse(req.body)['razon_social'],
                 c_denom_comercial: JSON.parse(req.body)['denom_comercial'],
-                c_capital_disponible: Number(superjson.parse(req.body)['capital_disponible']),
+                c_capital_disponible: Number(JSON.parse(req.body)['capital_disponible']),
                 c_direccion: JSON.parse(req.body)['direccion'],
                 c_direccion_fiscal_ppal: JSON.parse(req.body)['direccion_fiscal_ppal'],
                 c_pagina_web: JSON.parse(req.body)['pagina_web'],

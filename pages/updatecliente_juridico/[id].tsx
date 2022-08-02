@@ -21,7 +21,9 @@ export const getServerSideProps: GetServerSideProps = async ({params}) => {
     const c_juridicos = await prisma.cliente_juridico.findMany();
     const tiendas = await prisma.tienda.findMany();
     return {
-      props: {feed: feed, tiendas: tiendas, c_juridicos: c_juridicos},
+      props: {feed: superjson.parse(superjson.stringify(feed)), 
+              tiendas: tiendas, 
+              c_juridicos: superjson.parse(superjson.stringify(c_juridicos))},
     }
   }
 
@@ -39,9 +41,10 @@ const Component: React.FC<Props> = (props)=>
           rif: String(props.feed.c_rif),
           razon_social: String(props.feed.c_razon_social),
           denom_comercial: String(props.feed.c_denom_comercial),
-          capital_disponible: Number(props.feed.c_capital_disponible),
+          capital_disponible: String(props.feed.c_capital_disponible),
           direccion: String(props.feed.c_direccion),
           direccion_fiscal_ppal: String(props.feed.c_direccion_fiscal_ppal),
+          cantidad_puntos: String(props.feed.c_cantidad_puntos),
           pagina_web: String(props.feed.c_pagina_web),
           tienda: Number(props.feed.fk_tienda)
         },
@@ -54,6 +57,7 @@ const Component: React.FC<Props> = (props)=>
             direccion: Yup.string().required("Obligatorio").max(50, "Máximo 50 caraceres"),
             direccion_fiscal_ppal: Yup.string().required("Obligatorio").max(50, "Máximo 50 caracteres"),
             pagina_web: Yup.string().required("Obligatorio").max(60, "Máximo 60 caracteres"),
+            cantidad_puntos: Yup.number().min(0, "Minimo 0 puntos"),
             tienda: Yup.string().required("Obligatorio")
          }
         ),
@@ -83,7 +87,8 @@ const Component: React.FC<Props> = (props)=>
           direccion: formik.values.direccion,
           direccion_fiscal_ppal: formik.values.direccion_fiscal_ppal,
           pagina_web: formik.values.pagina_web,
-          tienda: formik.values.tienda
+          tienda: formik.values.tienda,
+          cantidad_puntos: formik.values.cantidad_puntos,
         })}).then(response =>{ 
           if(response.ok)
             return response.json()
@@ -140,11 +145,17 @@ const Component: React.FC<Props> = (props)=>
                       <ErrorMessage touched={formik.touched.pagina_web} errors={formik.errors.pagina_web}/>
                   </li>
                   <li>
+                      <label htmlFor="cantidad_puntos">Cantidad Puntos:</label>
+                      <input type="number" id="cantidad_puntos"
+                      {...formik.getFieldProps('cantidad_puntos')}/>
+                      <ErrorMessage touched={formik.touched.cantidad_puntos} errors={formik.errors.cantidad_puntos}/>
+                  </li>
+                  <li>
                       <label htmlFor="tienda">Tienda a la que pertenece:</label>
                       <DropDownList content={props.tiendas} attValueName={"t_nombre"} objType={"tienda"} name={"tienda"} onChange={formik.handleChange} value={formik.values.tienda}/>
                   </li>
                   <li className="Button">
-                      <Button type={"submit"} variant="contained" color={"success"} disabled={!(formik.isValid && formik.dirty)}>Crear</Button>
+                      <Button type={"submit"} variant="contained" color={"success"} disabled={!(formik.isValid && formik.dirty)}>Actualizar</Button>
                   </li>
               </ul>
           </form>

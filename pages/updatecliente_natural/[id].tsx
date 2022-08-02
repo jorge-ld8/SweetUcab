@@ -21,7 +21,7 @@ export const getServerSideProps: GetServerSideProps = async ({params}) => {
         }
     });
     return {
-      props: {feed: feed, c_naturales: c_naturales, cliente: cliente},
+      props: {feed: feed, c_naturales: superjson.parse(superjson.stringify(c_naturales)), cliente: superjson.parse(superjson.stringify(cliente))},
     }
   }
 
@@ -72,7 +72,8 @@ const Component: React.FC<Props> = (props)=>
                })
             ,
             direccion: Yup.string().required("Obligatorio").max(50, "Máximo 50 caraceres"),
-            tienda: Yup.string().required("Obligatorio")
+            tienda: Yup.string().required("Obligatorio"),
+            cantidad_puntos: Yup.number().min(0, "Minimo 0 puntos")
          }
         ),
         onSubmit: values => {console.log(values);},
@@ -158,11 +159,17 @@ const Component: React.FC<Props> = (props)=>
                       <ErrorMessage touched={formik.touched.direccion} errors={formik.errors.direccion}/>
                   </li>
                   <li>
+                      <label htmlFor="cantidad_puntos">Cantidad Puntos:</label>
+                      <input type="number" id="cantidad_puntos"
+                      {...formik.getFieldProps('cantidad_puntos')}/>
+                      <ErrorMessage touched={formik.touched.cantidad_puntos} errors={formik.errors.cantidad_puntos}/>
+                  </li>
+                  <li>
                       <label htmlFor="tienda">Tienda a la que pertenece:</label>
                       <DropDownList content={props.feed} attValueName={"t_nombre"} objType={"tienda"} name={"tienda"} onChange={formik.handleChange} value={formik.values.tienda}/>
                   </li>
                   <li className="Button">
-                      <Button type={"submit"} variant="contained" color={"success"} disabled={!(formik.isValid && formik.dirty)}>Crear</Button>
+                      <Button type={"submit"} variant="contained" color={"success"} disabled={!(formik.isValid && formik.dirty)}>Actualizar</Button>
                   </li>
               </ul>
           </form>

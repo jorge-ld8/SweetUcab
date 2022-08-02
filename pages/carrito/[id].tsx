@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from "react"
 import { GetServerSideProps } from "next"
-import Layout from "../components/Layout"
+import Layout from "../../components/Layout"
 import Image from "next/image";
-import prisma from '../lib/prisma';
-import { historico_punto, imagen_producto, producto, transaccion_compra, pago } from "@prisma/client"
+import prisma from '../../lib/prisma';
+import { historico_punto, imagen_producto, producto, transaccion_compra, pago, cliente_juridico, metodo_pago_cliente } from "@prisma/client"
 import { imageConfigDefault } from "next/dist/server/image-config";
 import Button from "@mui/material/Button";
 import * as Yup from 'yup';
 import { Formik, FormikProvider, useFormik, validateYupSchema } from "formik";
-import ErrorMessage from "../components/ErrorMessage";
+import ErrorMessage from "../../components/ErrorMessage";
 import { Container, FormControl, IconButton, InputLabel, List, ListItem, ListItemButton, ListItemIcon, ListItemText, NativeSelect, styled, TextField } from "@mui/material";
-import UserProfile from "./userSession";
+import UserProfile from "../userSession";
 import Router from "next/router";
 import { GetStaticProps } from "next";
 import { Delete } from "@mui/icons-material";
-import CarritoIndex from "../components/CarritoIndex";
+import CarritoIndex from "../../components/CarritoIndex";
 import superjson from "superjson";
 import TablePaginationActions from "@mui/material/TablePagination/TablePaginationActions";
 
@@ -25,22 +25,63 @@ const Img = styled('img')({
     maxHeight: '100%',
 });
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     let productos = await prisma.producto.findMany();
     let ultimoPunto = await prisma.historico_punto.findFirst({
         where:{
             h_fecha_final: null
         },
     });
+
+    let usuarioActual = await prisma.usuario.findUnique({
+        where:{
+            u_username: String(params?.id)
+        },
+        select:{
+            fk_cliente_juridico: true,
+            fk_cliente_natural: true
+        }
+    })
+    let clienteNatural = null, clienteJuridico = null;
+    if(usuarioActual.fk_cliente_natural){
+        clienteNatural = await prisma.cliente_natural.findFirst({
+            where:{
+                c_id: usuarioActual.fk_cliente_natural,
+            }
+        });
+    }
+    else{
+        clienteJuridico = await prisma.cliente_juridico.findFirst({
+            where:{
+                c_id: usuarioActual.fk_cliente_juridico,
+            }
+        });
+    }
+
+    let metodosPagoUsuario = await prisma.metodo_pago_cliente.findMany({
+        where:{
+            [clienteNatural ? 'fk_cliente_natural': 'fk_cliente_juridico'] : clienteNatural ? clienteNatural.c_id : clienteJuridico.c_id, 
+        },
+        select: {
+            fk_cheque: true,
+            fk_efectivo: true,
+            fk_pagomovil: true,
+            fk_paypal: true,
+            fk_tarjeta: true,
+            fk_zelle: true, 
+        }
+    })
+
     return{
         //   props: {producto, imagen}
-        props: { productos, ultimoPuntoValor: superjson.parse(superjson.stringify(ultimoPunto.h_valor)) }
+        props: { productos, ultimoPuntoValor: superjson.parse(superjson.stringify(ultimoPunto.h_valor)), metodosPago: metodosPagoUsuario}
     }
 }
 
 type ProductoProps = {
     productos: producto[],
     ultimoPuntoValor: number
+    metodosPago: metodo_pago_cliente[]
 }
 
 const ProductoPost: React.FC<ProductoProps> = (props) => {
@@ -53,29 +94,59 @@ const ProductoPost: React.FC<ProductoProps> = (props) => {
 
     let cantPuntos; 
     useEffect(() => {
-        setPuntos(Number(JSON.parse(window.localStorage.getItem("puntos"))));
+        const fetchData = async () => {
+            const data = await fetch(`/api/puntos`,{method: 'POST', 
+            body: JSON.stringify({username: JSON.parse(localStorage.getItem("username"))})
+            }).then(response =>{ 
+              if(response.ok)
+                return response.json()
+              }
+            ).catch(e => console.error(e));
+            setPuntos(data.c_cantidad_puntos);
+        }
+        fetchData();
     }, [])
+
     
     function handleStateChange(newState){
         setCarrito(newState);
     }
 
-    const formik = useFormik({
-        initialValues: {
-            cantidad: 0
-        },
-        validationSchema: Yup.object(
-            {
-                cantidad: Yup.number().min(1, "Seleccione una cantidad válida").required("Coloque una cantidad si desea comprar")
+    const metodosPago = [];
+    // funcion para manejar los metodos de pago
+    for(let mPago of props.metodosPago){
+        for(let prop in mPago){
+            if(mPago[prop]){
+                let strPago = prop.substring(3,);
+                if(metodosPago.findIndex((value)=>value===strPago) === -1)
+                    metodosPago.push(strPago)
             }
-        ),
-        onSubmit: values => { console.log(values); },
-    });
+        }
+    }
+
     async function handleSubmit(e) {
         e.preventDefault();
         //registrar pago
         let username = JSON.parse(window.localStorage.getItem("username"));
-
+        //caso 1==2
+        if(formVal1.tipo && formVal2.tipo && formVal1.tipo === formVal2.tipo){
+            formVal1.monto += formVal2.monto
+            formVal2.tipo = "";
+            formVal2.monto = 0;
+        }
+        //caso 1==3
+        if(formVal1.tipo && formVal3.tipo && formVal1.tipo === formVal3.tipo){
+            formVal1.monto += formVal3.monto
+            formVal3.tipo = "";
+            formVal3.monto = 0;
+        }
+        //caso 2==3
+        if(formVal1.tipo && formVal2.tipo && formVal2.tipo === formVal3.tipo){
+            formVal2.monto += formVal3.monto
+            formVal3.tipo = "";
+            formVal3.monto = 0;
+        }
+        //mandar pots request al backend de pago
         const pagos:pago[] = await fetch(`/api/pago`,{method: 'POST',         
         body: JSON.stringify({metodos: [formVal1, formVal2, formVal3],
                               puntoVal: String(puntoVal),
@@ -92,32 +163,16 @@ const ProductoPost: React.FC<ProductoProps> = (props) => {
         for(let pago of pagos){
             if(pago['fk_punto']){
                 localStorage.setItem("puntos", JSON.stringify(Number(JSON.parse(localStorage.getItem("puntos"))) - Number(pago.p_monto_pago) / props.ultimoPuntoValor));
-                 break
+                setPuntoVal(Number(JSON.parse(localStorage.getItem("puntos"))) - Number(pago.p_monto_pago) / props.ultimoPuntoValor) 
+                break
             }
         }
-        //iterar sobre el array de pagos y si hay alguno con el nombre fk_punto descontar esa cnatidad de puntos a localStorage
-
-        // const transaccionCompra:transaccion_compra = await fetch(`/api/transaccion_compra`,{method: 'POST',         
-        // body: JSON.stringify({en_linea: true,
-        //                       tienda: 1, 
-        //                     //   prods: JSON.parse(localStorage.getItem("carrito"))
-        //                       prods: JSON.parse(localStorage.getItem("carrito")),
-        //                       cliente_juridico: 1,
-        //                       cliente_natural: null})}).then(response =>{ 
-        //                           if(response.ok)
-        //                             return response.json()
-        //                           }
-        //                         ).catch(e => console.error(e));
-        //                       ;
         console.log(pagos);
-        // console.log(transaccionCompra);
         alert("PAGO EXITOSO");
-        // window.localStorage.setItem("carrito", JSON.stringify([]));
+        window.localStorage.setItem("carrito", JSON.stringify([]));
         //registrar comprar
-        // Router.back();
+        Router.back();
     }
-
-    const metodosPago: string[] = ["cheque", "efectivo", "pagomovil", "paypal", "punto", "tarjeta", "zelle"];
 
     let montoTotal = 0; //monto total de la compra 
     for(let prod of carrito){
@@ -210,7 +265,8 @@ const ProductoPost: React.FC<ProductoProps> = (props) => {
                         <Button variant="contained" id="pago" sx={{
                             bgcolor: '#E02464',
                         }} onClick={handleSubmit}
-                        disabled={puntoVal>cantPuntos || Math.round(montoRestante) !== 0}>
+                        disabled={puntoVal>cantPuntos || Math.round(montoRestante) !== 0 || carrito.length === 0}
+                        >
                             PAGAR
                         </Button>
                     </div>

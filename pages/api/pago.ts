@@ -156,7 +156,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 let newPago = await prisma.pago.create({
                     data:{
                         p_monto_pago: metodo.monto,
-                        fk_cheque: 1,
                         [`fk_${metodo.tipo}`]: metodoID[`fk_${metodo.tipo}`],
                         fk_transaccion_compra: transaccionCompra.t_id,
                         p_fecha: new Date(),

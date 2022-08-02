@@ -39,10 +39,6 @@ const AccessControl:React.FC<AccessProps> =  ({userPermissions,
         }
         return false
     }
-    console.log(`Allowed Permissions: ${allowedPermissions}`);
-    console.log(`User Permissions: ${userPermissions}`);
-    
-    
     if((mode==="all" && 
     calcAllowedPermissionsALL(allowedPermissions, userPermissions)) ||
        (mode==="one" && calcAllowedPermissionsONE(allowedPermissions, userPermissions))) 

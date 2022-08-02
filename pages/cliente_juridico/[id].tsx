@@ -5,7 +5,8 @@ import Layout from "../../components/Layout"
 import { PostProps } from "../../components/Post"
 import prisma from '../../lib/prisma';
 import { useRouter } from "next/router"
-import { cliente_juridico } from "@prisma/client"
+import { cliente_juridico } from "@prisma/client";
+import superjson from "superjson";
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     const cliente_juridico = await prisma.cliente_juridico.findUnique({
@@ -14,7 +15,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       },
     });
     return {
-      props: cliente_juridico,
+      props: superjson.parse(superjson.stringify(cliente_juridico)),
     }
   }
 

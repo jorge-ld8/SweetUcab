@@ -21,7 +21,7 @@ const App = ({ Component, pageProps }: AppProps) => {
   return (
     <>
       <Layout>
-        <Header user={username} handleUserChange={handleUserChange}/>
+        <Header user={username} handleUserChange={handleUserChange} roles={appPermisos ?? []}/>
         <NavBar roles={appPermisos ?? []} handleStateChange={handleStateChange}/>
         <Component {...pageProps}/>
         <Footer/>
