@@ -39,8 +39,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
     function handleSubmit(e){
         e.preventDefault();
-        // Router.push(`/modificarPedido/${formik.values.idPedido}`);
-        alert("FOUR OUT OF FIVE")
+        Router.push(`/modificarPedido/${formik.values.idPedido}`);
         Router.push("#");
     }
 
@@ -51,7 +50,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         },
         validationSchema: Yup.object(
           {
-            idPedido: Yup.number().required("Required").min(0, "Numeros positivos"), 
+            idPedido: Yup.number().required("Required"), 
           }
         ),
         onSubmit: values => {console.log(values);},
@@ -64,12 +63,12 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
             <div>  
                 <label htmlFor="nombre">Introduzca el ID del pedido que desea modificar:</label>
                 <br />
-                <input type="text" id="nombre"
-                {...formik.getFieldProps('nombre')}/>
+                <input type="text" id="idPedido"
+                {...formik.getFieldProps('idPedido')}/>
                 <ErrorMessage touched={formik.touched.idPedido} errors={formik.errors.idPedido}/>
             </div>
             <div className="Button">
-                      <Button type={"submit"} variant="contained" color={"success"} disabled={!(formik.isValid && formik.dirty)}>Consultar</Button>
+                <Button type={"submit"} variant="contained" color={"success"} disabled={!(formik.isValid && formik.dirty)}>Buscar Pedido</Button>
             </div>
           </form>
         <style jsx>{` 

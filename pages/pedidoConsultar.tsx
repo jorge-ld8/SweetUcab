@@ -10,19 +10,19 @@ import { useFormik } from "formik";
 import * as Yup from 'yup';
 import ErrorMessage from "../components/ErrorMessage";
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-    const rol = await prisma.rol.findFirst({
-        where: {
-          r_id: 1,
-        }
-    });
+// export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+//     const rol = await prisma.rol.findFirst({
+//         where: {
+//           r_id: 1,
+//         }
+//     });
 
-    return {
-      props: {
-        rol: rol,
-      }
-    }
-  }
+//     return {
+//       props: {
+//         rol: rol,
+//       }
+//     }
+//   }
 
   type perfilPost = {
     user: usuario
@@ -39,11 +39,9 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
     function handleSubmit(e){
         e.preventDefault();
-        // Router.push(`/consultarPedido/${formik.values.idPedido}`);
-        alert("FOUR OUT OF FIVE")
+        Router.push(`/consultarPedido/${formik.values.idPedido}`);
         Router.push("#");
     }
-
 
     const formik = useFormik({
         initialValues:{
@@ -51,7 +49,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         },
         validationSchema: Yup.object(
           {
-            idPedido: Yup.number().required("Required").min(0, "Numeros positivos"), 
+            idPedido: Yup.number().required("Required"), 
           }
         ),
         onSubmit: values => {console.log(values);},
@@ -64,12 +62,12 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
             <div>  
                 <label htmlFor="nombre">Introduzca el ID del pedido que desea consultar:</label>
                 <br />
-                <input type="text" id="nombre"
-                {...formik.getFieldProps('nombre')}/>
+                <input type="text" id="idPedido"
+                {...formik.getFieldProps('idPedido')}/>
                 <ErrorMessage touched={formik.touched.idPedido} errors={formik.errors.idPedido}/>
             </div>
             <div className="Button">
-                      <Button type={"submit"} variant="contained" color={"success"} disabled={!(formik.isValid && formik.dirty)}>Consultar</Button>
+                      <Button type={"submit"} variant="contained" color={"success"} disabled={!(formik.isValid && formik.dirty)}>Buscar Pedido</Button>
             </div>
           </form>
         <style jsx>{` 

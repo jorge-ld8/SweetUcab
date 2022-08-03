@@ -17,7 +17,7 @@ const DropDownList: React.FC<DropDownListProps<any>> = (props)=>
 {
     return(
         <select name={props.name} onChange={props.onChange} value={props.value} id={props.name} multiple={props.multiple}>
-            <option value="N/A">N/A</option>
+            <option value="">N/A</option>
             {props.content.map((option)=>{               
                 return (<option value={option[props.attValueName]}>{option[props.attValueName]}</option>);
             })}

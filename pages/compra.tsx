@@ -1,43 +1,52 @@
 import React, { ReactNode } from "react";
-import reactMarkdown from "react-markdown";
 import { GetServerSideProps } from "next"
-import ReactMarkdown from "react-markdown"
-import Layout from "../components/Layout"
 import { PostProps } from "../components/Post"
 import prisma from '../lib/prisma';
 import Router from "next/router";
-import { Formik, FormikProvider, useFormik } from "formik";
-import * as Yup from 'yup';
 import { lugar, producto } from "@prisma/client";
 import GridElement from "../components/GridElement";
 import Grid from "@mui/material/Grid";
 import UserProfile from "./userSession";
 
 export const getServerSideProps: GetServerSideProps = async () => {
-    const productos = await prisma.producto.findMany({
-      include: {
-        imagen_producto: true
-      }
-    });
+    const listaProductosAnaqueles = await prisma.producto_anaquel.findMany({
+      where:{   //PARA REBAJAR EL INVENTARIO SOLO CAMBIAR EL FIND POR UN UPDATE
+                  anaquel:{
+                      zona_pasillo:{
+                          pasillo:{
+                              almacen:{
+                                  tienda:{
+                                      t_id: 1,
+                                  }
+                              }
+                          }
+                      }
+                  }
+              },
+        select:{ 
+          producto:{
+              include: {
+                imagen_producto: true,
+              }
+          }
+        },
+        distinct: ['fk_producto'],
+      });
+
     return {
-      props: {productos: productos},
+      props: {productos: listaProductosAnaqueles}
     }
   }
 
-type Props = {
-    productos: producto[]
-}
-  
-
 const Component: React.FC<any> = (props)=>
 {
-    console.log(UserProfile.getProductoCarrito());
+   console.log(`Cantidad de productos: ${props.productos.length}`);
     return (
       <main>
             <Grid container >
               {props.productos.map((producto)=>{
-                return (<GridElement prodName={producto.p_nombre} prodPrecio={producto.p_precio_actual} 
-                  imageUrl={producto.imagen_producto[0].i_imagen} id={producto.p_id}></GridElement>)
+                return (<GridElement prodName={producto.producto.p_nombre} prodPrecio={producto.producto.p_precio_actual} 
+                  imageUrl={producto.producto.imagen_producto[0].i_imagen} id={producto.producto.p_id}></GridElement>)
               })}
             </Grid>
           <style jsx>{`

@@ -46,7 +46,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 fk_cliente_juridico: usuario.fk_cliente_juridico ?? null,
                 fk_cliente_natural: usuario.fk_cliente_natural ?? null,
             }
-        })
+        });
+
+        // crear estatus de transaccion recien creada
+        const estatus_transaccion = await prisma.estatus_transaccion.create({
+            data:{
+                e_fecha_hora_establecida: new Date(),
+                fk_estatus: 1,
+                fk_transaccion_compra: transaccionCompra.t_id,
+            }
+        });
 
         // agarrar los productos pasados y registrar cada uno de ellos
         for(let prodCant of JSON.parse(req.body)['carrito']){
