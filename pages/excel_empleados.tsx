@@ -175,7 +175,7 @@ var empleado = texto.substring(texto.indexOf('"ci_empleado": ') + 15, texto.inde
             }
             console.log("entra a else");
             subirABBDD(texto);
-            Router.back();
+            Router.push("/asistencias")
             }
 
             counter++;

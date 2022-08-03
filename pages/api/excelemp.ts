@@ -27,12 +27,7 @@ console.log("en el ts:"+req.body);
                 a_fecha: new Date(fecha), //fecha funciona
                 a_hora_salida: set(new Date(), { hours: parseInt(horas_hora)-4, minutes: parseInt(horas_min) , seconds: parseInt(horas_seg)}),
                 a_hora_entrada: set(new Date(), { hours: parseInt(horae_hora)-4, minutes: parseInt(horae_min) , seconds: parseInt(horae_seg)}),
-                //empleado: {
-               // connect: {e_id: Number(superjson.parse(req.body)['fk_empleado'])}
-                //}
-                //,//a_fecha: JSON.parse(req.body)['a_fecha'],
-                //a_hora_entrada: JSON.parse(req.body)['a_hora_entrada'],
-                //a_hora_salida: JSON.parse(req.body)['a_hora_salida']
+                a_asistencia: true,
             }
         });
         res.json(asistencia_empleado);
