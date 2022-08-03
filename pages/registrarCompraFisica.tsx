@@ -34,7 +34,7 @@ export const getStaticProps: GetStaticProps = async () => {
       props: { feed: feed, 
                ultimoPuntoValor: superjson.parse(superjson.stringify(ultimoPunto.h_valor)),
                tiendas: tiendas, 
-               usuarios: usuarios}, 
+               usuarios: usuarios},
       revalidate: 10 
     } 
 }
@@ -208,7 +208,7 @@ async function handleSubmitPago(e) {
       }
     ).catch(e => console.error(e));
     console.log(transaccionCompra);
-    alert(`PAGO EXITOS SU PEDIDO ES EL #${transaccionCompra.t_id}`);
+    alert(`PAGO EXITOSO - SU PEDIDO ES EL #${transaccionCompra.t_id}`);
     //registrar comprar
     Router.back();
 }
