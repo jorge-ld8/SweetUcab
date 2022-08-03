@@ -102,6 +102,7 @@ const Component: React.FC<inicio_de_sesionProps> = (props)=>
         window.localStorage.setItem("username", JSON.stringify(formik.values.username));
         window.localStorage.setItem("roles", JSON.stringify(rolUsuarioPermisos));
         window.localStorage.setItem("carrito", JSON.stringify([]));
+        window.localStorage.setItem("carritomix", JSON.stringify([]));
         let cantPuntos = await fetch(`/api/puntos`,{method: 'POST', 
         body: JSON.stringify({username: formik.values.username})
         }).then(response =>{ 

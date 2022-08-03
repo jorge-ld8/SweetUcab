@@ -58,7 +58,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         }
 
         //hay que confgurar carrito
-        /*const producto = await fetch(`/api/producto/${props.producto.p_id}`,{method: 'GET'})
+        const producto = await fetch(`/api/producto/${props.producto.p_id}`,{method: 'GET'})
         .then(response =>{
           if(response.ok)
             return response.json()
@@ -71,10 +71,13 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
                 Router.back();
             }
         }
+        producto.p_nombre=producto.p_nombre+" P&M";
+        producto.p_precio_actual=formik.values.cantidad*props.preciogramo;
         let carritoCurrent = JSON.parse(window.localStorage.getItem("carrito"));
-        carritoCurrent.push([producto, formik.values.cantidad]);
+        carritoCurrent.push([producto, 1]);
         window.localStorage.setItem("carrito", JSON.stringify(carritoCurrent));
-                            Router.back();*/
+        console.log("productos en carrito:", JSON.stringify(carritoCurrent));
+                            Router.back();
     }
 
     return (
