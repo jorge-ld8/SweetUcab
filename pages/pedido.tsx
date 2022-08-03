@@ -39,6 +39,11 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         Router.push("/pedidoConsultar");
     }
 
+    function onRegistrarCompraFisica(e){
+        e.preventDefault();
+        Router.push("/registrarCompraFisica");
+    }
+
     function onModificar(e){
         e.preventDefault();
         Router.push("/pedidoModificar");
@@ -46,6 +51,12 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     return (
       <main>
           <div className="stylish">
+            <div>
+              <Button variant="contained" sx={{
+                            bgcolor: '#E02464', width: '30%', margin:4, fontSize: 20}} onClick={onRegistrarCompraFisica}>
+                              REGISTRAR COMPRA FISICA                                                                                                
+              </Button>
+            </div>
             <div>
               <Button variant="contained" sx={{
                             bgcolor: '#E02464', width: '30%', margin:4, marginTop: 8, fontSize: 20}} onClick={onConsultar}>

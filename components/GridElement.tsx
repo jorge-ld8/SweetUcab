@@ -20,6 +20,8 @@ type Props = {
     id: number
     prodName: string
     prodPrecio: number
+    cantidad?:number
+    maxWidth?:number
 }
 
 const ElementoCompra: React.FC<Props> = (props) => {
@@ -28,7 +30,7 @@ const ElementoCompra: React.FC<Props> = (props) => {
       sx={{
         p: 2,
         margin: '1em',
-        maxWidth: 500,
+        maxWidth: props.maxWidth ? props.maxWidth : 500,
         flexGrow: 1,
         backgroundColor: (theme) =>
           theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -48,6 +50,9 @@ const ElementoCompra: React.FC<Props> = (props) => {
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 {props.prodPrecio}$
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Cantidad: {props.cantidad}
               </Typography>
             </Grid>
           </Grid>
