@@ -9,7 +9,7 @@ import Router from "next/router";
 import { Formik, FormikProvider, useFormik } from "formik";
 import * as Yup from 'yup';
 import { lugar, producto } from "@prisma/client";
-import GridElement from "../components/GridElement";
+import GridElement from "../components/GridElementmix";
 import Grid from "@mui/material/Grid";
 import UserProfile from "./userSession";
 

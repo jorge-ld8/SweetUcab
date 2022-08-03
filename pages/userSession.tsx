@@ -4,7 +4,7 @@ var UserProfile = (function() {
   let user_rol:string[] = [];
   let productosPresupuesto = [];
   let productosCarrito = [];
-
+  let productosPickandmix = [];
   let getName : () => string;
   getName = function() {
     return full_name; 
@@ -18,13 +18,21 @@ var UserProfile = (function() {
     productosCarrito = [];
   }
 
+    function initializeProductosPickandmix(){
+      productosPickandmix = [];
+    }
+
   function addProductoCantidad(prod, cantidad){
     productosPresupuesto.push([prod, cantidad]);
   }
 
-  function addProductoCarrito(prod, cantidad){
-    productosCarrito.push([prod, cantidad]);
+  function addProductoCarrito(prod, cantidad, precio){
+    productosCarrito.push([prod, cantidad, precio]);
   }
+
+    function addProductoPickandmix(prod, cantidad, precio){
+      productosPickandmix.push([prod, cantidad, precio]);
+    }
 
   function getProductosPresupuesto(){
     return productosPresupuesto;
@@ -33,6 +41,9 @@ var UserProfile = (function() {
   function getProductoCarrito(){
     return productosCarrito;
   }
+    function getProductoPickandmix(){
+      return productosPickandmix;
+    }
 
   let setName: (name: string) => void;
   setName = function(name) {
@@ -79,6 +90,9 @@ var UserProfile = (function() {
     initializeProductosCarrito: initializeProductosCarrito,
     addProductoCarrito: addProductoCarrito,
     getProductoCarrito: getProductoCarrito,
+    initializeProductosPickandmix: initializeProductosPickandmix,
+        addProductoPickandmix: addProductoPickandmix,
+        getProductoPickandmix: getProductoPickandmix,
   }
 
 })();
