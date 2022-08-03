@@ -88,6 +88,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     ],
                 },
             });
+
             if(productoAnaquelActual){
                 let newCompra = await prisma.compra.create({
                     data:{
@@ -228,7 +229,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
         }
         //RESPUESTA API 
-        res.json(pagosExitosos);
+        res.json(transaccionCompra);
     }
     if(req.method === "GET"){
         res.json(response);
