@@ -21,6 +21,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
           },
           t_id: true,
           t_total_compra: true,
+          t_en_linea: true,
         }
     });
 
@@ -95,16 +96,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   
   const RolPost: React.FC<any> = (props) => {
     
-    function onCerrarSesion(e){
-      e.preventDefault();
-      localStorage.clear();
-      Router.push("/");
-    }
-
-    function onCarnetSweetUCAB(e){
-      e.preventDefault();
-    }
     console.log(props.estatusP);
+    console.log(props.t_compra.t_en_linea);
     
     return (
       <main>
@@ -114,7 +107,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
               (
                 <div>
                   <h2>Transaccion #{props.t_compra.t_id}</h2>
-                  <p>{props.t_compra.t_en_linea ? "COMPRA EN LINEA" : "COMPRA FÍSICA"}</p>
+                  <p>{props.t_compra.t_en_linea? "COMPRA EN LINEA" : "COMPRA FÍSICA"}</p>
                   <p>Monto Total: ${props.t_compra.t_total_compra}</p>
                   <p><b> Productos Pedidos:</b></p>
                   <ul>

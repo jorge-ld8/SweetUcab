@@ -9,37 +9,42 @@ import superjson from "superjson";
 import DropDownList from "../../components/Dropdownlist";
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-    const t_compra = await prisma.transaccion_compra.findFirst({
+    const p_interno = await prisma.pedido_interno.findUnique({
         where:{
-            t_id: Number(params?.id),
+            p_id: Number(params?.id),
         },
         select:{
-          compra: {
-            select:{
-              fk_producto: true,
-              c_cantidad: true,
-            }
-          },
-          t_id: true,
-          t_total_compra: true,
-          t_en_linea: true,
+            producto_anaquel:{
+                select:{
+                    producto: true
+                }
+            },
+            detalle_pedido_interno:{
+                select:{
+                    producto: true,
+                    d_cantidad: true
+                }
+            },
+            p_fecha_creacion: true,
+            p_id: true,
         }
     });
 
-    if(!t_compra){
+    //p_interno.producto_anaquel.producto
+    //p_interno.detalle_pedido_interno[0]
+    
+    if(!p_interno){
       return  {
         props: {
-          t_compra: null
+          p_interno : null
         },
       }
     }
 
-    let estado = await prisma.estatus.findMany();
-
-    const estatusPedido = await prisma.estatus_transaccion.findFirst({
+    const estatusPedido = await prisma.estatus_pedido_interno.findMany({
       where: {
-          fk_transaccion_compra: t_compra.t_id,
-          e_fecha_fin: null,
+          fk_pedido_interno: p_interno.p_id,
+          e_fecha_hora_fin: null,
       },
       select: {
           estatus: {
@@ -47,22 +52,24 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
               e_nombre: true
             }
           },
+          e_fecha_hora_fin: true,
+          e_fecha_hora_inicio: true,
       },
    });
 
     const listaProductos = []; //la lista de productos que tiene la compra
-    for(let compra of t_compra.compra){
+    for(let pInterno of p_interno.detalle_pedido_interno){
         const prod = await prisma.producto.findUnique({
             where:{
-                p_id: compra.fk_producto,
+                p_id: pInterno.producto.p_id,
             }
         });
-        listaProductos.push({producto: prod, cantidad: compra.c_cantidad});
+        listaProductos.push({producto: prod, cantidad: pInterno.d_cantidad});
     }
 
 
-    for(let compraField in t_compra){
-        t_compra[compraField] = String(t_compra[compraField])
+    for(let compraField in p_interno){
+        p_interno[compraField] = String(p_interno[compraField])
     }
 
     let finalListaProd = [];
@@ -70,12 +77,22 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         finalListaProd.push(JSON.parse(JSON.stringify(prod)));
     }
 
+    let finalListEstatus = [];
+    for(let estatus of estatusPedido){
+        for(let estatusProp in estatus){
+            if(estatus[estatusProp] instanceof Date)
+              estatus[estatusProp] = estatus[estatusProp].toDateString();
+            else
+              estatus[estatusProp] = superjson.parse(superjson.stringify(estatus[estatusProp]));
+        }
+        finalListEstatus.push(estatus);
+    }
+
     return {
       props: {
-        t_compra: t_compra,
+        p_interno: p_interno,
         listaProd: finalListaProd,
-        estados: estado,
-        estadoActual: estatusPedido.estatus.e_nombre,
+        estatusP: finalListEstatus,
       },
     }
   }
@@ -98,10 +115,11 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
     async function handleSubmit(e){
       e.preventDefault();
-      console.log(JSON.stringify({estado: estadoActual, transaccion: props.t_compra.t_id}));
-      const data = await fetch(`/api/estatus`,{method: 'POST', 
+      console.log(JSON.stringify({estado: estadoActual, transaccion: props.p_interno.p_id}));
+      const data = await fetch(`/api/estatusInterno`,{method: 'POST', 
       body: JSON.stringify({estatus: estadoActual,
-                            transaccion: props.t_compra.t_id})
+                            p_interno: props.p_interno.p_id,
+                            cantidad: 100})
       }).then(response =>{ 
         if(response.ok)
           return response.json()
@@ -116,28 +134,30 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     return (
       <main>
         <div className="stylish">
-        {props.t_compra ? 
+        {props.p_interno ? 
         (
         <div>
-          <h2>Transaccion #{props.t_compra.t_id}</h2>
-          <p>{props.t_compra.t_en_linea ? "COMPRA EN LINEA" : "COMPRA FÍSICA"}</p>
-          <p>Monto Total: ${props.t_compra.t_total_compra}</p>
+          <h2>Orden de Reposicion #{props.p_interno.p_id}</h2>
+          <p></p>
           <p><b> Productos Pedidos:</b></p>
           <ul>
             {props.listaProd.map((prod)=>{
                 return(<li>{prod.producto.p_nombre} - ${prod.producto.p_precio_actual} Cantidad: {prod.cantidad}</li>);
             })}
           </ul>
-          <p><b>Estatus Actual: {props.estadoActual}</b></p>
-          <form id="theForm" onSubmit={handleSubmit}>
-            <label htmlFor="relacion">Nuevo Estatus:</label>
-            <DropDownList content={props.estados} attValueName={"e_nombre"} objType={"estatus"} name={"relacion"} value={estadoActual} onChange={handleEstatusChange}/>
-            <div>
-              <Button type={"submit"} variant="contained" color={"success"} 
-               sx={{marginTop: 3}}
-                disabled={estadoActual === props.estadoActual || estadoActual === "" || props.estadoActual === "Entregado"}>Modificar Estatus</Button>
-            </div>
-          </form>
+          <p><b>Estatus del pedido interno:</b></p>
+                  <ul>
+                    {props.estatusP.map((estatus)=>{
+                        return(<li>
+                                <i>{estatus.estatus.e_nombre}</i>
+                                <ul>
+                                    <li>Inicio: {estatus.e_fecha_hora_inicio}</li>
+                                    <li>Fin: {estatus.e_fecha_hora_fin}</li>
+                                </ul>
+                            </li>)
+                    })
+                  }
+                  </ul>
         </div>)
         :
         (<div>

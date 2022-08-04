@@ -36,9 +36,7 @@ export const getStaticProps: GetStaticProps = async () => {
       props: { feed: feed, 
                ultimoPuntoValor: superjson.parse(superjson.stringify(ultimoPunto.h_valor)),
                tiendas: tiendas, 
-               usuarios: usuarios,
-               c_naturales: c_naturales,
-               c_juridicos: c_juridicos}, 
+               usuarios: usuarios}, 
       revalidate: 10 
     } 
 }
@@ -192,7 +190,7 @@ async function handleSubmitPago(e) {
         }
     }
     //mandar pots request al backend de pago
-    const transaccionCompra: transaccion_compra = await fetch(`/api/pago`,{method: 'POST',         
+    const response = await fetch(`/api/pago`,{method: 'POST',         
     body: JSON.stringify({metodos: [formVal1, formVal2, formVal3],
                           puntoVal: String(puntoVal),
                           carrito: list,
@@ -204,8 +202,8 @@ async function handleSubmitPago(e) {
         return response.json()
       }
     ).catch(e => console.error(e));
-    console.log(transaccionCompra);
-    alert(`PAGO EXITOS SU PEDIDO ES EL #${transaccionCompra.t_id}`);
+    console.log(response);
+    alert(`PAGO EXITOSO - SU PEDIDO ES EL #${response.t_compra}`);
     //registrar comprar
     Router.back();
 }
@@ -327,9 +325,9 @@ function handleMovementPunto(e){
             </fieldset>
             <div>
                 {cliente === "cliente_juridico" ? 
-                        (<TextField helperText="Introduzca RIF" value={clienteID} onChange={handleChangeIDCliente}></TextField>)
+                        (<TextField helperText="Introduzca ID Cliente" value={clienteID} onChange={handleChangeIDCliente}></TextField>)
                         :
-                        (<TextField helperText="Introduzca Cedula" value={clienteID} onChange={handleChangeIDCliente}></TextField>)     
+                        (<TextField helperText="Introduzca ID Cliente" value={clienteID} onChange={handleChangeIDCliente}></TextField>)     
                     } 
             </div>
             <Container sx={{bgcolor: '#FEE2E6', borderRadius: 5, marginRight: 10}} className={"pagoElement"}>

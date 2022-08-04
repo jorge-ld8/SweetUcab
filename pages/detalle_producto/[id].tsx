@@ -3,7 +3,7 @@ import { GetServerSideProps } from "next"
 import Layout from "../../components/Layout"
 import Image from "next/image";
 import prisma from '../../lib/prisma';
-import { imagen_producto, producto } from "@prisma/client"
+import { imagen_producto, producto, producto_anaquel } from "@prisma/client"
 import { imageConfigDefault } from "next/dist/server/image-config";
 import Button from "@mui/material/Button";
 import * as Yup from 'yup';
@@ -24,17 +24,33 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         fk_producto: Number(params?.id)
       }
     })
+    const producto_anaquel = await prisma.producto_anaquel.findMany(
+      {
+        where:{
+          anaquel:{
+              zona_pasillo: {
+                  pasillo:{
+                      almacen:{
+                          fk_tienda: 1,
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+    )
     return {
-      props: {producto, imagen}
+      props: {producto, imagen, producto_anaquel}
     }
   }
 
   type ProductoProps = {
     producto: producto,
     imagen: imagen_producto[]
+    producto_anaquel: producto_anaquel[]
   }
   
-  const ProductoPost: React.FC<ProductoProps>= (props) => {
+  const ProductoPost: React.FC<any>= (props) => {
     const formik = useFormik({
         initialValues:{
             cantidad: 0
@@ -42,6 +58,14 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         validationSchema: Yup.object(
           {
             cantidad: Yup.number().min(1,"Seleccione una cantidad válida").required("Coloque una cantidad si desea comprar")
+            .test("cantidadValida", "cantidad de producto no disponible", 
+            function(value){
+                for(let p of props.producto_anaquel){
+                    if(p.fk_producto === props.producto.p_id && p.p_cantidad > value)
+                        return true;
+                }
+                return false;
+               }),
          }
         ),
         onSubmit: values => {console.log(values);},

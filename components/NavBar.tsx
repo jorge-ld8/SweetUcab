@@ -16,7 +16,9 @@ const NavBar: React.FC<any> = ({roles, handleStateChange}) => {
                         <AccessControl userPermissions={roles} allowedPermissions={["comprar"]} mode={"all"} children={<li key={2} onClick={()=>{Router.push("/compra")}}><a href="#">COMPRA</a></li>}/>,
 
                         <AccessControl userPermissions={roles} allowedPermissions={["usuario:read", "rol:read", "producto:read", "historico_punto:read",
-                                                                                                    "presupuesto:read", "descuento:read"]} mode={"one"} children={<li key={3}><a href="#">GESTIÓN SWEET UCAB</a></li>}></AccessControl>];                                                                                       
+                                                                                                    "presupuesto:read", "descuento:read"]} mode={"one"} children={<li key={3}><a href="#">GESTIÓN SWEET UCAB</a></li>}></AccessControl>,
+                                                                                                    <AccessControl userPermissions={roles} allowedPermissions={["usuario:read", "rol:read", "producto:read", "historico_punto:read",
+                                                                                                    "presupuesto:read", "descuento:read"]} mode={"one"} children={<li key={3}><a href="/inventario">INVENTARIO</a></li>}></AccessControl>];                                                                                       
     return(
         <nav>
             <ul>

@@ -72,7 +72,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     }
                 });
 
-                if(currProductoAnaquel.p_cantidad <= 20){ //cantidad restante es menor o igual a 20
+                let newProdAnaquel = await prisma.producto_anaquel.findFirst({
+                    where:{
+                        p_id: currProductoAnaquel.p_id,
+                    },
+                })
+
+                if(newProdAnaquel.p_cantidad <= 20){ //cantidad restante es menor o igual a 20
                     //generacion de orden de pedido interno
                     let newProdAnaquel = await prisma.pedido_interno.create({
                         data:{

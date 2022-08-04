@@ -92,6 +92,7 @@ const ProductoPost: React.FC<ProductoProps> = (props) => {
     const [formVal3, setformVal3] = useState({tipo:'', monto: 0});
     const [puntoVal, setPuntoVal] = useState(0); 
 
+    console.log(carrito);
     let cantPuntos; 
     useEffect(() => {
         const fetchData = async () => {
@@ -146,8 +147,15 @@ const ProductoPost: React.FC<ProductoProps> = (props) => {
             formVal3.tipo = "";
             formVal3.monto = 0;
         }
+
+        console.log(JSON.stringify({metodos: [formVal1, formVal2, formVal3],
+            puntoVal: String(puntoVal),
+            carrito: JSON.parse(localStorage.getItem("carrito")),
+            tienda: 1,
+            username: username,
+            en_linea: true }));
         //mandar pots request al backend de pago
-        const pagos:pago[] = await fetch(`/api/pago`,{method: 'POST',         
+        const response:{pagos:pago[], t_compra:transaccion_compra}= await fetch(`/api/pago`,{method: 'POST',         
         body: JSON.stringify({metodos: [formVal1, formVal2, formVal3],
                               puntoVal: String(puntoVal),
                               carrito: JSON.parse(localStorage.getItem("carrito")),
@@ -160,15 +168,15 @@ const ProductoPost: React.FC<ProductoProps> = (props) => {
           }
         ).catch(e => console.error(e));
         
-        for(let pago of Array.from(pagos)){
+        for(let pago of Array.from(response.pagos)){
             if(pago['fk_punto']){
                 localStorage.setItem("puntos", JSON.stringify(Number(JSON.parse(localStorage.getItem("puntos"))) - Number(pago.p_monto_pago) / props.ultimoPuntoValor));
                 setPuntoVal(Number(JSON.parse(localStorage.getItem("puntos"))) - Number(pago.p_monto_pago) / props.ultimoPuntoValor) 
                 break
             }
         }
-        console.log(pagos);
-        alert("PAGO EXITOSO");
+        console.log(response.pagos);
+        alert(`PAGO EXITOSO. Su transaccion es la #${response.t_compra.t_id}\nSe ha ganado 5 puntos por la compra`);
         window.localStorage.setItem("carrito", JSON.stringify([]));
         //registrar comprar
         Router.back();

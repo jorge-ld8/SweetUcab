@@ -52,7 +52,7 @@ const ElementoCompra: React.FC<Props> = (props) => {
                 {props.prodPrecio}$
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                Cantidad: {props.cantidad}
+                {props.cantidad ? "Cantidad" + props.cantidad : null}
               </Typography>
             </Grid>
           </Grid>
