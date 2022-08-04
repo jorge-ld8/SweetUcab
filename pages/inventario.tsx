@@ -29,11 +29,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   }
   
   const RolPost: React.FC<perfilPost> = (props) => {
-    
-    function onCarnetSweetUCAB(e){
-      e.preventDefault();
-    }
-    
+        
     function consultarInventario(e){
         e.preventDefault();
         Router.push("/internoConsultar");
@@ -42,6 +38,16 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     function aumentarInventario(e){
         e.preventDefault();
         Router.push("/internoModificar");
+    }
+
+    function consultarFabrica(e){
+        e.preventDefault();
+        Router.push("/fabricaConsultar");
+    }
+
+    function aumentarFabrica(e){
+        e.preventDefault();
+        Router.push("/fabricaModificar");
     }
     return (
       <main>
@@ -58,6 +64,18 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
                               MODIFICAR ESTATUS PEDIDO INTERNO
               </Button>
             </div>
+            <div>
+              <Button variant="contained" sx={{
+                            bgcolor: '#E02464', width: '30%', margin:4, marginTop: 8, fontSize: 20}} onClick={consultarFabrica}>
+                              CONSULTAR ESTATUS PEDIDO FABRICA
+              </Button>
+            </div>
+            {/* <div>
+              <Button variant="contained" sx={{
+                            bgcolor: '#E02464', width: '30%', margin:4, marginTop: 8, fontSize: 20}} onClick={aumentarFabrica}>
+                              MODIFICAR ESTATUS PEDIDO FABRICA
+              </Button>
+            </div> */}
             {/* <div>
               <Button variant="contained" sx={{
                             bgcolor: '#E02464', width: '30%', margin:4, fontSize: 20}} onClick={onModificar}>

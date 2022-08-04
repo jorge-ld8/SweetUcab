@@ -18,6 +18,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
             select:{
               fk_producto: true,
               c_cantidad: true,
+              c_precio_por_unidad: true,
             }
           },
           t_id: true,
@@ -57,7 +58,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
                 p_id: compra.fk_producto,
             }
         });
-        listaProductos.push({producto: prod, cantidad: compra.c_cantidad});
+        listaProductos.push({producto: prod, cantidad: compra.c_cantidad, precio: compra.c_precio_por_unidad});
     }
 
 
@@ -109,7 +110,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
       ).catch(e => console.error(e));
       console.log("DATOS: ");
       console.log(data);
-      Router.back();
+      Router.push("/pedido");
     }
 
     
@@ -125,7 +126,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
           <p><b> Productos Pedidos:</b></p>
           <ul>
             {props.listaProd.map((prod)=>{
-                return(<li>{prod.producto.p_nombre} - ${prod.producto.p_precio_actual} Cantidad: {prod.cantidad}</li>);
+                return(<li>{prod.producto.p_nombre} - ${prod.precio} Cantidad: {prod.cantidad}</li>);
             })}
           </ul>
           <p><b>Estatus Actual: {props.estadoActual}</b></p>

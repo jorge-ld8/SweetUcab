@@ -9,29 +9,22 @@ import superjson from "superjson";
 import DropDownList from "../../components/Dropdownlist";
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-    const p_interno = await prisma.pedido_interno.findUnique({
+    const p_interno = await prisma.pedido_fabrica.findUnique({
         where:{
             p_id: Number(params?.id),
         },
         select:{
-            producto_anaquel:{
-                select:{
-                    producto: true
-                }
-            },
-            detalle_pedido_interno:{
+            detalle_pedido:{
                 select:{
                     producto: true,
                     d_cantidad: true
                 }
             },
-            estatus_pedido_interno: true,
+            estatus_pedido: true,
             p_fecha_creacion: true,
             p_id: true,
         }
     });
-    //p_interno.producto_anaquel.producto
-    //p_interno.detalle_pedido_interno[0]
     
     if(!p_interno){
       return  {
@@ -43,9 +36,9 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
     let estado = await prisma.estatus.findMany();
 
-    const estatusInterno = await prisma.estatus_pedido_interno.findFirst({
+    const estatusInterno = await prisma.estatus_pedido.findFirst({
       where: {
-          fk_pedido_interno: p_interno.p_id,
+          fk_pedido_fabrica: p_interno.p_id,
           e_fecha_hora_fin: null,
       },
       select: {
@@ -58,7 +51,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
    });
 
     const listaProductos = []; //la lista de productos que tiene la compra
-    for(let pInterno of p_interno.detalle_pedido_interno){
+    for(let pInterno of p_interno.detalle_pedido){
         const prod = await prisma.producto.findUnique({
             where:{
                 p_id: pInterno.producto.p_id,
@@ -127,7 +120,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         {props.p_interno ? 
         (
         <div>
-          <h2>Orden de Reposicion #{props.p_interno.p_id}</h2>
+          <h2>Orden de Reposicion a la Fabrica #{props.p_interno.p_id}</h2>
           <p></p>
           <p><b> Productos Pedidos:</b></p>
           <ul>

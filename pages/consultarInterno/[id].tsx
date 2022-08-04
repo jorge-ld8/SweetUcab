@@ -29,9 +29,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
             p_id: true,
         }
     });
-
-    //p_interno.producto_anaquel.producto
-    //p_interno.detalle_pedido_interno[0]
     
     if(!p_interno){
       return  {
@@ -44,7 +41,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     const estatusPedido = await prisma.estatus_pedido_interno.findMany({
       where: {
           fk_pedido_interno: p_interno.p_id,
-          e_fecha_hora_fin: null,
       },
       select: {
           estatus: {
@@ -170,6 +166,12 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
         }
         </div>
         <style jsx>{`
+          i{
+            font-size: 1.4em;
+            margin: .5em;
+            display: inline-block;
+            }
+
           #theForm{
             padding: 0;
             margin: 0;

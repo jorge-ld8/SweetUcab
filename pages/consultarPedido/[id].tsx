@@ -16,6 +16,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
           compra: {
             select:{
               fk_producto: true,
+              c_precio_por_unidad: true,
               c_cantidad: true,
             }
           },
@@ -40,7 +41,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
                 p_id: compra.fk_producto,
             }
         });
-        listaProductos.push({producto: prod, cantidad: compra.c_cantidad});
+        listaProductos.push({producto: prod, cantidad: compra.c_cantidad, precio:compra.c_precio_por_unidad});
     }
 
      const estatusPedido = await prisma.estatus_transaccion.findMany({
@@ -90,7 +91,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 
   type perfilPost = {
     t_compra: transaccion_compra,
-    listaProd: {producto: producto, cantidad: number}[],
+    listaProd: {producto: producto, cantidad: number, precio: number}[],
     estatusP: {e_fecha_hora_establecida: Date, e_fecha_fin: Date, estatus: estatus }[]
   }
   
@@ -112,7 +113,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
                   <p><b> Productos Pedidos:</b></p>
                   <ul>
                     {props.listaProd.map((prod)=>{
-                        return(<li>{prod.producto.p_nombre} - ${prod.producto.p_precio_actual} Cantidad: {prod.cantidad}</li>);
+                        return(<li>{prod.producto.p_nombre} - ${prod.precio} Cantidad: {prod.cantidad}</li>);
                     })}
                   </ul>
                   <p><b>Estatus del producto:</b></p>
