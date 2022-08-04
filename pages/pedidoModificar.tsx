@@ -40,7 +40,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     function handleSubmit(e){
         e.preventDefault();
         Router.push(`/modificarPedido/${formik.values.idPedido}`);
-        Router.push("#");
     }
 
 
