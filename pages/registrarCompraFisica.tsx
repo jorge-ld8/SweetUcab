@@ -29,16 +29,12 @@ export const getStaticProps: GetStaticProps = async () => {
         });
         let tiendas = await prisma.tienda.findMany({});
         let usuarios = await prisma.usuario.findMany({});
-        let c_naturales = await prisma.cliente_natural.findMany({});
-        let c_juridicos = await prisma.cliente_juridico.findMany({});
 
     return { 
       props: { feed: feed, 
                ultimoPuntoValor: superjson.parse(superjson.stringify(ultimoPunto.h_valor)),
                tiendas: tiendas, 
-               usuarios: usuarios,
-               c_naturales: c_naturales,
-               c_juridicos: c_juridicos}, 
+               usuarios: usuarios},
       revalidate: 10 
     } 
 }
@@ -205,7 +201,7 @@ async function handleSubmitPago(e) {
       }
     ).catch(e => console.error(e));
     console.log(transaccionCompra);
-    alert(`PAGO EXITOS SU PEDIDO ES EL #${transaccionCompra.t_id}`);
+    alert(`PAGO EXITOSO - SU PEDIDO ES EL #${transaccionCompra.t_id}`);
     //registrar comprar
     Router.back();
 }
