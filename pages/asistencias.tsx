@@ -32,7 +32,7 @@ export const getStaticProps: GetStaticProps = async () => {
         );
 
             let feedJSON = feed.map(({a_id, a_fecha, a_asistencia, a_hora_entrada, a_hora_salida, fk_empleado})=>{
-                return {a_id, a_fecha: new Date(a_fecha.setUTCHours(5)).toDateString(), a_asistencia: a_asistencia.toString(), a_hora_entrada: new Date(a_hora_entrada.setUTCHours(5)).toTimeString().split(' ')[0], a_hora_salida: new Date(a_hora_salida.setUTCHours(5)).toTimeString().split(' ')[0], fk_empleado}
+                return {a_id, a_fecha: new Date(a_fecha.setUTCHours(5)).toDateString(), a_asistencia: a_asistencia.toString(), a_hora_entrada: new Date(a_hora_entrada.setHours(a_hora_entrada.getHours()+4)).toTimeString().split(' ')[0], a_hora_salida: new Date(a_hora_salida.setHours(a_hora_salida.getHours()+4)).toTimeString().split(' ')[0], fk_empleado}
             }
             );
 
