@@ -160,7 +160,7 @@ const ProductoPost: React.FC<ProductoProps> = (props) => {
           }
         ).catch(e => console.error(e));
         
-        for(let pago of pagos){
+        for(let pago of Array.from(pagos)){
             if(pago['fk_punto']){
                 localStorage.setItem("puntos", JSON.stringify(Number(JSON.parse(localStorage.getItem("puntos"))) - Number(pago.p_monto_pago) / props.ultimoPuntoValor));
                 setPuntoVal(Number(JSON.parse(localStorage.getItem("puntos"))) - Number(pago.p_monto_pago) / props.ultimoPuntoValor) 
