@@ -29,12 +29,16 @@ export const getStaticProps: GetStaticProps = async () => {
         });
         let tiendas = await prisma.tienda.findMany({});
         let usuarios = await prisma.usuario.findMany({});
+        let c_naturales = await prisma.cliente_natural.findMany({});
+        let c_juridicos = await prisma.cliente_juridico.findMany({});
 
     return { 
       props: { feed: feed, 
                ultimoPuntoValor: superjson.parse(superjson.stringify(ultimoPunto.h_valor)),
                tiendas: tiendas, 
-               usuarios: usuarios},
+               usuarios: usuarios,
+               c_naturales: c_naturales,
+               c_juridicos: c_juridicos}, 
       revalidate: 10 
     } 
 }
@@ -83,13 +87,6 @@ const Blog: React.FC<ProductoProps> = (props) => {
     setCantidad(0);
     setList(tempArr);
     setValue(null);
-        // }
-    // }
-
-    //de acuerdo a la tienda buscar si existe la cantidad, si no existe
-
-
-    // setCantidad(e) 
   };
 
   function handleChangeCantidad(e){
@@ -208,7 +205,7 @@ async function handleSubmitPago(e) {
       }
     ).catch(e => console.error(e));
     console.log(transaccionCompra);
-    alert(`PAGO EXITOSO - SU PEDIDO ES EL #${transaccionCompra.t_id}`);
+    alert(`PAGO EXITOS SU PEDIDO ES EL #${transaccionCompra.t_id}`);
     //registrar comprar
     Router.back();
 }

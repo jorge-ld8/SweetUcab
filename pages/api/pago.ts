@@ -5,6 +5,9 @@ import { transaccion_compra } from "@prisma/client";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse){
     let response = null;
+
+    const CANTIDAD_PRODS_ALMACEN = 100
+    const CANTIDAD_PRODS_FABRICA = 10000;
     
     if(req.method === "POST"){
         let usuario = await prisma.usuario.findUnique({
@@ -47,12 +50,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 fk_cliente_natural: usuario.fk_cliente_natural ?? null,
             }
         });
-
+        let estatusCompra;
+        if(JSON.parse(req.body)['en_linea']){
+            estatusCompra = 1;
+        }
+        else{
+            estatusCompra = 6; 
+        }
         // crear estatus de transaccion recien creada
         const estatus_transaccion = await prisma.estatus_transaccion.create({
             data:{
                 e_fecha_hora_establecida: new Date(),
-                fk_estatus: 1,
+                fk_estatus: estatusCompra,
                 fk_transaccion_compra: transaccionCompra.t_id,
             }
         });
@@ -87,7 +96,72 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         }
                     ],
                 },
+                select:{
+                    p_id: true,
+                    fk_anaquel: true,
+                    fk_producto: true,
+                    p_cantidad: true,
+                    anaquel:{
+                        select:{
+                            zona_pasillo:{
+                                select:{
+                                    pasillo:{
+                                        select:{
+                                            almacen: true
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             });
+
+            if(productoAnaquelActual && JSON.parse(req.body)['en_linea']){
+                //decrementar el inventario del anaquel una vez se concreto la compra
+                let newInventarioProdAnaquel = await prisma.producto_anaquel.updateMany({
+                    where: {
+                        p_id: productoAnaquelActual.p_id,
+                    },
+                    data:{
+                        p_cantidad:{
+                            decrement: prodCant[1],
+                        } 
+                    }
+                });
+
+                //si hay menos de 20 unidades en el anaquel despues de haber decrementado el inventario
+                if(productoAnaquelActual.p_cantidad <= 20){
+                    //generacion de orden de pedido interno
+                    let newProdAnaquel = await prisma.pedido_interno.create({
+                        data:{
+                            p_fecha_creacion: new Date(),
+                            fk_almacen: productoAnaquelActual.anaquel.zona_pasillo.pasillo.almacen.a_id,
+                            fk_producto_anaquel_id: productoAnaquelActual.p_id,
+                            fk_producto_anaquel_anaquel: productoAnaquelActual.fk_anaquel,
+                            fk_producto_anaquel_producto: productoAnaquelActual.fk_producto, 
+                        }
+                    })
+
+                    //nuevo Estatus d
+                    let newEstatusPInterno = await prisma.estatus_pedido_interno.create({
+                        data:{
+                            e_fecha_hora_inicio: new Date(),
+                            fk_estatus: 1,
+                            fk_pedido_interno: newProdAnaquel.p_id
+                        }
+                    })
+
+                    //detalle de la orden de pedido interno
+                    let newDetallePAnaquel = await prisma.detalle_pedido_interno.create({
+                        data:{
+                            d_cantidad: CANTIDAD_PRODS_ALMACEN,
+                            fk_pedido_interno: newProdAnaquel.p_id,
+                            fk_producto: productoAnaquelActual.fk_producto,
+                        }
+                    });
+                }
+            }
 
             if(productoAnaquelActual){
                 let newCompra = await prisma.compra.create({
@@ -213,7 +287,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                        c_id: usuario.fk_cliente_juridico 
                     },
                     data:{
-                        c_cantidad_puntos: Number(usuarioActual.cliente_juridico.c_cantidad_puntos) - puntoVal,
+                        c_cantidad_puntos: {
+                            decrement: puntoVal,
+                        },
                     }
                 });
             }
@@ -223,7 +299,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         c_id: usuario.fk_cliente_natural 
                      },
                      data:{
-                         c_cantidad_puntos: Number(usuarioActual.cliente_natural.c_cantidad_puntos) - puntoVal,
+                        c_cantidad_puntos:{
+                            decrement: puntoVal,
+                        },
                      }
                 });
             }
