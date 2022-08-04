@@ -29,14 +29,16 @@ export const getStaticProps: GetStaticProps = async () => {
         });
         let tiendas = await prisma.tienda.findMany({});
         let usuarios = await prisma.usuario.findMany({});
-        let c_naturales = await prisma.cliente_natural.findMany({});
-        let c_juridicos = await prisma.cliente_juridico.findMany({});
 
     return { 
       props: { feed: feed, 
                ultimoPuntoValor: superjson.parse(superjson.stringify(ultimoPunto.h_valor)),
                tiendas: tiendas, 
+<<<<<<< HEAD
                usuarios: usuarios}, 
+=======
+               usuarios: usuarios},
+>>>>>>> 1866ea24b20c5e8bf572c5e26e37fcc6b178434e
       revalidate: 10 
     } 
 }
@@ -202,8 +204,13 @@ async function handleSubmitPago(e) {
         return response.json()
       }
     ).catch(e => console.error(e));
+<<<<<<< HEAD
     console.log(response);
     alert(`PAGO EXITOSO - SU PEDIDO ES EL #${response.t_compra}`);
+=======
+    console.log(transaccionCompra);
+    alert(`PAGO EXITOSO - SU PEDIDO ES EL #${transaccionCompra.t_id}`);
+>>>>>>> 1866ea24b20c5e8bf572c5e26e37fcc6b178434e
     //registrar comprar
     Router.back();
 }

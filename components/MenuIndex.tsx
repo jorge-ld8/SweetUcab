@@ -25,7 +25,7 @@ const MenuIndex: React.FC<props> = (props) => {
   let cruds = ["lugar", "usuario", "rol", "producto", "historico_punto", "oferta", 
                "presupuesto", "cliente_juridico", "cliente_natural", "factura", "dashboard",
                "flyer", "lista_empleados", "orden_interna","orden_fabrica","orden_despacho", "excel_empleados",
-               "asistencias", "pedido", "pick_and_mix"];
+               "asistencias", "pedido", "pick_and_mix", "productos_por_tienda", "productos_por_almacen"];
 
   return(<>
     {cruds.map((value)=>{
