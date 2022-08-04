@@ -15,7 +15,9 @@ import UserProfile from "./userSession";
 
 export const getServerSideProps: GetServerSideProps = async () => {
 const productos = await prisma.$queryRaw`
-select distinct p.p_id, p.p_nombre, p.p_descripcion, (p.p_precio_actual/p.p_peso) precio, pa.p_cantidad, i.i_imagen imagen from producto p, producto_anaquel pa, imagen_producto i where pa.fk_anaquel in (1,42, 44, 45) and p.p_id=i.fk_producto and p.p_id=pa.fk_producto and mod(i.i_id,2)<>0 order by p.p_id;`
+select distinct p.p_id, p.p_nombre, p.p_descripcion, (p.p_precio_actual/p.p_peso) precio, pa.p_cantidad,
+i.i_imagen imagen from producto p, producto_anaquel pa, imagen_producto i where pa.fk_anaquel in (1,42, 44, 45)
+and p.p_id=i.fk_producto and p.p_id=pa.fk_producto and mod(i.i_id,2)<>0 order by p.p_id;`
 
     return {
       props: {productos}
